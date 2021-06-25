@@ -36,14 +36,11 @@ npm start
 
 A tab on Chrome will open showing this which means the server successfully turned on.
 
-![alt text](public/server_on.PNG)
+![alt text](public/server_on.png)
  
 4) Go to the index.html file in public folder to change the meta data the describes your app. For example, you can change the React logo for your logo in line 5 and 10.
 
 You can add scripts to use CSS frameworks like [Bootstrap](https://getbootstrap.com/) and [FontAwesome](https://fontawesome.com/v4.7/get-started/).
-
-You will see something like this:
-![alt text](frontend/public/index_html.PNG)
 
 Check the index.html file to see the entire code.
 
