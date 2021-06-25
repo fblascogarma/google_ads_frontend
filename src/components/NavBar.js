@@ -1,5 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink as Link } from 'react-router-dom';
+import {useCookies} from 'react-cookie';
+import {useHistory} from 'react-router-dom';
+
+
 
 
 export const NavBar = () => {
@@ -7,6 +11,26 @@ export const NavBar = () => {
     // Config to collapse navbar options on click
     const [toggle, setToggle] = useState(false)
     const onClick = () => setToggle(toggle => !toggle)
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+
+    const [token, setToken, removeToken] = useCookies(['mytoken'])
+    let history = useHistory()
+
+    const [isLogin, setLogin] = useState(false)
+
+
+    const logoutBtn = () => {
+        removeToken(['mytoken'])
+        setLogin(false)
+
+    }
+
+    const redirectLogin = () => {
+        history.push('/login')
+        setLogin(true)
+
+    }
     
 
     return (
@@ -106,7 +130,20 @@ export const NavBar = () => {
                         </div>
                     </div> */}
                     </ul>
+                    
                 </div>
+                
+                {isLogin ? 
+                <div className="col-4">
+                    <button onClick={logoutBtn} className="btn btn-outline-dark">Logout</button>
+                </div> :
+                
+                <div className="col-4">
+                    <button onClick={redirectLogin} className="btn btn-outline-dark">Login / Register</button>
+                </div>}
+                {/* <div className="col-4">
+                    <button onClick={logoutBtn} className="btn btn-outline-dark">Logout</button>
+                </div> */}
             </div>
         </nav>
     )

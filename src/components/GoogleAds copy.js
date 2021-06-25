@@ -79,35 +79,29 @@ const GoogleAds = () => {
         
     }
 
-    // const logoutBtn = () => {
-    //     removeToken(['mytoken'])
+    const logoutBtn = () => {
+        removeToken(['mytoken'])
 
-    // }
+    }
 
 
 
     return (
         
-    <div className="container mt-4" font="gotham-rounded-bold">
+    <div className="container mt-4">
         
         <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
             Welcome to Google Ads!
-        </h4> 
-
-        <p>Please connect your Google Ads account. 
-            You need to add at least one Google Ads account to see your Google Ads campaigns inside FranAds.</p>
+        </h4>
 
         <div className="container">
             <div className="row justify-content-between">
-                {/* <div className="col-4">
-                    <button onClick={articleForm} className="btn btn-success">Create New Data</button>
-                </div> */}
                 <div className="col-4">
-                    <button onClick={articleForm} className="btn btn-success">Connect to Google Ads</button>
+                    <button onClick={articleForm} className="btn btn-success">Create New Data</button>
                 </div>
-                {/* <div className="col-4">
+                <div className="col-4">
                     <button onClick={logoutBtn} className="btn btn-outline-dark">Logout</button>
-                </div> */}
+                </div>
             </div>
         </div>
 
