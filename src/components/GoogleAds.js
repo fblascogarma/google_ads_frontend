@@ -37,51 +37,46 @@ const GoogleAds = () => {
         }
     }, [token])
 
-    const editBtn = (article) => {
-        setEditArticle(article)
-    }
+    // const editBtn = (article) => {
+    //     setEditArticle(article)
+    // }
 
-    const updatedInformation = (article) => {
-        const new_article = articles.map(myarticle => {
-            if(myarticle.id === article.id) {
-                return article;
-            }
-            else {
-                return myarticle;
-            }
-        })
+    // const updatedInformation = (article) => {
+    //     const new_article = articles.map(myarticle => {
+    //         if(myarticle.id === article.id) {
+    //             return article;
+    //         }
+    //         else {
+    //             return myarticle;
+    //         }
+    //     })
 
-        setArticles(new_article)
+    //     setArticles(new_article)
 
-    }
+    // }
 
     const articleForm = () => {
         setEditArticle({title:'', description:''})
     }
 
-    const createdArticleElement = (article) => {
-        const new_articles = [...articles, article]
-        setArticles(new_articles)
+    // const createdArticleElement = (article) => {
+    //     const new_articles = [...articles, article]
+    //     setArticles(new_articles)
 
-    }
+    // }
 
-    const deleteBtn = (article) => {
-        APIService.DeleteArticle(article.id, token['mytoken'])
+    // const deleteBtn = (article) => {
+    //     APIService.DeleteArticle(article.id, token['mytoken'])
 
-         const new_articles = articles.filter(myarticle => {
-            if(myarticle.id === article.id) {
-                return false
-            }
-            return true;
-        })
+    //      const new_articles = articles.filter(myarticle => {
+    //         if(myarticle.id === article.id) {
+    //             return false
+    //         }
+    //         return true;
+    //     })
 
-        setArticles(new_articles)
+    //     setArticles(new_articles)
         
-    }
-
-    // const logoutBtn = () => {
-    //     removeToken(['mytoken'])
-
     // }
 
 
@@ -97,24 +92,18 @@ const GoogleAds = () => {
         <p>Please connect your Google Ads account. 
             You need to add at least one Google Ads account to see your Google Ads campaigns inside FranAds.</p>
 
-        <div className="container">
-            <div className="row justify-content-between">
-                {/* <div className="col-4">
-                    <button onClick={articleForm} className="btn btn-success">Create New Data</button>
-                </div> */}
+        <div className="container" align="center">
+            
                 <div className="col-4">
                     <button onClick={articleForm} className="btn btn-success">Connect to Google Ads</button>
                 </div>
-                {/* <div className="col-4">
-                    <button onClick={logoutBtn} className="btn btn-outline-dark">Logout</button>
-                </div> */}
-            </div>
+            
         </div>
 
         <br/>
         <br/>
 
-        {articles.map(article => {
+        {/* {articles.map(article => {
             return (
                 <div key={article.id}>
 
@@ -145,9 +134,9 @@ const GoogleAds = () => {
         })}
 
         {editArticle ? <UpdateArticle article={editArticle} updatedInformation={updatedInformation} createdArticleElement={createdArticleElement} /> : null}
-        
+         */}
 
-        <div className='mt-4' align="center">
+        {/* <div className='mt-4' align="center">
             <br></br>
             <Link to="/">
                 <button type="button" className="btn btn-primary btn-block" style={{margin:'10px'}}>NEXT</button>
@@ -155,7 +144,7 @@ const GoogleAds = () => {
             <Link to="/">
             <button type="button" className="btn btn-outline-primary btn-block" style={{margin:'10px'}}>HOME</button>
             </Link>
-        </div>
+        </div> */}
         
     </div>
 )}

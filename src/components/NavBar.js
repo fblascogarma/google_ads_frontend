@@ -17,18 +17,14 @@ export const NavBar = () => {
     const [token, setToken, removeToken] = useCookies(['mytoken'])
     let history = useHistory()
 
-    const [isLogin, setLogin] = useState(false)
-
 
     const logoutBtn = () => {
         removeToken(['mytoken'])
-        setLogin(false)
 
     }
 
     const redirectLogin = () => {
         history.push('/login')
-        setLogin(true)
 
     }
     
@@ -133,18 +129,18 @@ export const NavBar = () => {
                     
                 </div>
                 
-                {isLogin ? 
-                <div className="col-4">
-                    <button onClick={logoutBtn} className="btn btn-outline-dark">Logout</button>
-                </div> :
+                {/* if there is a cookie called 'mytoken', then show Logout because user is logged in, 
+                if not show Login/Register */}
+                {token['mytoken'] ? 
+                    <div className="col-4">
+                        <button onClick={logoutBtn} className="btn btn-outline-dark">Logout</button>
+                    </div> :
+                    
+                    <div className="col-4">
+                        <button onClick={redirectLogin} className="btn btn-outline-dark">Login / Register</button>
+                    </div>}
                 
-                <div className="col-4">
-                    <button onClick={redirectLogin} className="btn btn-outline-dark">Login / Register</button>
-                </div>}
-                {/* <div className="col-4">
-                    <button onClick={logoutBtn} className="btn btn-outline-dark">Logout</button>
-                </div> */}
-            </div>
+                </div>
         </nav>
     )
 }
