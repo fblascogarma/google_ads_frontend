@@ -1,35 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
-import APIService from '../APIService';
-import UpdateArticle from './UpdateArticle';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 
-
-
-
 const GoogleAds = () => {
 
-    const [articles, setArticles] = useState([])
-    const [editArticle, setEditArticle] = useState(null)
+    const [Url, setUrl] = useState('')
     const [token, setToken, removeToken] = useCookies(['mytoken'])
+    const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
     let history = useHistory()
 
 
-
-    useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/articles/', {
-            'method': 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token['mytoken']}`
-            }
-        })
-        .then(resp => resp.json())
-        .then(resp => setArticles(resp))
-    .   catch(error => console.log(error))
-    }, [])
-
+    // if there is no mytoken in the cookie, redirect user to the login page (denying access)
     useEffect(() => {
         if(!token['mytoken']) {
             // history.push('/')
@@ -37,47 +19,79 @@ const GoogleAds = () => {
         }
     }, [token])
 
-    // const editBtn = (article) => {
-    //     setEditArticle(article)
-    // }
+    // check to see if user has a refresh token for Google
+    // and if so, save it as a cookie
+    // and redirect user to the '/googleads/accounts' page
+    useEffect(() => {
+        if(!refreshToken['refreshToken']) {
+            const data = { 'mytoken': token['mytoken']}
 
-    // const updatedInformation = (article) => {
-    //     const new_article = articles.map(myarticle => {
-    //         if(myarticle.id === article.id) {
-    //             return article;
-    //         }
-    //         else {
-    //             return myarticle;
-    //         }
-    //     })
+            fetch('http://127.0.0.1:8000/api/lookup-refreshtoken/', {
+            'method': 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+        })
+        .then(function(response) {    
+            return response.text();
+        })
+        .then(function(text) {
+            // console.log(text);
+            // use a cookie to store the refresh token value
+            // text contains the refresh token value
+            // need to add the encode function because the default will encode to url
+            setRefreshToken('refreshToken', text, { encode: String})
+            
+            // redirect user to the accessible accounts page
+            history.push('/googleads/accounts')
+        })
+        .catch(error => console.log(error))
+            
+        }
+        
+    }, [refreshToken, token, history, setRefreshToken])
 
-    //     setArticles(new_article)
 
-    // }
+    // if user has a refresh token saved as a cookie,
+    // redirect user to the Accounts page
+    useEffect(() => {
+        if(refreshToken['refreshToken']) {
+            history.push('/googleads/accounts')
 
-    const articleForm = () => {
-        setEditArticle({title:'', description:''})
+        }
+    }, [refreshToken, history])
+
+
+    // when user clicks the 'Connect to Google' button
+    const authenticateGoogle = () => {
+        fetch('http://127.0.0.1:8000/api/connect/', {
+            'method': 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            }
+        })
+        .then(function(response) {    
+            return response.text();
+        })
+        .then(function(text) {
+            console.log(text);
+            setUrl(text);
+        })
+    .   catch(error => console.log(error))
+
     }
 
-    // const createdArticleElement = (article) => {
-    //     const new_articles = [...articles, article]
-    //     setArticles(new_articles)
-
-    // }
-
-    // const deleteBtn = (article) => {
-    //     APIService.DeleteArticle(article.id, token['mytoken'])
-
-    //      const new_articles = articles.filter(myarticle => {
-    //         if(myarticle.id === article.id) {
-    //             return false
-    //         }
-    //         return true;
-    //     })
-
-    //     setArticles(new_articles)
-        
-    // }
+    // if Url has a value, redirect user to that url
+    // that is the url where the user will authenticate in Google and authorize your app
+    useEffect(() => {
+        if(Url) {
+           
+            window.location.href = Url;
+        }
+    }, [Url])
 
 
 
@@ -90,61 +104,38 @@ const GoogleAds = () => {
         </h4> 
 
         <p>Please connect your Google Ads account. 
-            You need to add at least one Google Ads account to see your Google Ads campaigns inside FranAds.</p>
+            <br/>
+            <br/>
+            When you click, you will be redirected to Google so you can 
+            authenticate yourself and give us permission to manage your AdWords campaigns.
+            You will be redirected back here.
+        </p>
+
+        {Url && <p>Redirecting you to {Url}</p>}
+        
 
         <div className="container" align="center">
             
                 <div className="col-4">
-                    <button onClick={articleForm} className="btn btn-success">Connect to Google Ads</button>
+                    <button onClick={authenticateGoogle} className="btn btn-success">Connect to Google Ads</button>
                 </div>
             
         </div>
 
         <br/>
         <br/>
+        <p>If you already connected to Google Ads, get the list of possible accounts to choose from.</p>
 
-        {/* {articles.map(article => {
-            return (
-                <div key={article.id}>
+        <div className="container" align="center">
+            
+                <Link to="/googleads/accounts">
+                    <button type="button" className="btn btn-success" style={{margin:'10px'}}>Get list of accounts</button>
+                </Link>
+            
+        </div>
 
-                    <h4 className="mb-0" font="gotham-rounded-bold" align="left" style={{color:'black', fontSize:'20px'}}>{article.title}</h4>
-                    <br/>
-                    <p className="mb-0" font="gotham-rounded-bold" align="left" style={{color:'black', fontSize:'20px'}}>{article.description}</p>
-                    <br/>
-
-                    <div className="container">
-                        <div className= "row justify-content-start">
-                            <div className= "col-2">
-                                <button className="btn btn-primary" onClick= {() => editBtn(article)} >Update</button>
-                            </div>
-
-                            <div className= "col-2">
-                                <button onClick={() => deleteBtn(article)} className="btn btn-danger">Delete</button>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <br/>
-                    <br/>
-
-
-                </div>
-            )
-        })}
-
-        {editArticle ? <UpdateArticle article={editArticle} updatedInformation={updatedInformation} createdArticleElement={createdArticleElement} /> : null}
-         */}
-
-        {/* <div className='mt-4' align="center">
-            <br></br>
-            <Link to="/">
-                <button type="button" className="btn btn-primary btn-block" style={{margin:'10px'}}>NEXT</button>
-            </Link>
-            <Link to="/">
-            <button type="button" className="btn btn-outline-primary btn-block" style={{margin:'10px'}}>HOME</button>
-            </Link>
-        </div> */}
+        <br/>
+        <br/>
         
     </div>
 )}

@@ -40,15 +40,15 @@ const LearnMore = () => {
         </h4>
 
         <p className="mb-0" font="gotham-rounded-bold" align="center" style={{color:'black', fontSize:'20px'}}>
-        Google Ads allows you to take advantage of the benefits of online advertising: <strong style={{color:'rgb(248,172,6)'}} >show your ads to the right people, 
+        Google Ads allows you to take advantage of the benefits of online advertising: show your ads to the<strong style={{color:'rgb(248,172,6)'}} > right people, 
         in the right place, and at the right time.</strong>
         <br/>
         <br/>
-        When you sign up for a <strong style={{color:'rgb(248,172,6)'}} >Smart campaign</strong>, 
+        When you sign up for a Smart campaign, 
         you’ll write an ad that describes your business. 
-        You’ll also choose which <strong style={{color:'rgb(248,172,6)'}} >keyword themes</strong> you want to target your ad 
-        and <strong style={{color:'rgb(248,172,6)'}} >set a budget</strong>. Your ad will automatically show to potential customers 
-        across <strong style={{color:'rgb(248,172,6)'}} >Google Search, Google Maps, YouTube, Gmail, and Google partner websites</strong>.
+        You’ll also choose which keyword themes you want to target your ad 
+        and set a budget. Your ad will automatically show to potential customers 
+        across Google Search, Google Maps, YouTube, Gmail, and Google partner websites.
         <br/>
         <br/>
         <br/>

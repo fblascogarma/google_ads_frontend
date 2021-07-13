@@ -16,7 +16,7 @@ function Login() {
         if(token['mytoken']) {
             history.push('/googleads')
         }
-    }, [token])
+    }, [token, history])
     
     const loginBtn = () => {
         APIService.LoginUser({username, password})
