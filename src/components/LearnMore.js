@@ -34,14 +34,20 @@ const LearnMore = () => {
     return (
         
     <div className="container mt-4">
+        <br/>
         
         <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
             Why use Google Ads?
         </h4>
 
+        <br/>
+        <br/>
+
+
         <p className="mb-0" font="gotham-rounded-bold" align="center" style={{color:'black', fontSize:'20px'}}>
         Google Ads allows you to take advantage of the benefits of online advertising: show your ads to the<strong style={{color:'rgb(248,172,6)'}} > right people, 
         in the right place, and at the right time.</strong>
+        <br/>
         <br/>
         <br/>
         When you sign up for a Smart campaign, 

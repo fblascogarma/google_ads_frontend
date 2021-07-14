@@ -66,14 +66,20 @@ const Home = () => {
         
     <div className="container mt-4">
         
+        <br/>
         <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
             Create marketing campaigns on Google!
         </h4>
 
+        <br/>
+        <br/>
         <p className="mb-0" font="gotham-rounded-bold" align="center" style={{color:'black', fontSize:'20px'}}>
         FranAds is a free app that that will <strong style={{color:'rgb(248,172,6)'}} >help you promote your business </strong>on Google Search, 
         Google Maps, YouTube, Gmail, and Google partner websites.
         </p>
+
+        <br/>
+        <br/>
         
         <div className='mt-4' align="center">
             <br></br>
