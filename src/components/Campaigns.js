@@ -13,6 +13,8 @@ const Campaigns = () => {
     let history = useHistory()
     const [campaignInfo, setCampaignInfo] = useState([])
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
+    const [toggle, setToggle] = useState(false)
+    const onClickToggle = () => setToggle(toggle => !toggle)
 
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -68,6 +70,23 @@ const Campaigns = () => {
         <br/>
         <p>Please select the campaign that you want to see in further detail.</p>
 
+        <br/>
+        <br/>
+        <p>Filters:</p>
+       
+        <div className="btn-group">
+            
+            <button type="button" onClick={onClickToggle} className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Campaign status
+            </button>
+                
+                <ul className="dropdown-menu" style={{ display: toggle ? '' : 'none'}}>
+                    <li><a className="dropdown-item" href="/#">All</a></li>
+                    <li><a className="dropdown-item" href="/#">All enabled</a></li>
+                    <li><a className="dropdown-item" href="/#">All but removed</a></li>
+                </ul>
+                
+        </div>
         <br/>
         <br/>
 

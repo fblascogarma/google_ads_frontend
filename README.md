@@ -1,6 +1,6 @@
 # Build a web app that is integrated with Google Ads (this is the frontend)
 
-This project will teach you how to build a frontend for your web app that integrates with Google Ads using Google Ads API. To see the project for the backend, go [here]((https://github.com/fblascogarma/google_ads_backend))
+This project will teach you how to build a frontend for your web app that integrates with Google Ads using Google Ads API. To see the project for the backend, go [here](https://github.com/fblascogarma/google_ads_backend)
 
 I have [this repo](https://github.com/fblascogarma/backend_starter) to help you get started with a basic backend using Django, and [this repo](https://github.com/fblascogarma/frontend_starter) to help you get started with a basic frontend using React. We will build from these two repos.
 

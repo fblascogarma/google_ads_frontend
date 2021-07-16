@@ -13,6 +13,8 @@ const AccessibleCustomers = () => {
     const [accountInfo, setAccountInfo] = useState([])
     const [customerID, setCustomerID] = useState('')
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
+    const [Url, setUrl] = useState('')
+
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
     useEffect(() => {
@@ -59,6 +61,37 @@ const AccessibleCustomers = () => {
 
     }
 
+    // when user clicks the 'Re-connect to Google' button
+    // this is in case the refresh token is now working anymore
+    // and user has to get another one
+    const authenticateGoogle = () => {
+        fetch('http://127.0.0.1:8000/api/connect/', {
+            'method': 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            }
+        })
+        .then(function(response) {    
+            return response.text();
+        })
+        .then(function(text) {
+            console.log(text);
+            setUrl(text);
+        })
+    .   catch(error => console.log(error))
+
+    }
+
+    // if Url has a value, redirect user to that url
+    // that is the url where the user will authenticate in Google and authorize your app
+    useEffect(() => {
+        if(Url) {
+           
+            window.location.href = Url;
+        }
+    }, [Url])
+
 
     return (
         
@@ -73,6 +106,15 @@ const AccessibleCustomers = () => {
         <p>Please select the Google Ads account you want to manage.</p>
 
         <br/>
+
+        <div className="container" align="right">
+            
+                <div className="col-6">
+                    <button onClick={authenticateGoogle} className="btn btn-success">Re-connect to Google Ads</button>
+                </div>
+            
+        </div>
+
         <br/>
 
         <table className="table table-bordered table-hover table-responsive">
