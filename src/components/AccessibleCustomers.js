@@ -14,8 +14,6 @@ const AccessibleCustomers = () => {
     const [customerID, setCustomerID] = useState('')
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
 
-    // const [customerId, setCustomerId] = useState('')
-
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
     useEffect(() => {
         if(!token['mytoken']) {
@@ -55,28 +53,11 @@ const AccessibleCustomers = () => {
     // to the page of campaigns info for that customer
     const onClick = e => {
         const cusID = e.currentTarget.id
-        console.log(cusID)
+        // console.log(cusID)
         setCustomerId("customerID", cusID);
         history.push('/googleads/accounts/campaigns');
 
     }
-    // const onClick = () => {
-
-    //     // const cusID = e.target.value
-    //     // const cusID = document.getElementById('a').getAttribute('value')
-    //     const x = document.getElementsByTagName("TD")
-    //     const cusID = x[0].innerHTML
-    //     console.log(cusID)
-    //     // setCustomerID(e.target.value);
-    //     // setCustomerID("test");
-    //     // setCustomerId("customerID", alert(e.srcElement.value));
-    //     // history.push('/googleads/accounts/campaigns');
-
-    // }
-
-    // const onChange = e => {
-    //     setCustomerId(e.target.value)
-    // }
 
 
     return (
