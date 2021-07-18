@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import Message from './Message';
+import InfoCard from './InfoCard';
 
 
 
@@ -95,7 +96,9 @@ const Campaigns = () => {
 
         {message ? <Message msg={message} /> : null}
 
-        <p>Filter by campaign status</p>
+        
+        <p><i className="fas fa-filter"></i>  Filter by campaign status</p>
+        
         <div className="btn-group">
             
             <select className="form-select form-select-sm" onChange={onChange} value={status} aria-label="Filter table by campaign status">
@@ -137,9 +140,9 @@ const Campaigns = () => {
                             display: item.status === "Enabled" ? '' : 'none'  }}>
                                 
                             
-                                <td> <i class="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
-                                <i class="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
-                                <i class="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
+                                <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
+                                <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
                                 <td> ${item.campaign_budget}</td>
                                 <td> {item.status}</td>
@@ -165,9 +168,9 @@ const Campaigns = () => {
                             display: item.status === "Enabled" || item.status === "Paused" ? '' : 'none'  }}>
                                 
                             
-                                <td> <i class="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
-                                <i class="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
-                                <i class="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
+                                <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
+                                <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
                                 <td> ${item.campaign_budget}</td>
                                 <td> {item.status}</td>
@@ -193,9 +196,9 @@ const Campaigns = () => {
                             <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer'}}>
                                 
                             
-                                <td> <i class="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
-                                <i class="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
-                                <i class="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
+                                <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
+                                <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
                                 <td> ${item.campaign_budget}</td>
                                 <td> {item.status}</td>
