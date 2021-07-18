@@ -101,7 +101,7 @@ const Campaigns = () => {
                 <tr key="accounts_table" style={{ textAlign: 'center', verticalAlign: 'top'}}>
                     
                     <th key="campaign_name" scope="col">Campaign</th>
-                    <th key="budget" scope="col">Budget</th>
+                    <th key="budget" scope="col">Budget per day</th>
                     <th key="status" scope="col">Status</th>
                     <th key="campaign_type" scope="col">Campaign type</th>
                     <th key="impressions" scope="col">Impr.</th>
@@ -125,17 +125,17 @@ const Campaigns = () => {
                                 
                             
                                 <td> {item.campaign_name}</td>
-                                <td> {item.campaign_budget}</td>
+                                <td> ${item.campaign_budget}</td>
                                 <td> {item.status}</td>
                                 <td> {item.campaign_type}</td>
-                                <td> {item.impressions}</td>
-                                <td> {item.interactions}</td>
-                                <td> {item.interaction_rate}</td>
-                                <td> {item.cpc}</td>
-                                <td> {item.cost}</td>
-                                <td> {item.conv}</td>
-                                <td> {item.cost_per_conv}</td>
-                                <td> {item.conv_rate}</td>
+                                <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {item.interaction_rate}%</td>
+                                <td> ${item.cpc}</td>
+                                <td> ${String(item.cost).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {String(item.conv).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> ${item.cost_per_conv}</td>
+                                <td> {item.conv_rate}%</td>
             
                                 
                             </tr>
@@ -150,17 +150,17 @@ const Campaigns = () => {
                                 
                             
                                 <td> {item.campaign_name}</td>
-                                <td> {item.campaign_budget}</td>
+                                <td> ${item.campaign_budget}</td>
                                 <td> {item.status}</td>
                                 <td> {item.campaign_type}</td>
-                                <td> {item.impressions}</td>
-                                <td> {item.interactions}</td>
-                                <td> {item.interaction_rate}</td>
-                                <td> {item.cpc}</td>
-                                <td> {item.cost}</td>
-                                <td> {item.conv}</td>
-                                <td> {item.cost_per_conv}</td>
-                                <td> {item.conv_rate}</td>
+                                <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {item.interaction_rate}%</td>
+                                <td> ${item.cpc}</td>
+                                <td> ${String(item.cost).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {String(item.conv).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> ${item.cost_per_conv}</td>
+                                <td> {item.conv_rate}%</td>
             
                                 
                             </tr>
@@ -175,17 +175,17 @@ const Campaigns = () => {
                                 
                             
                                 <td> {item.campaign_name}</td>
-                                <td> {item.campaign_budget}</td>
+                                <td> ${item.campaign_budget}</td>
                                 <td> {item.status}</td>
                                 <td> {item.campaign_type}</td>
-                                <td> {item.impressions}</td>
-                                <td> {item.interactions}</td>
-                                <td> {item.interaction_rate}</td>
-                                <td> {item.cpc}</td>
-                                <td> {item.cost}</td>
-                                <td> {item.conv}</td>
-                                <td> {item.cost_per_conv}</td>
-                                <td> {item.conv_rate}</td>
+                                <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {item.interaction_rate}%</td>
+                                <td> ${item.cpc}</td>
+                                <td> ${String(item.cost).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> {String(item.conv).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                <td> ${item.cost_per_conv}</td>
+                                <td> {item.conv_rate}%</td>
             
                                 
                             </tr>
