@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 // import { Link } from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
+import Message from './Message';
+
 
 
 
@@ -14,6 +16,8 @@ const Campaigns = () => {
     const [campaignInfo, setCampaignInfo] = useState([])
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [status, setStatus] = useState("All but removed")
+    const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
+
 
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -29,6 +33,9 @@ const Campaigns = () => {
     // where they will be used to get the campaigns info associated with that customer_id and token
     useEffect(() => {
         if(customerId) {
+
+            // tell user you are fetching their data
+            setMessage(' Fetching your data... It will take a few seconds.');
             
             // data to send to the backend
             const data = { 'refreshToken': refreshToken['refreshToken'], 'customer_id': customerId['customerID']}
@@ -50,6 +57,13 @@ const Campaigns = () => {
         }
     }, [customerId, refreshToken, token])
 
+    // if campaignInfo object has data, delete the 'fetching data' message
+    useEffect(() => {
+        if(campaignInfo.length > 0) {
+            setMessage('')
+        }
+    }, [campaignInfo])
+
     // const onClick = () => {
 
     //     history.push('/googleads/accounts/campaigns')
@@ -63,9 +77,6 @@ const Campaigns = () => {
 
     }
 
-    // function search(rows) {
-    //     return rows.filter(row => row.status.indexOf(status))
-    // }
 
     return (
         
@@ -81,6 +92,8 @@ const Campaigns = () => {
 
         <br/>
         <br/>
+
+        {message ? <Message msg={message} /> : null}
 
         <p>Filter by campaign status</p>
         <div className="btn-group">

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
+import Message from './Message';
 
 
 
@@ -14,6 +15,7 @@ const AccessibleCustomers = () => {
     const [customerID, setCustomerID] = useState('')
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [Url, setUrl] = useState('')
+    const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
 
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -29,6 +31,9 @@ const AccessibleCustomers = () => {
     // where they will be used to get the list of accounts associated with those tokens
     useEffect(() => {
         if(refreshToken) {
+
+            // tell user you are fetching their data
+            setMessage(' Fetching your data... It will take a few seconds.');
             
             // data to send to the backend
             const data = { 'mytoken': token['mytoken'], 'refreshToken': refreshToken['refreshToken']}
@@ -45,10 +50,16 @@ const AccessibleCustomers = () => {
             .then(resp => resp.json())
             .then(resp => setAccountInfo(resp))
             .catch(error => console.log(error))
-           
-            
+              
         }
     }, [token, history, refreshToken, setRefreshToken])
+
+    // if accountInfo object has data, delete the 'fetching data' message
+    useEffect(() => {
+        if(accountInfo.length > 0) {
+            setMessage('')
+        }
+    }, [accountInfo])
 
     // when user clicks on a row, the customer_id will be saved as a cookie
     // to be used for the session, and they will be redirected 
@@ -79,7 +90,7 @@ const AccessibleCustomers = () => {
             console.log(text);
             setUrl(text);
         })
-    .   catch(error => console.log(error))
+        .catch(error => console.log(error))
 
     }
 
@@ -107,6 +118,8 @@ const AccessibleCustomers = () => {
 
         <br/>
 
+        {message ? <Message msg={message} /> : null}
+
         <div className="container" align="left">
             
                 <div className="col-6">
@@ -131,6 +144,7 @@ const AccessibleCustomers = () => {
            
             <tbody>
                 {accountInfo.map(item => {
+
                 return(
                     
                 <tr key={item.customer_id} onClick={onClick} id={item.customer_id} value={item.customer_id} style={{ textAlign: 'center', cursor: 'pointer'}}>
