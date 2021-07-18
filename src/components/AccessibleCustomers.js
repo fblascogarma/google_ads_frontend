@@ -107,10 +107,10 @@ const AccessibleCustomers = () => {
 
         <br/>
 
-        <div className="container" align="right">
+        <div className="container" align="left">
             
                 <div className="col-6">
-                    <button onClick={authenticateGoogle} className="btn btn-success">Re-connect to Google Ads</button>
+                    <button onClick={authenticateGoogle} className="btn btn-success btn-sm">Re-connect to Google Ads</button>
                 </div>
             
         </div>

@@ -13,8 +13,7 @@ const Campaigns = () => {
     let history = useHistory()
     const [campaignInfo, setCampaignInfo] = useState([])
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
-    const [toggle, setToggle] = useState(false)
-    const onClickToggle = () => setToggle(toggle => !toggle)
+    const [status, setStatus] = useState("All but removed")
 
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -57,6 +56,16 @@ const Campaigns = () => {
 
     // }
 
+    // filter campaigns by status
+    // first get the value of the option selected by the user
+    const onChange = (e) => {
+        setStatus(e.target.value)
+
+    }
+
+    // function search(rows) {
+    //     return rows.filter(row => row.status.indexOf(status))
+    // }
 
     return (
         
@@ -72,21 +81,18 @@ const Campaigns = () => {
 
         <br/>
         <br/>
-        <p>Filters:</p>
-       
+
+        <p>Filter by campaign status</p>
         <div className="btn-group">
             
-            <button type="button" onClick={onClickToggle} className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                Campaign status
-            </button>
+            <select className="form-select form-select-sm" onChange={onChange} value={status} aria-label="Filter table by campaign status">
                 
-                <ul className="dropdown-menu" style={{ display: toggle ? '' : 'none'}}>
-                    <li><a className="dropdown-item" href="/#">All</a></li>
-                    <li><a className="dropdown-item" href="/#">All enabled</a></li>
-                    <li><a className="dropdown-item" href="/#">All but removed</a></li>
-                </ul>
-                
+                <option value="All">All</option>
+                <option value="All enabled">All enabled</option>
+                <option value="All but removed">All but removed</option>
+            </select>
         </div>
+
         <br/>
         <br/>
 
@@ -111,28 +117,82 @@ const Campaigns = () => {
            
             <tbody>
                 {campaignInfo.map(item => {
-                return(
+                    if (status === "All enabled") {
+                        return(
                     
-                <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer'}}>
-                    
-                
-                    <td> {item.campaign_name}</td>
-                    <td> {item.campaign_budget}</td>
-                    <td> {item.status}</td>
-                    <td> {item.campaign_type}</td>
-                    <td> {item.impressions}</td>
-                    <td> {item.interactions}</td>
-                    <td> {item.interaction_rate}</td>
-                    <td> {item.cpc}</td>
-                    <td> {item.cost}</td>
-                    <td> {item.conv}</td>
-                    <td> {item.cost_per_conv}</td>
-                    <td> {item.conv_rate}</td>
+                            <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer', 
+                            display: item.status === "Enabled" ? '' : 'none'  }}>
+                                
+                            
+                                <td> {item.campaign_name}</td>
+                                <td> {item.campaign_budget}</td>
+                                <td> {item.status}</td>
+                                <td> {item.campaign_type}</td>
+                                <td> {item.impressions}</td>
+                                <td> {item.interactions}</td>
+                                <td> {item.interaction_rate}</td>
+                                <td> {item.cpc}</td>
+                                <td> {item.cost}</td>
+                                <td> {item.conv}</td>
+                                <td> {item.cost_per_conv}</td>
+                                <td> {item.conv_rate}</td>
+            
+                                
+                            </tr>
+                            
+                            )
 
+                    } else if (status === "All but removed") {
+                        return(
                     
-                </tr>
+                            <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer', 
+                            display: item.status === "Enabled" || item.status === "Paused" ? '' : 'none'  }}>
+                                
+                            
+                                <td> {item.campaign_name}</td>
+                                <td> {item.campaign_budget}</td>
+                                <td> {item.status}</td>
+                                <td> {item.campaign_type}</td>
+                                <td> {item.impressions}</td>
+                                <td> {item.interactions}</td>
+                                <td> {item.interaction_rate}</td>
+                                <td> {item.cpc}</td>
+                                <td> {item.cost}</td>
+                                <td> {item.conv}</td>
+                                <td> {item.cost_per_conv}</td>
+                                <td> {item.conv_rate}</td>
+            
+                                
+                            </tr>
+
+                            
+                            
+                            )
+                    } else if (status === "All") {
+                        return(
+                    
+                            <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer'}}>
+                                
+                            
+                                <td> {item.campaign_name}</td>
+                                <td> {item.campaign_budget}</td>
+                                <td> {item.status}</td>
+                                <td> {item.campaign_type}</td>
+                                <td> {item.impressions}</td>
+                                <td> {item.interactions}</td>
+                                <td> {item.interaction_rate}</td>
+                                <td> {item.cpc}</td>
+                                <td> {item.cost}</td>
+                                <td> {item.conv}</td>
+                                <td> {item.cost_per_conv}</td>
+                                <td> {item.conv_rate}</td>
+            
+                                
+                            </tr>
+                            
+                            )
+                    }
                 
-                )
                 })}
 
             </tbody>
