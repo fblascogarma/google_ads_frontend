@@ -96,7 +96,7 @@ const Campaigns = () => {
         </h4> 
 
         <br/>
-        <p>Please select the campaign that you want to see in further detail.</p>
+        <p>Please select the campaign that you want to see in further detail or want to edit.</p>
 
         <br/>
         <br/>
@@ -120,7 +120,28 @@ const Campaigns = () => {
 
                 </div>
 
-                <div className="col-sm" style={{ display: 'flex', justifyContent: 'flex-end'}}>
+                <div className="col-sm" align='right'>
+                    <p><i className="fas fa-filter"></i>  Filter by date</p>
+            
+                    <div className="btn-group" >
+                        
+                    <select className="form-select form-select-sm" onChange={onChangeDate} value={date} aria-label="Filter table by date">
+                            
+                            <option value="TODAY">Today</option>
+                            <option value="YESTERDAY">Yesterday</option>
+                            <option value="THIS_WEEK_SUN_TODAY">This week (Sun - Today)</option>
+                            <option value="LAST_7_DAYS">Last 7 days</option>
+                            <option value="LAST_14_DAYS">Last 14 days</option>
+                            <option value="THIS_MONTH">This month</option>
+                            <option value="LAST_30_DAYS">Last 30 days</option>
+                            <option value="LAST_MONTH">Last month</option>
+                            <option value="ALL_TIME">All time</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                {/* <div className="col-sm" style={{ display: 'flex', justifyContent: 'flex-end'}}>
                     
             
                     <div className="btn-group">
@@ -140,7 +161,7 @@ const Campaigns = () => {
                         </select>
                     </div>
 
-                </div>
+                </div> */}
             </div>
         </div>
         

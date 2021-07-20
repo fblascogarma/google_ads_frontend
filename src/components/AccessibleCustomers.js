@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import Message from './Message';
+import MessageError from './MessageError';
 
 
 
@@ -16,6 +17,7 @@ const AccessibleCustomers = () => {
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [Url, setUrl] = useState('')
     const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
+    const [messageError, setMessageError] = useState('')
 
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -72,6 +74,14 @@ const AccessibleCustomers = () => {
 
     }
 
+    // if user tries to select a Manager account to see campaign details
+    // show an error message saying that is not possible
+    // and indicate how to proceed
+    const onClickManager = e => {
+        setMessageError('Metrics cannot be requested for a manager account. To retrieve metrics, select a client account.')
+
+    }
+
     // when user clicks the 'Re-connect to Google' button
     // this is in case the refresh token is now working anymore
     // and user has to get another one
@@ -119,6 +129,7 @@ const AccessibleCustomers = () => {
         <br/>
 
         {message ? <Message msg={message} /> : null}
+        {messageError ? <MessageError msg={messageError} /> : null}
 
         <div className="container" align="left">
             
@@ -147,7 +158,7 @@ const AccessibleCustomers = () => {
 
                 return(
                     
-                <tr key={item.customer_id} onClick={onClick} id={item.customer_id} value={item.customer_id} style={{ textAlign: 'center', cursor: 'pointer'}}>
+                <tr key={item.customer_id} onClick={item.account_type === 'Client' ? onClick : onClickManager} id={item.customer_id} value={item.customer_id} style={{ textAlign: 'center', cursor: 'pointer'}}>
                     
                 
                     <td key={item.customer_id}> {item.customer_id}</td>
