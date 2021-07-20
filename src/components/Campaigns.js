@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import Message from './Message';
-import InfoCard from './InfoCard';
+// import InfoCard from './InfoCard';
 
 
 
@@ -17,6 +17,7 @@ const Campaigns = () => {
     const [campaignInfo, setCampaignInfo] = useState([])
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [status, setStatus] = useState("All but removed")
+    const [date, setDate] = useState("ALL_TIME")
     const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
 
 
@@ -39,7 +40,7 @@ const Campaigns = () => {
             setMessage(' Fetching your data... It will take a few seconds.');
             
             // data to send to the backend
-            const data = { 'refreshToken': refreshToken['refreshToken'], 'customer_id': customerId['customerID']}
+            const data = { 'refreshToken': refreshToken['refreshToken'], 'customer_id': customerId['customerID'], 'date_range': date}
 
             fetch('http://127.0.0.1:8000/api/get-campaigns/', {
                 method: 'POST',
@@ -56,7 +57,7 @@ const Campaigns = () => {
            
             
         }
-    }, [customerId, refreshToken, token])
+    }, [customerId, refreshToken, token, date])
 
     // if campaignInfo object has data, delete the 'fetching data' message
     useEffect(() => {
@@ -72,9 +73,15 @@ const Campaigns = () => {
     // }
 
     // filter campaigns by status
-    // first get the value of the option selected by the user
-    const onChange = (e) => {
+    const onChangeStatus = (e) => {
         setStatus(e.target.value)
+
+    }
+
+    // filter campaigns by date
+    const onChangeDate = (e) => {
+        setDate(e.target.value);
+        setCampaignInfo([])
 
     }
 
@@ -96,18 +103,47 @@ const Campaigns = () => {
 
         {message ? <Message msg={message} /> : null}
 
-        
-        <p><i className="fas fa-filter"></i>  Filter by campaign status</p>
-        
-        <div className="btn-group">
+        <div className="container">
+            <div className="row">
+                <div className="col-sm">
+                    <p><i className="fas fa-filter"></i>  Filter by campaign status</p>
             
-            <select className="form-select form-select-sm" onChange={onChange} value={status} aria-label="Filter table by campaign status">
-                
-                <option value="All">All</option>
-                <option value="All enabled">All enabled</option>
-                <option value="All but removed">All but removed</option>
-            </select>
+                    <div className="btn-group">
+                        
+                        <select className="form-select form-select-sm" onChange={onChangeStatus} value={status} aria-label="Filter table by campaign status">
+                            
+                            <option value="All">All</option>
+                            <option value="All enabled">All enabled</option>
+                            <option value="All but removed">All but removed</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div className="col-sm" style={{ display: 'flex', justifyContent: 'flex-end'}}>
+                    
+            
+                    <div className="btn-group">
+                        <p><i className="fas fa-filter"></i>  Filter by date</p>
+                        
+                        <select className="form-select form-select-sm" onChange={onChangeDate} value={date} aria-label="Filter table by date">
+                            
+                            <option value="TODAY">Today</option>
+                            <option value="YESTERDAY">Yesterday</option>
+                            <option value="THIS_WEEK_SUN_TODAY">This week (Sun - Today)</option>
+                            <option value="LAST_7_DAYS">Last 7 days</option>
+                            <option value="LAST_14_DAYS">Last 14 days</option>
+                            <option value="THIS_MONTH">This month</option>
+                            <option value="LAST_30_DAYS">Last 30 days</option>
+                            <option value="LAST_MONTH">Last month</option>
+                            <option value="ALL_TIME">All time</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
         </div>
+        
 
         <br/>
         <br/>
