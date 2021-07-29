@@ -10,6 +10,7 @@ import Login from './components/Login';
 import ScrollToTop from './components/ScrollToTop';
 import AccessibleCustomers from './components/AccessibleCustomers';
 import Campaigns from './components/Campaigns';
+import CreateCampaign from './components/CreateCampaign';
 
 const App = () => (
 <BrowserRouter onUpdate={() => window.scrollTo(0, 0)}>
@@ -25,6 +26,7 @@ const App = () => (
         <Route exact path= "/login" component={Login} />
         <Route exact path= "/googleads/accounts" component={AccessibleCustomers} />
         <Route exact path= "/googleads/accounts/campaigns" component={Campaigns} />
+        <Route exact path= "/googleads/accounts/campaigns/create-campaign" component={CreateCampaign} />
         <Route exact path= "/about" component={About} />
       </Switch>
     </Fragment>

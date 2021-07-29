@@ -66,11 +66,6 @@ const Campaigns = () => {
         }
     }, [campaignInfo])
 
-    // const onClick = () => {
-
-    //     history.push('/googleads/accounts/campaigns')
-
-    // }
 
     // filter campaigns by status
     const onChangeStatus = (e) => {
@@ -85,6 +80,10 @@ const Campaigns = () => {
 
     }
 
+    // redirect to CreateCampaign when user clicks on 'Create new campaign' button
+    const create = () => {
+        history.push('/googleads/accounts/campaigns/create-campaign')}
+
 
     return (
         
@@ -92,12 +91,24 @@ const Campaigns = () => {
         
         <br/>
         <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
-            Campaigns
+            Campaigns Performance
         </h4> 
 
         <br/>
-        <p>Please select the campaign that you want to see in further detail or want to edit.</p>
+        <p>See how your campaigns are performing. 
+            You can filter by campaign status and dates. 
+            Click a campaign if you want to edit it or see the current settings.</p>
 
+        <br/>
+        <br/>
+
+        <div className="container" align="left">
+            
+                <div className="col-6">
+                    <button onClick={create} className="btn btn-success">Create new campaign</button>
+                </div>
+            
+        </div>
         <br/>
         <br/>
 
@@ -140,28 +151,6 @@ const Campaigns = () => {
                     </div>
 
                 </div>
-
-                {/* <div className="col-sm" style={{ display: 'flex', justifyContent: 'flex-end'}}>
-                    
-            
-                    <div className="btn-group">
-                        <p><i className="fas fa-filter"></i>  Filter by date</p>
-                        
-                        <select className="form-select form-select-sm" onChange={onChangeDate} value={date} aria-label="Filter table by date">
-                            
-                            <option value="TODAY">Today</option>
-                            <option value="YESTERDAY">Yesterday</option>
-                            <option value="THIS_WEEK_SUN_TODAY">This week (Sun - Today)</option>
-                            <option value="LAST_7_DAYS">Last 7 days</option>
-                            <option value="LAST_14_DAYS">Last 14 days</option>
-                            <option value="THIS_MONTH">This month</option>
-                            <option value="LAST_30_DAYS">Last 30 days</option>
-                            <option value="LAST_MONTH">Last month</option>
-                            <option value="ALL_TIME">All time</option>
-                        </select>
-                    </div>
-
-                </div> */}
             </div>
         </div>
         

@@ -108,7 +108,7 @@ const GoogleAds = () => {
             <br/>
             When you click, you will be redirected to Google so you can 
             authenticate yourself and give us permission to manage your AdWords campaigns.
-            You will be redirected back here.
+            You will be redirected back to Fran Ads.
         </p>
 
         {Url && <p>Redirecting you to {Url}</p>}
@@ -124,7 +124,20 @@ const GoogleAds = () => {
 
         <br/>
         <br/>
-        <p>If you already connected to Google Ads, get the list of possible accounts to choose from.</p>
+        <p>If you don't have a Google Ads account yet, let us create one for you now.</p>
+
+        <div className="container" align="center">
+            
+                <Link to="/#">
+                    <button type="button" className="btn btn-success" style={{margin:'10px'}}>Create Google Ads Account</button>
+                </Link>
+            
+        </div>
+
+        <br/>
+        <br/>
+        
+        {/* <p>If you already connected to Google Ads, get the list of possible accounts to choose from.</p>
 
         <div className="container" align="center">
             
@@ -135,7 +148,7 @@ const GoogleAds = () => {
         </div>
 
         <br/>
-        <br/>
+        <br/> */}
         
     </div>
 )}

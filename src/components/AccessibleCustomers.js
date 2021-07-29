@@ -124,7 +124,10 @@ const AccessibleCustomers = () => {
         </h4> 
 
         <br/>
-        <p>Please select the Google Ads account you want to manage.</p>
+        <p>Please select the account you want to manage. 
+            If you want to see how your campaigns are performing or create/edit campaigns, 
+            select the Client account that has those campaigns.
+        </p>
 
         <br/>
 
