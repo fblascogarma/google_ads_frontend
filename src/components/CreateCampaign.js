@@ -1,30 +1,36 @@
 import React, {useState, useEffect} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
+import MessageError from './MessageErrorNoClose';
 
 
 
 const CreateCampaign = () => {
 
     const [token, setToken, removeToken] = useCookies(['mytoken'])
-    const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
     let history = useHistory()
-    const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [goal, setGoal] = useState("sales_signups")
     const [businessName, setBusinessName] = useState("")
     const [landingPage, setLandingPage] = useState("")
-    const [headlineOne, setHeadlineOne] = useState("")
-    const [headlineTwo, setHeadlineTwo] = useState("")
-    const [headlineThree, setHeadlineThree] = useState("")
-    const [headlineOneCharacters, setHeadlineOneCharacters] = useState(0)
-    const [headlineTwoCharacters, setHeadlineTwoCharacters] = useState(0)
-    const [headlineThreeCharacters, setHeadlineThreeCharacters] = useState(0)
-    const [descOne, setDescOne] = useState("")
-    const [descTwo, setDescTwo] = useState("")
-    const [descOneCharacters, setDescOneCharacters] = useState(0)
-    const [descTwoCharacters, setDescTwoCharacters] = useState(0)
-    const [phoneNumber, setPhoneNumber] = useState()
+    const [phoneNumber, setPhoneNumber] = useState("")
     const [countryCode, setCountryCode] = useState("US")
+
+    // cookies from step 1
+    const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code', "US"])
+    const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
+    const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
+    const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
+    
+
+    // cookies from step 2
+    const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
+    const [headline_2, setHeadline_2, removeHeadline_2] = useCookies(['headline_2'])
+    const [headline_3, setHeadline_3, removeHeadline_3] = useCookies(['headline_3'])
+    const [desc_1, setDesc_1, removeDesc_1] = useCookies(['desc_1'])
+    const [desc_2, setDesc_2, removeDesc_2] = useCookies(['desc_2'])
+
+    const [messageError, setMessageError] = useState('')
+
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
     useEffect(() => {
@@ -38,43 +44,111 @@ const CreateCampaign = () => {
     const onChangeGoal = (e) => {setGoal(e.target.value)}
 
     // set business name
-    const onChangeBusName = (e) => {setBusinessName(e.target.value)}
+    const onChangeBusName = (e) => {
+        removeBusiness_name(['business_name']);
+        setBusinessName(e.target.value)}
 
     // set business name
-    const onChangeLanding = (e) => {setLandingPage(e.target.value)}
-
-    // set headline 1
-    const onChangeHeadlineOne = (e) => {
-        setHeadlineOne(e.target.value); 
-        setHeadlineOneCharacters(e.target.value.length)}
-
-    // set headline 2
-    const onChangeHeadlineTwo = (e) => {
-        setHeadlineTwo(e.target.value);
-        setHeadlineTwoCharacters(e.target.value.length)}
-
-    // set headline 3
-    const onChangeHeadlineThree = (e) => {
-        setHeadlineThree(e.target.value);
-        setHeadlineThreeCharacters(e.target.value.length)}
-
-    // set description 1
-    const onChangeDescOne = (e) => {
-        setDescOne(e.target.value); 
-        setDescOneCharacters(e.target.value.length)}
-    
-    // set description 2
-    const onChangeDescTwo = (e) => {
-        setDescTwo(e.target.value);
-        setDescTwoCharacters(e.target.value.length)}
+    const onChangeLanding = (e) => {
+        removeLanding_page(['landing_page']);
+        setLandingPage(e.target.value)}
 
     // set phone number
-    const onChangePhoneNumber = (e) => {setPhoneNumber(e.target.value)}
+    const onChangePhoneNumber = (e) => {
+        removePhone_number(['phone_number']);
+        setPhoneNumber(e.target.value)}
 
     // set country code for phone number
-    const onChangeCountryCode = (e) => {setCountryCode(e.target.value)}
+    const onChangeCountryCode = (e) => {
+        removeCountry_code(['country_code']);
+        setCountryCode(e.target.value)}
 
+    // if there are field values saved as cookies, setState
+    useEffect(() => {
+        if(business_name['business_name']) {
+            
+            setBusinessName(business_name['business_name'])
+        }
+    }, [business_name])
 
+    useEffect(() => {
+        if(landing_page['landing_page']) {
+            
+            setLandingPage(landing_page['landing_page'])
+        }
+    }, [landing_page])
+
+    useEffect(() => {
+        if(phone_number['phone_number']) {
+            
+            setPhoneNumber(phone_number['phone_number'])
+        }
+    }, [phone_number])
+
+    useEffect(() => {
+        if(country_code['country_code']) {
+            
+            setCountryCode(country_code['country_code'])
+        }
+    }, [country_code])
+
+    // when user clicks on 'Next' button
+    const goStep2 = () => {
+        if (
+            // if required fields are completed
+            // or there are cookies of the fields
+            // send user to the next step
+            // if not, error message
+            ((businessName.length !== 0) && (landingPage.length !== 0) && (phoneNumber.length !== 0)) || 
+            ((business_name['business_name']) && 
+            (landing_page['landing_page']) && 
+            (phone_number['phone_number']))) 
+               
+                {
+                    // save values as cookies to use later and send user to step 2
+                    setBusiness_name("business_name", businessName, { encode: String});
+                    setLanding_page("landing_page", landingPage, { encode: String});
+                    setCountry_code("country_code", countryCode);
+                    setPhone_number("phone_number", phoneNumber);
+                    history.push('/googleads/write-smart-ad');
+                } else {setMessageError('You need to fill out all fields to continue.');}
+        }
+
+    // when user clicks on 'Back' button
+    const goPreviousStep = () => {
+        history.push('/googleads/accounts/campaigns')}
+
+    const goStep1 = () => {
+        history.push('/googleads/campaigns/create-campaign')
+    }
+
+    // to self: replace urls and add condition logic
+    const goStep4 = () => {
+        history.push('/googleads/campaigns/create-campaign')}
+
+    const goStep5 = () => {
+        history.push('/googleads/campaigns/create-campaign')}
+
+    // user can go to step 3 only if they already completed step 1 and 2.
+    const goStep3 = () => {
+        if (
+            // completed step 1:
+            (business_name['business_name']) && 
+            (landing_page['landing_page']) && 
+            (phone_number['phone_number']) &&
+            // completed step 2:
+            (headline_1['headline_1']) && 
+            (headline_2['headline_2']) && 
+            (headline_3['headline_3']) && 
+            (desc_1['desc_1']) && 
+            (desc_2['desc_2'])
+        ) {
+            history.push('/googleads/campaigns/keyword-themes')
+        } else {
+            history.push('/googleads/write-smart-ad')
+        }
+        }
+    
 
 
     return (
@@ -88,7 +162,98 @@ const CreateCampaign = () => {
         </h4> 
 
         <br/>
-        <p>Follow these simple steps to create a new campaign.</p>
+        {/* start of progression tracker */}
+
+        <div className="container">
+            <div className="row" style={{ 
+                textAlign: 'center', 
+                display: 'grid', 
+                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr' }}>
+                    
+                <div className="col-sm">
+                <button type="button" className="btn btn-link" name="go back" 
+                onClick={goStep1} 
+                style={{ color: 'white' }}>
+                <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
+                    <i className="fa fa-circle-o fa-stack-2x"></i>
+                    <strong className="fa-stack-1x">1</strong>
+                </span>
+                <span style={{ color: 'rgb(30,144,255)'}}>General information</span>
+                </button>
+                </div>
+
+                <div className="col-sm" style={{paddingTop: '10px'}}>
+                <i className="fas fa-long-arrow-alt-right fa-3x" 
+                style={{ color: 'rgb(30,144,255)'}}></i>
+                </div>
+
+                <div className="col-sm">
+                <button type="button" className="btn btn-link" name="go back" 
+                onClick={goStep2} 
+                style={{ color: 'white' }}>
+                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
+                    <i className="fa fa-circle-o fa-stack-2x"></i>
+                    <strong className="fa-stack-1x">2</strong>
+                </span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Write ad</span>
+                </button>
+                </div>
+
+                <div className="col-sm" style={{paddingTop: '10px'}}>
+                <i className="fas fa-long-arrow-alt-right fa-3x" 
+                style={{ color: 'rgb(176,196,222)'}}></i>
+                </div>
+
+                <div className="col-sm">
+                <button type="button" className="btn btn-link" name="go back" 
+                onClick={goStep3} 
+                style={{ color: 'white' }}>
+                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
+                    <i className="fa fa-circle-o fa-stack-2x"></i>
+                    <strong className="fa-stack-1x">3</strong>
+                </span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Select keywords</span>
+                </button>
+                </div>
+
+                <div className="col-sm">
+                <i className="fas fa-long-arrow-alt-right fa-3x" 
+                style={{ color: 'rgb(176,196,222)', paddingTop: '10px'}}></i>
+                </div>
+
+                <div className="col-sm">
+                <button type="button" className="btn btn-link" name="go back" 
+                onClick={goStep4} 
+                style={{ color: 'white' }}>
+                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
+                    <i className="fa fa-circle-o fa-stack-2x"></i>
+                    <strong className="fa-stack-1x">4</strong>
+                </span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Select location</span>
+                </button>
+                </div>
+
+                <div className="col-sm">
+                <i className="fas fa-long-arrow-alt-right fa-3x" 
+                style={{ color: 'rgb(176,196,222)', paddingTop: '10px'}}></i>
+                </div>
+
+                <div className="col-sm">
+                <button type="button" className="btn btn-link" name="go back" 
+                onClick={goStep5} 
+                style={{ color: 'white' }}>
+                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
+                    <i className="fa fa-circle-o fa-stack-2x"></i>
+                    <strong className="fa-stack-1x">5</strong>
+                </span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Select budget</span>
+                </button>
+                </div>
+
+            </div>
+        </div>
+        
+        {/* end of progression tracker */}
 
         <br/>
         <br/>
@@ -98,23 +263,29 @@ const CreateCampaign = () => {
             1. General Information
         </h6>
 
-        <label>What's your main advertising goal?</label>
+        {/* all fields in this section will be pre-populated 
+        if user already filled them in another section
+        and didn't remove all cookies */}
+        <label>What do you want to accomplish from this Google ad?</label>
         <br/>
         <br/>
         <div className="list-group" role="group">
-            <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer'}}>
+            <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+            color: (goal === 'calls') && 'rgb(30,136,229)'}}>
                 <input className="form-check-input me-1" type="radio" value="calls" 
                 onChange={onChangeGoal} 
                 checked={ goal === "calls"}/>
                 Get more calls
             </label>
-            <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer'}}>
+            <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+            color: (goal === 'sales_signups') && 'rgb(30,136,229)'}}>
                 <input className="form-check-input me-1" type="radio" value="sales_signups" 
                 onChange={onChangeGoal} 
                 checked={ goal === "sales_signups"}/>
                 Get more website sales or sign-ups
             </label>
-            <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer'}}>
+            <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+            color: (goal === 'offline_sales') && 'rgb(30,136,229)'}}>
                 <input className="form-check-input me-1" type="radio" value="offline_sales" 
                 onChange={onChangeGoal} 
                 checked={ goal === "offline_sales"}/>
@@ -126,99 +297,37 @@ const CreateCampaign = () => {
         </small>
         <br/>
         <br/>
+        <br/>
 
         <label>Enter name of your business</label>
         <br/>
         <br/>
         <textarea className="form-control" placeholder="Enter name of your business..." id="business_name" rows="1" maxLength="1000"
-        onChange={onChangeBusName} value={businessName}></textarea>
+        onChange={onChangeBusName} 
+        value={business_name ? business_name['business_name'] : businessName}></textarea>
         <small className="form-text text-muted">
             This helps Google show your ad when people search for your business by name.
         </small>
+        <br/>
         <br/>
         <br/>
 
         <label>Tell us where people go after they click your ad</label>
         <br/>
         <br/>
-        <textarea className="form-control" placeholder="www.example.com" id="landing_page_url" rows="1" maxLength="1000"
-        onChange={onChangeLanding} value={landingPage}></textarea>
+        <textarea className="form-control" placeholder="https://www.example.com" id="landing_page_url" rows="1" maxLength="1000"
+        onChange={onChangeLanding} 
+        value={landing_page ? landing_page['landing_page'] : landingPage}></textarea>
         <small className="form-text text-muted">
-            This might be your homepage, or a more specific page.
+            This might be your homepage, or a more specific page. 
+            Copy the page address (URL) and paste it here 
+            to make sure there are no mistakes.
         </small>
         <br/>
         <br/>
+        <br/>
 
-        <h6 className="display-4 text-left mb-4" font="gotham-rounded-bold" 
-        style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-            2. Write your ad
-        </h6>
-
-        
-
-        <div>
-        <p>Your headlines are what your customers will focus on. 
-            Keep them simple, clear, and related to what they're are searching for.
-        </p>
-            <label>Headline 1</label>
-            <br/>
-            <textarea className="form-control" placeholder="Enter first headline for your ad..." 
-            id="headline_1" rows="1" maxLength="30"
-            onChange={onChangeHeadlineOne} value={headlineOne}></textarea>
-            <small className="form-text text-muted">
-                {headlineOneCharacters}/30 characters.
-            </small>
-            <br/>
-            <br/>
-
-            <label>Headline 2</label>
-            <br/>
-            <textarea className="form-control" placeholder="Enter second headline for your ad..." 
-            id="headline_2" rows="1" maxLength="30"
-            onChange={onChangeHeadlineTwo} value={headlineTwo}></textarea>
-            <small className="form-text text-muted">
-                {headlineTwoCharacters}/30 characters.
-            </small>
-            <br/>
-            <br/>
-
-            <label>Headline 3</label>
-            <br/>
-            <textarea className="form-control" placeholder="Enter third headline for your ad..." 
-            id="headline_3" rows="1" maxLength="30"
-            onChange={onChangeHeadlineThree} value={headlineThree}></textarea>
-            <small className="form-text text-muted">
-                {headlineThreeCharacters}/30 characters.
-            </small>
-            <br/>
-            <br/>
-            
-        <p>Your descriptions should highlight what sets you apart from your competition. 
-            Check spelling and grammar.
-        </p>
-            <label>Description 1</label>
-            <br/>
-            <textarea className="form-control" placeholder="Enter first description for your ad..." 
-            id="desc_1" rows="2" maxLength="90"
-            onChange={onChangeDescOne} value={descOne}></textarea>
-            <small className="form-text text-muted">
-                {descOneCharacters}/90 characters.
-            </small>
-            <br/>
-            <br/>
-
-            <label>Description 2</label>
-            <br/>
-            <textarea className="form-control" placeholder="Enter second description for your ad..." 
-            id="desc_2" rows="2" maxLength="90"
-            onChange={onChangeDescTwo} value={descTwo}></textarea>
-            <small className="form-text text-muted">
-                {descTwoCharacters}/90 characters.
-            </small>
-            <br/>
-            <br/>
-
-            <label>Show a call button in your ad by entering your business phone number</label>
+        <label>Enter your business phone number</label>
             <br/>
             <br/>
             <div className="container">
@@ -226,7 +335,7 @@ const CreateCampaign = () => {
                     <div className="col">
                         <label>Select country of your phone number</label>
                         <select className="form-select form-select" onChange={onChangeCountryCode} 
-                        value={countryCode} aria-label="Choose country code for phone number">
+                        value={country_code ? country_code['country_code'] : countryCode} aria-label="Choose country code for phone number">
                             <option value="US">United States</option>
                             <option value="AR">Argentina</option>
                             <option value="BR">Brazil</option>
@@ -236,21 +345,40 @@ const CreateCampaign = () => {
                         <label>Enter phone number for your business</label>
                         <textarea className="form-control" placeholder="Enter phone number..." 
                             id="phone_number" rows="1" maxLength="100"
-                            onChange={onChangePhoneNumber} value={phoneNumber}></textarea>
+                            onChange={onChangePhoneNumber} 
+                            value={phone_number ? phone_number['phone_number'] : phoneNumber}></textarea>
                     </div>
                 </div>
             </div>
+            <br/>
+            <br/>
+
+        {messageError ? <MessageError msg={messageError} /> : null}
+        <div className="container" align="left">
             
+            <div className="row">
+                    <div className="col">
+
+                        <button type="button" onClick={goPreviousStep} 
+                        className="btn btn-outline-primary btn-block" 
+                        style={{margin:'10px'}}>Back
+                        </button>
+                
+                    </div>
+
+                    <div className="col" align="right">
+
+                        <button type="button" onClick={goStep2} 
+                        className="btn btn-primary btn-block"  
+                        style={{margin:'10px'}}>
+                            Next
+                        </button>
+                
+                    </div>
+            </div>
         </div>
-        {/* <div className="container" align="left">
-            
-                <div className="col-6">
-                    <button onClick={writeAd} className="btn btn-success">
-                        Continue to write your ad
-                    </button>
-                </div>
-            
-        </div> */}
+        <br/>
+        <br/>
         
         <br/>
         

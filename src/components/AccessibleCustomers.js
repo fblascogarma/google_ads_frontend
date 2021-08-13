@@ -51,7 +51,11 @@ const AccessibleCustomers = () => {
             })
             .then(resp => resp.json())
             .then(resp => setAccountInfo(resp))
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error);
+                setMessage('');
+                setMessageError('During testing, refresh tokens expire. Please re-connect to Google Ads')})
+            
               
         }
     }, [token, history, refreshToken, setRefreshToken])
@@ -68,7 +72,6 @@ const AccessibleCustomers = () => {
     // to the page of campaigns info for that customer
     const onClick = e => {
         const cusID = e.currentTarget.id
-        // console.log(cusID)
         setCustomerId("customerID", cusID);
         history.push('/googleads/accounts/campaigns');
 

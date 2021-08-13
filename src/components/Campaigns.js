@@ -82,7 +82,7 @@ const Campaigns = () => {
 
     // redirect to CreateCampaign when user clicks on 'Create new campaign' button
     const create = () => {
-        history.push('/googleads/accounts/campaigns/create-campaign')}
+        history.push('/googleads/campaigns/create-campaign')}
 
 
     return (
@@ -236,7 +236,7 @@ const Campaigns = () => {
                             
                             
                             )
-                    } else if (status === "All") {
+                    } else {
                         return(
                     
                             <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer'}}>

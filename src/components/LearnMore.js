@@ -60,7 +60,16 @@ const LearnMore = () => {
         <br/>
         </p>
         
-        <button type="button" className="btn btn-link" onClick={onClick} style={{ "textDecoration": "none", color:'rgb(248,172,6)', "font":"gotham-rounded-bold", fontSize:'20px' }}>See key benefits   <i className="fas fa-chevron-down"></i></button>
+        <button type="button" className="btn btn-link" 
+        onClick={onClick} 
+        style={{ 
+            "textDecoration": "none", 
+            color:'rgb(248,172,6)', 
+            "font":"gotham-rounded-bold", 
+            fontSize:'20px' }}>
+                See key benefits   
+                <i className="fas fa-chevron-down"></i>
+        </button>
         { showCases ? <Cases /> : null }
         
         <div className='mt-4' align="center">

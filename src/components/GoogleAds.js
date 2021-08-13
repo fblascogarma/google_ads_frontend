@@ -137,19 +137,6 @@ const GoogleAds = () => {
         <br/>
         <br/>
         
-        {/* <p>If you already connected to Google Ads, get the list of possible accounts to choose from.</p>
-
-        <div className="container" align="center">
-            
-                <Link to="/googleads/accounts">
-                    <button type="button" className="btn btn-success" style={{margin:'10px'}}>Get list of accounts</button>
-                </Link>
-            
-        </div>
-
-        <br/>
-        <br/> */}
-        
     </div>
 )}
 

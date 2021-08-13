@@ -17,9 +17,22 @@ export const NavBar = () => {
     const [token, setToken, removeToken] = useCookies(['mytoken'])
     let history = useHistory()
 
+    // cookies to be removed when user logouts
+    // cookies from step 2
+    const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
+    const [headline_2, setHeadline_2, removeHeadline_2] = useCookies(['headline_2'])
+    const [headline_3, setHeadline_3, removeHeadline_3] = useCookies(['headline_3'])
+    const [desc_1, setDesc_1, removeDesc_1] = useCookies(['desc_1'])
+    const [desc_2, setDesc_2, removeDesc_2] = useCookies(['desc_2'])
+
 
     const logoutBtn = () => {
-        removeToken(['mytoken'])
+        removeToken(['mytoken']);
+        removeHeadline_1(['headline_1']);
+        removeHeadline_2(['headline_2']);
+        removeHeadline_3(['headline_3']);
+        removeDesc_1(['desc_1']);
+        removeDesc_2(['desc_2'])
 
     }
 
