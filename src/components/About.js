@@ -4,7 +4,7 @@ export const About = () => {
     return (
         <div className="container mt-4">
         <br/>
-        <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
+        <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
             About FranAds
         </h4>
         <br />

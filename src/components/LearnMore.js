@@ -14,13 +14,13 @@ const LearnMore = () => {
         <div className="card">
             <div className="card-body">
             <p className="mb-0" font="gotham-rounded-bold" align="left" style={{color:'black', fontSize:'20px'}}>
-                    1. Create an online ad <strong style={{color:'rgb(248,172,6)'}} >quickly and easily</strong>.
+                    1. Create an online ad <strong>quickly and easily</strong>.
                 <br/>
                     2. Pay only when people click your ad.
                 <br/>
-                    3. <strong style={{color:'rgb(248,172,6)'}} >Attract more customers</strong> to your website or Google Maps listing.
+                    3. <strong>Attract more customers</strong> to your website or Google Maps listing.
                 <br/>
-                    4. Minimal ongoing management necessary. <strong style={{color:'rgb(248,172,6)'}} >Google Ads runs your ads for you</strong>.
+                    4. Minimal ongoing management necessary. <strong>Google Ads runs your ads for you</strong>.
                 <br/>
                     5. Reach customers on desktop computers and mobile devices (such as mobile phones and tablets).
                 <br/>
@@ -36,7 +36,7 @@ const LearnMore = () => {
     <div className="container mt-4">
         <br/>
         
-        <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
+        <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
             Why use Google Ads?
         </h4>
 
@@ -44,7 +44,7 @@ const LearnMore = () => {
         <br/>
 
 
-        <p className="mb-0" font="gotham-rounded-bold" align="center" style={{color:'black', fontSize:'20px'}}>
+        <p className="mb-0" font="gotham-rounded-bold" align="left" style={{color:'black', fontSize:'20px'}}>
         Google Ads allows you to take advantage of the benefits of online advertising: show your ads to the<strong style={{color:'rgb(248,172,6)'}} > right people, 
         in the right place, and at the right time.</strong>
         <br/>
@@ -64,11 +64,11 @@ const LearnMore = () => {
         onClick={onClick} 
         style={{ 
             "textDecoration": "none", 
-            color:'rgb(248,172,6)', 
+            color:'black', 
             "font":"gotham-rounded-bold", 
             fontSize:'20px' }}>
                 See key benefits   
-                <i className="fas fa-chevron-down"></i>
+                <i className="fas fa-chevron-down fa-fw"></i>
         </button>
         { showCases ? <Cases /> : null }
         
