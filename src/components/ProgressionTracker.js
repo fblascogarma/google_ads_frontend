@@ -75,7 +75,8 @@ const ProgressionTracker = ({ step }) => {
             <div className="row" style={{ 
                 textAlign: 'center', 
                 display: 'grid', 
-                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr' }}>
+                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr',
+                maxWidth: '100px' }}>
                     
                 <div className="col-sm">
                 <button type="button" className="btn btn-link" name="step1" 
@@ -166,7 +167,8 @@ const ProgressionTracker = ({ step }) => {
             <div className="row" style={{ 
                 textAlign: 'center', 
                 display: 'grid', 
-                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr' }}>
+                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr',
+                maxWidth: '100px' }}>
                     
                 <div className="col-sm">
                 <button type="button" className="btn btn-link" name="go back" 
@@ -258,7 +260,8 @@ const ProgressionTracker = ({ step }) => {
             <div className="row" style={{ 
                 textAlign: 'center', 
                 display: 'grid', 
-                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr' }}>
+                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr',
+                maxWidth: '100px' }}>
                     
                 <div className="col-sm">
                 <button type="button" className="btn btn-link" name="go back" 
@@ -349,7 +352,8 @@ const ProgressionTracker = ({ step }) => {
             <div className="row" style={{ 
                 textAlign: 'center', 
                 display: 'grid', 
-                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr' }}>
+                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr',
+                maxWidth: '100px' }}>
                     
                 <div className="col-sm">
                 <button type="button" className="btn btn-link" name="go back" 
@@ -439,7 +443,8 @@ const ProgressionTracker = ({ step }) => {
             <div className="row" style={{ 
                 textAlign: 'center', 
                 display: 'grid', 
-                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr' }}>
+                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr',
+                maxWidth: '100px' }}>
                     
                 <div className="col-sm">
                 <button type="button" className="btn btn-link" name="go back" 

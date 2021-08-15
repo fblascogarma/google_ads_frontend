@@ -157,7 +157,7 @@ const CreateCampaign = () => {
     <div className="container mt-4" font="gotham-rounded-bold">
         
         <br/>
-        <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" 
+        <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" 
         style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
             Create New Campaign
         </h4> 
