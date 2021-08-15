@@ -80,7 +80,7 @@ const Campaigns = () => {
 
     }
 
-    // redirect to CreateCampaign when user clicks on 'Create new campaign' button
+    // redirect to CreateCampaign when user clicks on 'Create campaign' button
     const create = () => {
         history.push('/googleads/campaigns/create-campaign')}
 
@@ -105,7 +105,7 @@ const Campaigns = () => {
         <div className="container" align="left">
             
                 <div className="col-6">
-                    <button onClick={create} className="btn btn-success">Create new campaign</button>
+                    <button onClick={create} className="btn btn-success">Create campaign</button>
                 </div>
             
         </div>

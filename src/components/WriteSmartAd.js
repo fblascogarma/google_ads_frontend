@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import MessageError from './MessageErrorNoClose';
+import ProgressionTracker from './ProgressionTracker';
 
 
 
@@ -180,93 +181,7 @@ const WriteSmartAd = () => {
         
         {/* start of progression tracker */}
 
-        <div className="container">
-            <div className="row" style={{ 
-                textAlign: 'center', 
-                display: 'grid', 
-                gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr' }}>
-                    
-                <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
-                onClick={goStep1} 
-                style={{ color: 'white' }}>
-                <span className="fa-stack fa-2x" style={{ color: 'green'}}>
-                    <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
-                </span>
-                <span style={{ color: 'green'}}>General information</span>
-                </button>
-                </div>
-
-                <div className="col-sm">
-                <i className="fas fa-long-arrow-alt-right fa-3x" 
-                style={{ color: 'green', paddingTop: '10px'}}></i>
-                </div>
-
-                <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
-                onClick={goStep2} 
-                style={{ color: 'white' }}>
-                <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
-                    <i className="fa fa-circle-o fa-stack-2x"></i>
-                    <strong className="fa-stack-1x">2</strong>
-                </span>
-                <span style={{ color: 'rgb(30,144,255)'}}>Write ad</span>
-                </button>
-                </div>
-
-                <div className="col-sm">
-                <i className="fas fa-long-arrow-alt-right fa-3x" 
-                style={{ color: 'rgb(30,144,255)', paddingTop: '10px'}}></i>
-                </div>
-
-                <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
-                onClick={goStep3} 
-                style={{ color: 'white' }}>
-                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
-                    <i className="fa fa-circle-o fa-stack-2x"></i>
-                    <strong className="fa-stack-1x">3</strong>
-                </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select keywords</span>
-                </button>
-                </div>
-
-                <div className="col-sm">
-                <i className="fas fa-long-arrow-alt-right fa-3x" 
-                style={{ color: 'rgb(176,196,222)', paddingTop: '10px'}}></i>
-                </div>
-
-                <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
-                onClick={goStep4} 
-                style={{ color: 'white' }}>
-                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
-                    <i className="fa fa-circle-o fa-stack-2x"></i>
-                    <strong className="fa-stack-1x">4</strong>
-                </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select location</span>
-                </button>
-                </div>
-
-                <div className="col-sm">
-                <i className="fas fa-long-arrow-alt-right fa-3x" 
-                style={{ color: 'rgb(176,196,222)', paddingTop: '10px'}}></i>
-                </div>
-
-                <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
-                onClick={goStep5} 
-                style={{ color: 'white' }}>
-                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
-                    <i className="fa fa-circle-o fa-stack-2x"></i>
-                    <strong className="fa-stack-1x">5</strong>
-                </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select budget</span>
-                </button>
-                </div>
-
-            </div>
-        </div>
+        <ProgressionTracker step="step2" />
         
         {/* end of progression tracker */}
 
