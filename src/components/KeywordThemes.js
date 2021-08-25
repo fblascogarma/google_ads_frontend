@@ -11,12 +11,20 @@ const KeywordThemes = () => {
     const [token, setToken, removeToken] = useCookies(['mytoken'])
     const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
     let history = useHistory()
-    const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
+  
+    // cookies that have value to send to the backend to get keyword themes recommendations
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code'])
     const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
+
+    // alert messages to give feedback to users
     const [message, setMessage] = useState('')
     const [messageWarning, setMessageWarning] = useState('')
     const [messageWarning2, setMessageWarning2] = useState('')
+    // warning message if user tries to go to next step without having selected at least 1 keyword theme
+    const [messageWarning3, setMessageWarning3] = useState('')
+
+    // cookie to save the selected keyword themes
+    const [keyword_themes, setKeyword_themes, removeKeyword_themes] = useCookies(['keyword_themes'])
 
 
     // keyword themes state management
@@ -88,7 +96,10 @@ const KeywordThemes = () => {
 
 
     // data to send to the backend and then to the API
-    const data = { 'refreshToken': refreshToken['refreshToken'], 'keyword_text': keywordOne, 'country_code': country_code['country_code'], 'language_code': language_code['language_code']}
+    const data = { 'refreshToken': refreshToken['refreshToken'], 
+    'keyword_text': keywordOne, 
+    'country_code': country_code['country_code'], 
+    'language_code': language_code['language_code']}
     
     
     // get keyword themes suggestions from API
@@ -96,6 +107,7 @@ const KeywordThemes = () => {
         // if there was a warning message, remove it
         setMessageWarning('');
         setMessageWarning2('');
+        setMessageWarning3('');
         // tell user it can take a few seconds to show results
         setMessage(' Fetching your data... It will take a few seconds.');
 
@@ -175,22 +187,30 @@ const KeywordThemes = () => {
     // redirect to step 4 of campaign creation
     // when user clicks on 'Next' button
     const goStep4 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
+        if (selectedKeywordThemes.length > 0) {
+            // save the selected keyword themes as cookies
+            setKeyword_themes("keyword_themes", selectedKeywordThemes, { encode: String})
+
+            // and send user to the next step
+            history.push('/googleads/campaigns/location')
+
+            } else (setMessageWarning3('Please select at least one category of keywords to go to the next setp.'))
+        }
 
     // redirect to user to previous or next step,
     // also used for progression tracker
     const goStep2 = () => {
         history.push('/googleads/write-smart-ad')}
 
-    const goStep1 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
+    // const goStep1 = () => {
+    //     history.push('/googleads/campaigns/create-campaign')}
 
-    const goStep3 = () => {
-        history.push('/googleads/campaigns/keyword-themes')
-    }
+    // const goStep3 = () => {
+    //     history.push('/googleads/campaigns/keyword-themes')
+    // }
 
-    const goStep5 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
+    // const goStep5 = () => {
+    //     history.push('/googleads/campaigns/create-campaign')}
 
 
     return (
@@ -204,11 +224,9 @@ const KeywordThemes = () => {
         </h4> 
 
         <br/>
-        {/* start of progression tracker */}
 
         <ProgressionTracker step="step3" />
         
-        {/* end of progression tracker */}
         <br/>
         <br/>
 
@@ -294,7 +312,7 @@ const KeywordThemes = () => {
                 </button>
                 <br/>
                 <small className= "form-text text-muted">
-                    Recommendations come from your category of keywords
+                    Recommendations come from your category of keywords.
                 </small>
                 <br/>
                 <br/>
@@ -308,13 +326,13 @@ const KeywordThemes = () => {
         
         {selectedKeywordThemes && 
 
-            <div className="container">
+            <div className="container" style={{paddingLeft: '0px'}}>
                 {selectedKeywordThemes.length > 0 && 
                     <Fragment>
                         <label>Selected category keywords:</label>
                         <br/>
                         {selectedKeywordThemes.length === 7 ? 
-                        <small className= "form-text text-muted">7 categories selected. 
+                        <small className= "form-text text-success">7 categories selected. 
                         If you want to add more, create a new campaign or delete selected ones.</small> :
                         <small className="form-text text-muted">
                             You can select {7 - selectedKeywordThemes.length} more.
@@ -346,7 +364,14 @@ const KeywordThemes = () => {
             
             <Fragment>
                
-                {keywordSuggestions.length > 0 && <p>Recommended category keywords:</p>}
+                {keywordSuggestions.length > 0 && 
+                <Fragment>
+                    <label>Recommended category keywords:</label>
+                    <br/>
+                    <small className="form-text text-muted">
+                        {keywordSuggestions.length} recommendations for {keywordOne}.
+                    </small>
+                </Fragment>}
                 <div className="container">
                     <div className="row">
                     {keywordSuggestions.map(item => {
@@ -361,6 +386,7 @@ const KeywordThemes = () => {
                                         <i className="fas fa-plus fa-fw" 
                                         style={{marginRight: '5px'}}
                                         key={item}></i>
+                                        
                                         {item}
                                     </button>
                                 </div>
@@ -377,6 +403,7 @@ const KeywordThemes = () => {
         <br/>
         <br/>
 
+        {messageWarning3 ? <MessageWarning msg={messageWarning3} /> : null}
 
         <div className="container" align="left">
             <div className="row">

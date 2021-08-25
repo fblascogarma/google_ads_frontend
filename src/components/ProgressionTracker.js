@@ -27,6 +27,12 @@ const ProgressionTracker = ({ step }) => {
     const [desc_1, setDesc_1, removeDesc_1] = useCookies(['desc_1'])
     const [desc_2, setDesc_2, removeDesc_2] = useCookies(['desc_2'])
 
+    // cookie from step 3
+    const [keyword_themes, setKeyword_themes, removeKeyword_themes] = useCookies(['keyword_themes'])
+
+    // cookie from step 4
+    const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
+
     // onClick functions for icons and elements of each step
 
     // for step 1 no need to check cookies
@@ -60,12 +66,19 @@ const ProgressionTracker = ({ step }) => {
                 }
     }
 
-    // to self: replace urls and add condition logic for step 4 and 5
+    // user can go to step 4 if there is a cookie saved with the necessary data
     const goStep4 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
-
+        if (keyword_themes['keyword_themes']) {
+            history.push('/googleads/campaigns/location')
+            }
+    }
+        
+    // to self: replace urls and add condition logic for step 5
     const goStep5 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
+        if (geo_location["geo_location"]) {
+            history.push('/googleads/campaigns/budget')
+        }
+    }
 
 
 
@@ -356,7 +369,7 @@ const ProgressionTracker = ({ step }) => {
                 maxWidth: '100px' }}>
                     
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step1" 
                 onClick={goStep1} 
                 style={{ color: 'white' }}>
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
@@ -372,7 +385,7 @@ const ProgressionTracker = ({ step }) => {
                 </div>
 
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step2" 
                 onClick={goStep2} 
                 style={{ color: 'white' }}>
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
@@ -388,14 +401,30 @@ const ProgressionTracker = ({ step }) => {
                 </div>
 
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step3" 
                 onClick={goStep3} 
                 style={{ color: 'white' }}>
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
-                    <i className="fa fa-circle-o fa-stack-2x"></i>
-                    <strong className="fa-stack-1x">3</strong>
+                    <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'rgb(30,144,255)'}}>Select keywords</span>
+                <span style={{ color: 'green'}}>Select keywords</span>
+                </button>
+                </div>
+
+                <div className="col-sm">
+                <i className="fas fa-long-arrow-alt-right fa-3x" 
+                style={{ color: 'green', paddingTop: '10px'}}></i>
+                </div>
+
+                <div className="col-sm">
+                <button type="button" className="btn btn-link" name="step4" 
+                onClick={goStep4} 
+                style={{ color: 'white' }}>
+                <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
+                    <i className="fa fa-circle-o fa-stack-2x"></i>
+                    <strong className="fa-stack-1x">4</strong>
+                </span>
+                <span style={{ color: 'rgb(30,144,255)'}}>Select location</span>
                 </button>
                 </div>
 
@@ -405,24 +434,7 @@ const ProgressionTracker = ({ step }) => {
                 </div>
 
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
-                onClick={goStep4} 
-                style={{ color: 'white' }}>
-                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
-                    <i className="fa fa-circle-o fa-stack-2x"></i>
-                    <strong className="fa-stack-1x">4</strong>
-                </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select location</span>
-                </button>
-                </div>
-
-                <div className="col-sm">
-                <i className="fas fa-long-arrow-alt-right fa-3x" 
-                style={{ color: 'rgb(176,196,222)', paddingTop: '10px'}}></i>
-                </div>
-
-                <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step5" 
                 onClick={goStep5} 
                 style={{ color: 'white' }}>
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
@@ -445,9 +457,10 @@ const ProgressionTracker = ({ step }) => {
                 display: 'grid', 
                 gridTemplateColumns: '2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr',
                 maxWidth: '100px' }}>
-                    
+
+                {/* Step 1 starts here */}    
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step1" 
                 onClick={goStep1} 
                 style={{ color: 'white' }}>
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
@@ -461,9 +474,11 @@ const ProgressionTracker = ({ step }) => {
                 <i className="fas fa-long-arrow-alt-right fa-3x" 
                 style={{ color: 'green', paddingTop: '10px'}}></i>
                 </div>
+                {/* Step 1 ends here */}
 
+                {/* Step 2 starts here */}
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step2" 
                 onClick={goStep2} 
                 style={{ color: 'white' }}>
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
@@ -477,52 +492,59 @@ const ProgressionTracker = ({ step }) => {
                 <i className="fas fa-long-arrow-alt-right fa-3x" 
                 style={{ color: 'green', paddingTop: '10px'}}></i>
                 </div>
+                {/* Step 2 ends here */}
 
+                {/* Step 3 starts here */}
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step3" 
                 onClick={goStep3} 
                 style={{ color: 'white' }}>
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
-                    <i className="fa fa-circle-o fa-stack-2x"></i>
-                    <strong className="fa-stack-1x">3</strong>
+                    <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'rgb(30,144,255)'}}>Select keywords</span>
+                <span style={{ color: 'green'}}>Select keywords</span>
                 </button>
                 </div>
 
                 <div className="col-sm">
                 <i className="fas fa-long-arrow-alt-right fa-3x" 
-                style={{ color: 'rgb(30,144,255)', paddingTop: '10px'}}></i>
+                style={{ color: 'green', paddingTop: '10px'}}></i>
                 </div>
+                {/* Step 3 ends here */}
 
+                {/* Step 4 starts here */}
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step4" 
                 onClick={goStep4} 
                 style={{ color: 'white' }}>
-                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
-                    <i className="fa fa-circle-o fa-stack-2x"></i>
-                    <strong className="fa-stack-1x">4</strong>
+                <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
+                    <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select location</span>
+                <span style={{ color: 'green'}}>Select location</span>
                 </button>
                 </div>
 
                 <div className="col-sm">
                 <i className="fas fa-long-arrow-alt-right fa-3x" 
-                style={{ color: 'rgb(176,196,222)', paddingTop: '10px'}}></i>
+                style={{ color: 'green', paddingTop: '10px'}}></i>
                 </div>
+                {/* Step 4 ends here */}
 
+                {/* Step 5 starts here */}
                 <div className="col-sm">
-                <button type="button" className="btn btn-link" name="go back" 
+                <button type="button" className="btn btn-link" name="step5" 
                 onClick={goStep5} 
                 style={{ color: 'white' }}>
-                <span className="fa-stack fa-2x" style={{ color: 'rgb(176,196,222)'}}>
+                <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">5</strong>
                 </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select budget</span>
+                <span style={{ color: 'rgb(30,144,255)'}}>Select budget</span>
                 </button>
                 </div>
+                {/* Step 5 ends here */}
+
+               
 
             </div>
         </div>

@@ -5,11 +5,13 @@ import MessageError from './MessageErrorNoClose';
 import ProgressionTracker from './ProgressionTracker';
 
 
-
+// this is step 1 from a 5-step process
 const CreateCampaign = () => {
 
     const [token, setToken, removeToken] = useCookies(['mytoken'])
     let history = useHistory()
+
+    // fields to be completed by user
     const [goal, setGoal] = useState("sales_signups")
     const [businessName, setBusinessName] = useState("")
     const [landingPage, setLandingPage] = useState("")
@@ -22,14 +24,6 @@ const CreateCampaign = () => {
     const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
     const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
     
-
-    // cookies from step 2
-    const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
-    const [headline_2, setHeadline_2, removeHeadline_2] = useCookies(['headline_2'])
-    const [headline_3, setHeadline_3, removeHeadline_3] = useCookies(['headline_3'])
-    const [desc_1, setDesc_1, removeDesc_1] = useCookies(['desc_1'])
-    const [desc_2, setDesc_2, removeDesc_2] = useCookies(['desc_2'])
-
     const [messageError, setMessageError] = useState('')
 
 
@@ -118,37 +112,6 @@ const CreateCampaign = () => {
     // when user clicks on 'Back' button
     const goPreviousStep = () => {
         history.push('/googleads/accounts/campaigns')}
-
-    const goStep1 = () => {
-        history.push('/googleads/campaigns/create-campaign')
-    }
-
-    // to self: replace urls and add condition logic
-    const goStep4 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
-
-    const goStep5 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
-
-    // user can go to step 3 only if they already completed step 1 and 2.
-    const goStep3 = () => {
-        if (
-            // completed step 1:
-            (business_name['business_name']) && 
-            (landing_page['landing_page']) && 
-            (phone_number['phone_number']) &&
-            // completed step 2:
-            (headline_1['headline_1']) && 
-            (headline_2['headline_2']) && 
-            (headline_3['headline_3']) && 
-            (desc_1['desc_1']) && 
-            (desc_2['desc_2'])
-        ) {
-            history.push('/googleads/campaigns/keyword-themes')
-        } else {
-            history.push('/googleads/write-smart-ad')
-        }
-        }
     
 
 
@@ -163,12 +126,17 @@ const CreateCampaign = () => {
         </h4> 
 
         <br/>
-        {/* start of progression tracker */}
 
         <ProgressionTracker step="step1" />
         
-        {/* end of progression tracker */}
+        <br/>
+        <br/>
 
+        <button type="button" className="btn btn-link" name="go back" 
+        onClick={goPreviousStep} 
+        style={{ color: 'black' }}>
+            <i className="fas fa-arrow-left fa-2x"></i>
+        </button>
         <br/>
         <br/>
 

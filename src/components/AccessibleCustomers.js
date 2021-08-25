@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import Message from './Message';
@@ -135,15 +135,21 @@ const AccessibleCustomers = () => {
         <br/>
 
         {message ? <Message msg={message} /> : null}
-        {messageError ? <MessageError msg={messageError} /> : null}
-
-        <div className="container" align="left">
-            
+        {messageError ? 
+        <Fragment>
+            <MessageError msg={messageError} />
+            <div className="container" align="left">
                 <div className="col-6">
-                    <button onClick={authenticateGoogle} className="btn btn-success btn-sm">Re-connect to Google Ads</button>
+                    <button onClick={authenticateGoogle} className="btn btn-success btn-sm">
+                        Re-connect to Google Ads
+                    </button>
                 </div>
-            
-        </div>
+            </div>
+
+        </Fragment> 
+        : null}
+
+        
 
         <br/>
 

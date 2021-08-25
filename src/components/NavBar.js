@@ -18,12 +18,21 @@ export const NavBar = () => {
     let history = useHistory()
 
     // cookies to be removed when user logouts
+    // not including the ones from step 1 because those have a high chance of
+    // being used again when user wants to create a new campaign
+
     // cookies from step 2
     const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
     const [headline_2, setHeadline_2, removeHeadline_2] = useCookies(['headline_2'])
     const [headline_3, setHeadline_3, removeHeadline_3] = useCookies(['headline_3'])
     const [desc_1, setDesc_1, removeDesc_1] = useCookies(['desc_1'])
     const [desc_2, setDesc_2, removeDesc_2] = useCookies(['desc_2'])
+    
+    // cookie from step 3
+    const [keyword_themes, setKeyword_themes, removeKeyword_themes] = useCookies(['keyword_themes'])
+
+    // cookie from step 4 (not sure I want to remove it)
+    // const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
 
 
     const logoutBtn = () => {
@@ -32,7 +41,9 @@ export const NavBar = () => {
         removeHeadline_2(['headline_2']);
         removeHeadline_3(['headline_3']);
         removeDesc_1(['desc_1']);
-        removeDesc_2(['desc_2'])
+        removeDesc_2(['desc_2']);
+        removeKeyword_themes(['keyword_themes']);
+        // removeGeo_location(['geo_location']);
 
     }
 

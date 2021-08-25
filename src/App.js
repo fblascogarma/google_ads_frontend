@@ -13,6 +13,8 @@ import Campaigns from './components/Campaigns';
 import CreateCampaign from './components/CreateCampaign';
 import KeywordThemes from './components/KeywordThemes';
 import WriteSmartAd from './components/WriteSmartAd';
+import Location from './components/Location';
+import Budget from './components/Budget';
 
 const App = () => (
 <BrowserRouter onUpdate={() => window.scrollTo(0, 0)}>
@@ -31,6 +33,8 @@ const App = () => (
         <Route exact path= "/googleads/campaigns/create-campaign" component={CreateCampaign} />
         <Route exact path= "/googleads/write-smart-ad" component={WriteSmartAd} />
         <Route exact path= "/googleads/campaigns/keyword-themes" component={KeywordThemes} />
+        <Route exact path= "/googleads/campaigns/location" component={Location} />
+        <Route exact path= "/googleads/campaigns/budget" component={Budget} />
         <Route exact path= "/about" component={About} />
       </Switch>
     </Fragment>

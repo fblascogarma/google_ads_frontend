@@ -124,7 +124,7 @@ const Campaigns = () => {
                         <select className="form-select form-select-sm" onChange={onChangeStatus} value={status} aria-label="Filter table by campaign status">
                             
                             <option value="All">All</option>
-                            <option value="All enabled">All enabled</option>
+                            <option value="All active">All active</option>
                             <option value="All but removed">All but removed</option>
                         </select>
                     </div>
@@ -179,14 +179,14 @@ const Campaigns = () => {
            
             <tbody>
                 {campaignInfo.map(item => {
-                    if (status === "All enabled") {
+                    if (status === "All active") {
                         return(
                     
                             <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer', 
-                            display: item.status === "Enabled" ? '' : 'none'  }}>
+                            display: item.status === "Active" ? '' : 'none'  }}>
                                 
                             
-                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
                                 <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
                                 <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
@@ -211,10 +211,10 @@ const Campaigns = () => {
                         return(
                     
                             <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer', 
-                            display: item.status === "Enabled" || item.status === "Paused" ? '' : 'none'  }}>
+                            display: item.status === "Active" || item.status === "Paused" ? '' : 'none'  }}>
                                 
                             
-                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
                                 <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
                                 <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
@@ -242,7 +242,7 @@ const Campaigns = () => {
                             <tr key={item.campaign_id} style={{ textAlign: 'center', cursor: 'pointer'}}>
                                 
                             
-                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Enabled" ? '' : 'none'}}></i>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
                                 <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
                                 <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
