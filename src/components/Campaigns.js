@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 // import { Link } from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
@@ -61,7 +61,7 @@ const Campaigns = () => {
 
     // if campaignInfo object has data, delete the 'fetching data' message
     useEffect(() => {
-        if(campaignInfo.length > 0) {
+        if(campaignInfo) {
             setMessage('')
         }
     }, [campaignInfo])
@@ -82,7 +82,13 @@ const Campaigns = () => {
 
     // redirect to CreateCampaign when user clicks on 'Create campaign' button
     const create = () => {
-        history.push('/googleads/campaigns/create-campaign')}
+        history.push('/googleads/campaigns/create-campaign')
+    }
+
+    // go back to previous page of the table showing possible accounts the user can access
+    const goAccountsList = () => {
+        history.push('/googleads/accounts')
+    }
 
 
     return (
@@ -95,9 +101,28 @@ const Campaigns = () => {
         </h4> 
 
         <br/>
-        <p>See how your campaigns are performing. 
+        <button type="button" className="btn btn-link" name="go back" 
+        onClick={goAccountsList} 
+        style={{ color: 'black' }}>
+            <i className="fas fa-arrow-left fa-2x"></i>
+        </button>
+        <br/>
+        <br/>
+        {/* if user has campaigns, show this message */}
+        {campaignInfo ? 
+        <Fragment>
+            <p>See how your campaigns are performing. 
             You can filter by campaign status and dates. 
-            Click a campaign if you want to edit it or see the current settings.</p>
+            Click a campaign if you want to edit it or see the current settings.
+            </p>
+        </Fragment> : 
+        // if user has zero campaigns yet, show this message
+        <Fragment>
+            <p>You don't have campaigns created. 
+                Create your first campaign in 5 easy steps to achieve your business goals.
+            </p>
+        </Fragment>}
+        
 
         <br/>
         <br/>
@@ -178,7 +203,7 @@ const Campaigns = () => {
             </thead>
            
             <tbody>
-                {campaignInfo.map(item => {
+                {campaignInfo && campaignInfo.map(item => {
                     if (status === "All active") {
                         return(
                     

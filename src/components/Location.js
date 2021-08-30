@@ -31,10 +31,10 @@ const Location = () => {
         setLocation_input(e.target.value);
     }
 
-    // capture the location suggestions sent by Google's API
+    // capture the location suggestions sent by Google's API from the text user input in text field
     const [locationSuggestions, setLocationSuggestions] = useState([])
 
-    // capture the additional location suggestions sent by Google's API
+    // capture the additional location suggestions sent by Google's API from the selected recommendations
     const [additional_locationSuggestions, setAdditional_locationSuggestions] = useState([])
 
     // add the location the user input in the text field
@@ -136,11 +136,15 @@ const Location = () => {
     }
 
     const goStep5 = () => {
-        // save the selected keyword themes as cookies
-        setGeo_location("geo_location", location_targeting, { encode: String})
-
-        // and send user to the next step
-        history.push('/googleads/campaigns/budget')}
+        if (location_targeting.length > 0) {
+            // save the selected keyword themes as cookies
+            setGeo_location("geo_location", location_targeting, { encode: String})
+            // and send user to the next step
+            history.push('/googleads/campaigns/budget')
+        } else {
+            setMessageWarning('Add at least one location, please.')
+        }
+    }
 
 
     return (

@@ -54,7 +54,7 @@ const AccessibleCustomers = () => {
             .catch(error => {
                 console.log(error);
                 setMessage('');
-                setMessageError('During testing, refresh tokens expire. Please re-connect to Google Ads')})
+                setMessageError('During testing, refresh tokens expire. Please reconnect to Google Ads')})
             
               
         }
@@ -85,7 +85,7 @@ const AccessibleCustomers = () => {
 
     }
 
-    // when user clicks the 'Re-connect to Google' button
+    // when user clicks the 'Reconnect to Google' button
     // this is in case the refresh token is now working anymore
     // and user has to get another one
     const authenticateGoogle = () => {
@@ -116,6 +116,11 @@ const AccessibleCustomers = () => {
         }
     }, [Url])
 
+    // create new Google Ads account (client, not manager)
+    const createAccount = () => {
+        history.push('/googleads/accounts/create')
+    }
+
 
     return (
         
@@ -141,16 +146,20 @@ const AccessibleCustomers = () => {
             <div className="container" align="left">
                 <div className="col-6">
                     <button onClick={authenticateGoogle} className="btn btn-success btn-sm">
-                        Re-connect to Google Ads
+                        Reconnect to Google Ads
                     </button>
                 </div>
             </div>
+            <br/>
 
         </Fragment> 
         : null}
 
-        
+        <br/>
+        <button onClick={createAccount} className="btn btn-success">Create account</button>
 
+        <br/>
+        <br/>
         <br/>
 
         <table className="table table-bordered table-hover table-responsive">

@@ -21,6 +21,16 @@ export const NavBar = () => {
     // not including the ones from step 1 because those have a high chance of
     // being used again when user wants to create a new campaign
 
+    // refresh token
+    const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
+
+
+    // cookies from step 1
+    const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code', "US"])
+    const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
+    const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
+    const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
+    
     // cookies from step 2
     const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
     const [headline_2, setHeadline_2, removeHeadline_2] = useCookies(['headline_2'])
@@ -32,18 +42,24 @@ export const NavBar = () => {
     const [keyword_themes, setKeyword_themes, removeKeyword_themes] = useCookies(['keyword_themes'])
 
     // cookie from step 4 (not sure I want to remove it)
-    // const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
+    const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
 
 
+    // remove all cookies when user logsout
     const logoutBtn = () => {
         removeToken(['mytoken']);
+        removeRefreshToken(['refreshToken']);
+        removeCountry_code(['country_code']);
+        removeBusiness_name(['business_name']);
+        removeLanding_page(['landing_page']);
+        removePhone_number(['phone_number']);
         removeHeadline_1(['headline_1']);
         removeHeadline_2(['headline_2']);
         removeHeadline_3(['headline_3']);
         removeDesc_1(['desc_1']);
         removeDesc_2(['desc_2']);
         removeKeyword_themes(['keyword_themes']);
-        // removeGeo_location(['geo_location']);
+        removeGeo_location(['geo_location']);
 
     }
 

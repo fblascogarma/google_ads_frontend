@@ -95,44 +95,70 @@ const GoogleAds = () => {
 
 
 
+
     return (
         
     <div className="container mt-4" font="gotham-rounded-bold">
         
-        <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
+        <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
             Welcome to Google Ads!
-        </h4> 
+        </h4>
 
-        <p>Please connect your Google Ads account. 
-            <br/>
-            <br/>
-            When you click, you will be redirected to Google so you can 
-            authenticate yourself and give us permission to manage your AdWords campaigns.
-            You will be redirected back to Fran Ads.
-        </p>
+        <br/>
+        <br/>
+
+        {/* If user already has a Google Ads account */}
+        <div className="row">
+            <div className="col-sm-6">
+                <div className="card" style={{width: '18rem'}} >
+                    <img className="card-img-top" src="connect-to-google-ads.jpeg" alt="Already have Google Ads account?" />
+                    <div className="card-body">
+                        <h5 className="card-title">Connect to Google Ads</h5>
+                        <h6 className="card-subtitle mb-2 text-muted">Already have an account?</h6>
+                        <br/>
+                        <p className="card-text">
+                            Connect your account with Fran Ads so you can 
+                            manage your account from our app!  
+                            
+                        </p>
+                        <p className="card-text"> 
+                            {/* make clarification below because OAuth scope uses the word Adwords which can create unnecessary friction */}
+                            When giving us permission to connect to your account, 
+                            you will see that the name used by Google for Google Ads is AdWords.
+                        </p>
+                        <p className="card-text">
+                            You can disconnect your account anytime you want.
+                        </p>
+                        <br/>
+                        <button onClick={authenticateGoogle} className="btn btn-success">Connect</button>
+                    </div>
+                </div> 
+            </div>
+
+            {/* If user does not have a Google Ads account */}
+            <div className="col-sm-6">
+                <div className="card" style={{width: '18rem'}} >
+                    <img className="card-img-top" src="google-ads-logo.png" alt="Need to create a Google Ads account?" />
+                    <div className="card-body">
+                        <h5 className="card-title">Create a Google Ads account</h5>
+                        <h6 className="card-subtitle mb-2 text-muted">Don't have an account?</h6>
+                        <br/>
+                        <p className="card-text">
+                            Don't worry! We can create one for you.
+                        </p>
+                        <p className="card-text">
+                            You will need to select an account name, your email, 
+                            the currency you want to use for your account, 
+                            and the time zone.
+                        </p>
+                        <br/>
+                        <button onClick={authenticateGoogle} className="btn btn-success">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         {Url && <p>Redirecting you to {Url}</p>}
-        
-
-        <div className="container" align="center">
-            
-                <div className="col-4">
-                    <button onClick={authenticateGoogle} className="btn btn-success">Connect to Google Ads</button>
-                </div>
-            
-        </div>
-
-        <br/>
-        <br/>
-        <p>If you don't have a Google Ads account yet, let us create one for you now.</p>
-
-        <div className="container" align="center">
-            
-                <Link to="/#">
-                    <button type="button" className="btn btn-success" style={{margin:'10px'}}>Create Google Ads Account</button>
-                </Link>
-            
-        </div>
 
         <br/>
         <br/>
