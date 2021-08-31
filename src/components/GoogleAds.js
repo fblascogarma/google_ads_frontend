@@ -8,6 +8,7 @@ const GoogleAds = () => {
     const [Url, setUrl] = useState('')
     const [token, setToken, removeToken] = useCookies(['mytoken'])
     const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
+    const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     let history = useHistory()
 
 
@@ -38,14 +39,27 @@ const GoogleAds = () => {
             return response.text();
         })
         .then(function(text) {
-            // console.log(text);
-            // use a cookie to store the refresh token value
-            // text contains the refresh token value
-            // need to add the encode function because the default will encode to url
-            setRefreshToken('refreshToken', text, { encode: String})
+            let isnum = /^\d+$/.test(text);
+            // check if value from backend is the customer id or refresh token
+            // by checking if the response is all digits, which means is customer id
+            if (isnum) {
+                // save it as a cookie
+                setCustomerId('customerID', text, { encode: String})
+
+                // redirect user to the reporting page
+                history.push('/googleads/accounts/campaigns')
+
+            } else {
+                // use a cookie to store the refresh token value
+                // text contains the refresh token value
+                // need to add the encode function because the default will encode to url
+                setRefreshToken('refreshToken', text, { encode: String})
+                
+                // redirect user to the accessible accounts page
+                history.push('/googleads/accounts')
+
+            }
             
-            // redirect user to the accessible accounts page
-            history.push('/googleads/accounts')
         })
         .catch(error => console.log(error))
             
@@ -93,6 +107,10 @@ const GoogleAds = () => {
         }
     }, [Url])
 
+    // create new Google Ads account (client, not manager)
+    const createAccount = () => {
+        history.push('/googleads/accounts/create')
+    }
 
 
 
@@ -111,26 +129,28 @@ const GoogleAds = () => {
         <div className="row">
             <div className="col-sm-6">
                 <div className="card" style={{width: '18rem'}} >
-                    <img className="card-img-top" src="connect-to-google-ads.jpeg" alt="Already have Google Ads account?" />
-                    <div className="card-body">
+                    <img className="card-img-top" src="connect-to-google-ads.jpeg" 
+                    alt="Already have Google Ads account?" 
+                    style={{borderBottom: '1px solid gray'}}/>
+                    <div className="card-body bg-light">
                         <h5 className="card-title">Connect to Google Ads</h5>
                         <h6 className="card-subtitle mb-2 text-muted">Already have an account?</h6>
                         <br/>
                         <p className="card-text">
-                            Connect your account with Fran Ads so you can 
-                            manage your account from our app!  
+                            Connect your account and  
+                            manage it from our app!  
                             
                         </p>
                         <p className="card-text"> 
                             {/* make clarification below because OAuth scope uses the word Adwords which can create unnecessary friction */}
                             When giving us permission to connect to your account, 
-                            you will see that the name used by Google for Google Ads is AdWords.
+                            you will see that Google uses Adwords to refer to Google Ads.
                         </p>
                         <p className="card-text">
                             You can disconnect your account anytime you want.
                         </p>
                         <br/>
-                        <button onClick={authenticateGoogle} className="btn btn-success">Connect</button>
+                        <button onClick={authenticateGoogle} className="btn btn-success">CONNECT</button>
                     </div>
                 </div> 
             </div>
@@ -138,8 +158,10 @@ const GoogleAds = () => {
             {/* If user does not have a Google Ads account */}
             <div className="col-sm-6">
                 <div className="card" style={{width: '18rem'}} >
-                    <img className="card-img-top" src="google-ads-logo.png" alt="Need to create a Google Ads account?" />
-                    <div className="card-body">
+                    <img className="card-img-top" src="google-ads-logo.png" 
+                    alt="Need to create a Google Ads account?" 
+                    style={{borderBottom: '1px solid gray'}} />
+                    <div className="card-body bg-light">
                         <h5 className="card-title">Create a Google Ads account</h5>
                         <h6 className="card-subtitle mb-2 text-muted">Don't have an account?</h6>
                         <br/>
@@ -148,11 +170,13 @@ const GoogleAds = () => {
                         </p>
                         <p className="card-text">
                             You will need to select an account name, your email, 
-                            the currency you want to use for your account, 
+                            the currency you want to use, 
                             and the time zone.
                         </p>
                         <br/>
-                        <button onClick={authenticateGoogle} className="btn btn-success">Create</button>
+                        <br/>
+                        <br/>
+                        <button onClick={createAccount} className="btn btn-success">CREATE</button>
                     </div>
                 </div>
             </div>

@@ -24,6 +24,8 @@ export const NavBar = () => {
     // refresh token
     const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
 
+    // customer id
+    const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
 
     // cookies from step 1
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code', "US"])
@@ -49,6 +51,7 @@ export const NavBar = () => {
     const logoutBtn = () => {
         removeToken(['mytoken']);
         removeRefreshToken(['refreshToken']);
+        removeCustomerID(['customerID']);
         removeCountry_code(['country_code']);
         removeBusiness_name(['business_name']);
         removeLanding_page(['landing_page']);

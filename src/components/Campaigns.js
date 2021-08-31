@@ -3,7 +3,7 @@ import React, {useState, useEffect, Fragment} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import Message from './Message';
-// import InfoCard from './InfoCard';
+import MessageWarning from './MessageWarning';
 
 
 
@@ -19,6 +19,7 @@ const Campaigns = () => {
     const [status, setStatus] = useState("All but removed")
     const [date, setDate] = useState("ALL_TIME")
     const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
+    const [messageWarning, setMessageWarning] = useState('')
 
 
 
@@ -40,7 +41,11 @@ const Campaigns = () => {
             setMessage(' Fetching your data... It will take a few seconds.');
             
             // data to send to the backend
-            const data = { 'refreshToken': refreshToken['refreshToken'], 'customer_id': customerId['customerID'], 'date_range': date}
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
+                'date_range': date
+            }
 
             fetch('http://127.0.0.1:8000/api/get-campaigns/', {
                 method: 'POST',
@@ -52,7 +57,18 @@ const Campaigns = () => {
                 
             })
             .then(resp => resp.json())
-            .then(resp => setCampaignInfo(resp))
+            .then(resp => {
+                if (resp !== null) {
+                    // console.log(resp.length);
+                    setCampaignInfo(resp);
+                    setMessage('')
+                } else if (resp === null) {
+                    // console.log(resp);
+                    setMessage('');
+                    setMessageWarning('You do not have campaigns. Create your first campaign in 5 easy steps')
+
+                }
+            })
             .catch(error => console.log(error))
            
             
@@ -61,7 +77,7 @@ const Campaigns = () => {
 
     // if campaignInfo object has data, delete the 'fetching data' message
     useEffect(() => {
-        if(campaignInfo) {
+        if(campaignInfo.length > 0) {
             setMessage('')
         }
     }, [campaignInfo])
@@ -80,14 +96,22 @@ const Campaigns = () => {
 
     }
 
-    // redirect to CreateCampaign when user clicks on 'Create campaign' button
+    // redirect to step 1 of campaign creation 
+    // when user clicks on 'Create campaign' button
     const create = () => {
         history.push('/googleads/campaigns/create-campaign')
     }
 
-    // go back to previous page of the table showing possible accounts the user can access
+    // go back button
     const goAccountsList = () => {
-        history.push('/googleads/accounts')
+        // if user has refresh token cookie, take them to Accounts page
+        if (refreshToken['refreshToken']) {
+            history.push('/googleads/accounts')
+        // if not, taking them to the home page
+        } else {
+            history.push('/')
+        }
+        
     }
 
 
@@ -109,7 +133,7 @@ const Campaigns = () => {
         <br/>
         <br/>
         {/* if user has campaigns, show this message */}
-        {campaignInfo ? 
+        {campaignInfo.length > 0 ? 
         <Fragment>
             <p>See how your campaigns are performing. 
             You can filter by campaign status and dates. 
@@ -118,8 +142,8 @@ const Campaigns = () => {
         </Fragment> : 
         // if user has zero campaigns yet, show this message
         <Fragment>
-            <p>You don't have campaigns created. 
-                Create your first campaign in 5 easy steps to achieve your business goals.
+            <p>Oh! It seems you do not have ads running on Google yet. 
+                Create a campaign to achieve your business goals.
             </p>
         </Fragment>}
         
@@ -138,6 +162,7 @@ const Campaigns = () => {
         <br/>
 
         {message ? <Message msg={message} /> : null}
+        {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
 
         <div className="container">
             <div className="row">
@@ -203,7 +228,7 @@ const Campaigns = () => {
             </thead>
            
             <tbody>
-                {campaignInfo && campaignInfo.map(item => {
+                {campaignInfo.length > 0 && campaignInfo.map(item => {
                     if (status === "All active") {
                         return(
                     
