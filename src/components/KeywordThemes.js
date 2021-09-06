@@ -131,8 +131,14 @@ const KeywordThemes = () => {
             })
             .then(resp => resp.json())
             .then(setMessage(''))
-            .then(resp => resp.length ? setKeywordSuggestions(resp) : 
-            setMessageWarning('Please try again. No recommendations for that category.'))
+            .then(resp => {
+                console.log(resp)
+                if (resp.length > 0) {
+                    setKeywordSuggestions(resp)
+                } else if (resp.length === 0) {
+                    setMessageWarning('Please try again. No recommendations for that category.')
+                }
+            })
             .catch(error => console.log(error))
 
     }
@@ -183,6 +189,14 @@ const KeywordThemes = () => {
     useEffect(() => {
         keywordSuggestions && setMessage('')
     }, [keywordSuggestions])
+
+    // if there are keyword themes saved as a cookie, store them in the selectedKeywordThemes object
+    // possible use case: if user is in step 4 or 5 and goes back to this step 3
+    useEffect(() => {
+        if(keyword_themes['keyword_themes']) {
+            setSelectedKeywordThemes(keyword_themes['keyword_themes'])
+        }
+    }, [keyword_themes])
 
     // redirect to step 4 of campaign creation
     // when user clicks on 'Next' button
@@ -290,7 +304,7 @@ const KeywordThemes = () => {
         <br/>
         
 
-        <label>Enter category of keywords</label>
+        <label>Category of keywords</label>
             <br/>
             <textarea className="form-control" placeholder="Enter category of keywords..." 
             id="keyword_text" rows="1" maxLength="30"
@@ -308,7 +322,7 @@ const KeywordThemes = () => {
             {keywordOneCharacters > 0 && 
             <Fragment>
                 <button onClick={keywordThemesSuggestions} className="btn btn-success">
-                Recommend categories
+                ADD & RECOMMEND
                 </button>
                 <br/>
                 <small className= "form-text text-muted">
@@ -324,10 +338,10 @@ const KeywordThemes = () => {
                 <br/>
                 {messageWarning2 ? <MessageWarning msg={messageWarning2} /> : null}
         
-        {selectedKeywordThemes && 
+        {(selectedKeywordThemes || keyword_themes['keyword_themes']) && 
 
             <div className="container" style={{paddingLeft: '0px'}}>
-                {selectedKeywordThemes.length > 0 && 
+                {(selectedKeywordThemes.length > 0 || keyword_themes['keyword_themes']) && 
                     <Fragment>
                         <label>Selected category keywords:</label>
                         <br/>
@@ -368,13 +382,17 @@ const KeywordThemes = () => {
                 <Fragment>
                     <label>Recommended category keywords:</label>
                     <br/>
+                    {keywordOne ? 
                     <small className="form-text text-muted">
                         {keywordSuggestions.length} recommendations for {keywordOne}.
-                    </small>
+                    </small> :
+                    <small className="form-text text-muted">
+                        Enter a new category to get more recommendations.
+                    </small>}
                 </Fragment>}
                 <div className="container">
                     <div className="row">
-                    {keywordSuggestions.map(item => {
+                    {keywordSuggestions.length > 0 && keywordSuggestions.map(item => {
                         // map value if item is not already in the recommendations
                         if (selectedKeywordThemes.indexOf(item) === -1) {
                             return  <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
@@ -386,7 +404,7 @@ const KeywordThemes = () => {
                                         <i className="fas fa-plus fa-fw" 
                                         style={{marginRight: '5px'}}
                                         key={item}></i>
-                                        
+
                                         {item}
                                     </button>
                                 </div>

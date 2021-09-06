@@ -176,11 +176,11 @@ export const NavBar = () => {
                 if not show Login/Register */}
                 {token['mytoken'] ? 
                     <div className="col-4">
-                        <button onClick={logoutBtn} className="btn btn-outline-dark">Logout</button>
+                        <button onClick={logoutBtn} className="btn btn-outline-dark">LOGOUT</button>
                     </div> :
                     
                     <div className="col-4">
-                        <button onClick={redirectLogin} className="btn btn-outline-dark">Login / Register</button>
+                        <button onClick={redirectLogin} className="btn btn-outline-dark">LOGIN / SIGNUP</button>
                     </div>}
                 
                 </div>

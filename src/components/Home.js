@@ -68,7 +68,7 @@ const Home = () => {
         
         <br/>
         <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
-            Create marketing campaigns on Google!
+            Get in the first page of Google!
         </h4>
 
         <br/>

@@ -12,6 +12,10 @@ const Location = () => {
     const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
     let history = useHistory()
 
+    // messages to give feedback to users
+    const [message, setMessage] = useState('')
+    const [messageWarning, setMessageWarning] = useState('')
+
     // cookies that have value to send to the backend to get 
     // GeoTargetConstants by given location names
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code'])
@@ -49,10 +53,12 @@ const Location = () => {
             setLocation_targeting([...location_targeting, location_input]);
 
             // data to send to the backend and then to the API
-            const data = { 'refreshToken': refreshToken['refreshToken'], 
-            'location': location_input, 
-            'country_code': country_code['country_code'], 
-            'language_code': language_code['language_code']}
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'location': location_input, 
+                'country_code': country_code['country_code'], 
+                'language_code': language_code['language_code']
+            }
 
             // call the API to get location recommendations
             fetch('http://127.0.0.1:8000/api/location-recommendations/', {
@@ -65,7 +71,15 @@ const Location = () => {
                 
             })
             .then(resp => resp.json())
-            .then(resp => resp.length && setLocationSuggestions(resp))
+            .then(resp => {
+                console.log(resp)
+                if (resp !== null) {
+                    setLocationSuggestions(resp)
+                } else if (resp === null) {
+                    setMessageWarning('No recommendations for that location.')
+                }
+            })
+            // .then(resp => resp.length && setLocationSuggestions(resp))
             .catch(error => console.log(error))
         } else if (location_targeting.indexOf(location_input) !== -1) {
             setMessageWarning('You already added '+location_input+'.')
@@ -116,10 +130,6 @@ const Location = () => {
         const newArray = location_targeting.filter(el => el !== itemToRemove)
         setLocation_targeting(newArray)
     }
-
-    // messages to give feedback to users
-    const [message, setMessage] = useState('')
-    const [messageWarning, setMessageWarning] = useState('')
 
     
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -186,7 +196,7 @@ const Location = () => {
         <br/>
         <br/>
 
-        <label>Enter location</label>
+        <label>Location</label>
             <br/>
             <textarea className="form-control" placeholder="Enter location..." 
             id="location" rows="1"
@@ -198,7 +208,7 @@ const Location = () => {
             <br/>
             <br/>
             <button onClick={addLocation} className="btn btn-success">
-                Add location
+                ADD & RECOMMEND
             </button>
             
 

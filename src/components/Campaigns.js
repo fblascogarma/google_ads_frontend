@@ -59,7 +59,7 @@ const Campaigns = () => {
             .then(resp => resp.json())
             .then(resp => {
                 if (resp !== null) {
-                    // console.log(resp.length);
+                    // console.log(resp);
                     setCampaignInfo(resp);
                     setMessage('')
                 } else if (resp === null) {
