@@ -140,6 +140,14 @@ const Location = () => {
         }
     }, [token])
 
+    // if there are locations saved as a cookie, store them in the location_targeting object
+    // possible use case: if user is in step 5 and goes back to this step 4
+    useEffect(() => {
+        if(geo_location['geo_location']) {
+            setLocation_targeting(geo_location['geo_location'])
+        }
+    }, [geo_location])
+
 
     const goStep3 = () => {
         history.push('/googleads/campaigns/keyword-themes')

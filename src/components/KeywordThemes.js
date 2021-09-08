@@ -132,7 +132,7 @@ const KeywordThemes = () => {
             .then(resp => resp.json())
             .then(setMessage(''))
             .then(resp => {
-                console.log(resp)
+                // console.log(resp)
                 if (resp.length > 0) {
                     setKeywordSuggestions(resp)
                 } else if (resp.length === 0) {

@@ -35,8 +35,8 @@ function Login() {
     return (
         <div>
             <br/>
-            {isLogin ? <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>Sign in to your account</h4> 
-            : <h4 className="display-4 text-center mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>Create your account</h4>}
+            {isLogin ? <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>Login to your account</h4> 
+            : <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>Create your account</h4>}
 
             <div className="mb-3">
 
@@ -53,11 +53,11 @@ function Login() {
             </div>
 
             {isLogin ? <button onClick={loginBtn} className="btn btn-primary">Login</button>
-            : <button onClick={registerBtn} className="btn btn-primary">Register</button>}
+            : <button onClick={registerBtn} className="btn btn-primary">Signup</button>}
 
             <div className="mb-3">
                 <br/>
-                {isLogin ? <p font="gotham-rounded-bold">Don't have an account? <button className="btn btn-outline-primary" onClick={() => setLogin(false)}>Register here</button></p>
+                {isLogin ? <p font="gotham-rounded-bold">Don't have an account? <button className="btn btn-outline-primary" onClick={() => setLogin(false)}>Signup here</button></p>
                 : <p font="gotham-rounded-bold">If You Have An Account, Please <button className="btn btn-outline-primary" onClick={() => setLogin(true)}>Login here</button> </p>
                 }
             </div>

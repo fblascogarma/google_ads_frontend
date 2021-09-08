@@ -1,9 +1,9 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
-// import Message from './Message';
-import MessageWarning from './MessageWarning';
 import ProgressionTracker from './ProgressionTracker';
+import Message from './Message';
+import MessageWarning from './MessageWarning';
 
 
 const Budget = () => {
@@ -13,114 +13,62 @@ const Budget = () => {
     let history = useHistory()
 
     // cookies that have value to send to the backend to get 
-    // GeoTargetConstants by given location names
+    // budget recommendation
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code'])
     const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
-
-    // cookie to save the selected locations
+    const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
+    const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
+    const [keyword_themes, setKeyword_themes, removeKeyword_themes] = useCookies(['keyword_themes'])
 
-    // object to store the locations selected by users
-    const [location_targeting, setLocation_targeting] = useState([])
-
-    // object to manage location input
-    const [location_input, setLocation_input] = useState('')
-
-    // set location in location_input state
-    const onChangeLocation = (e) => {
-        setLocation_input(e.target.value);
-    }
-
-    // capture the location suggestions sent by Google's API
-    const [locationSuggestions, setLocationSuggestions] = useState([])
-
-    // capture the additional location suggestions sent by Google's API
-    const [additional_locationSuggestions, setAdditional_locationSuggestions] = useState([])
-
-    // add the location the user input in the text field
-    // and get recommendations from API
-    const addLocation = (e) => {
-        if (location_input.length > 0 && 
-            // add location if it has not been added yet to the selected object
-            (location_targeting.indexOf(location_input) === -1)) {
-            // eliminate warning message of no input in text box
-            setMessageWarning('')
-            // add it to the selected array
-            setLocation_targeting([...location_targeting, location_input]);
-
-            // data to send to the backend and then to the API
-            const data = { 'refreshToken': refreshToken['refreshToken'], 
-            'location': location_input, 
-            'country_code': country_code['country_code'], 
-            'language_code': language_code['language_code']}
-
-            // call the API to get location recommendations
-            fetch('http://127.0.0.1:8000/api/location-recommendations/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token['mytoken']}`
-                },
-                body: JSON.stringify(data),
-                
-            })
-            .then(resp => resp.json())
-            .then(resp => resp.length && setLocationSuggestions(resp))
-            .catch(error => console.log(error))
-        } else if (location_targeting.indexOf(location_input) !== -1) {
-            setMessageWarning('You already added '+location_input+'.')
-
-        } else {setMessageWarning('Enter a location in the text box above.')}
-        
-    }
-
-    // add the location selected from the suggestions
-    const addLocationRecommended = (e) => {
-        
-            // store selected recommendation
-            const selectedRecomm = e.currentTarget.value
-        
-            // add it to the selected array
-            setLocation_targeting([...location_targeting, selectedRecomm]);
-            // remove it from the suggestion array
-            const itemToRemove = selectedRecomm
-            const newArray = locationSuggestions.filter(el => el !== itemToRemove);
-            setLocationSuggestions(newArray);
-
-            // get more recommendations from the API based on the selected one
-            // data to send to the backend and then to the API
-            const data_recomm = { 'refreshToken': refreshToken['refreshToken'], 
-            'location': selectedRecomm, 
-            'country_code': country_code['country_code'], 
-            'language_code': language_code['language_code']}
-
-            // call the API to get location recommendations
-            fetch('http://127.0.0.1:8000/api/location-recommendations/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token['mytoken']}`
-                },
-                body: JSON.stringify(data_recomm),
-                
-            })
-            .then(resp => resp.json())
-            .then(resp => resp.length && setAdditional_locationSuggestions(resp))
-            .catch(error => console.log(error))
-        
-    }
-    
-    // remove location from selected object
-    const removeLocation = (e) => {
-        const itemToRemove = e.currentTarget.value
-        const newArray = location_targeting.filter(el => el !== itemToRemove)
-        setLocation_targeting(newArray)
-    }
-
-    // messages to give feedback to users
     const [message, setMessage] = useState('')
     const [messageWarning, setMessageWarning] = useState('')
 
+
+    // store selected budget
+    const [budget, setBudget] = useState("recommended")
+    const [custom_budget, setCustom_budget] = useState("")
+    
+    // set budget in budget state
+    const onChangeBudget = (e) => {
+        setBudget(e.target.value);
+    }
+
+    // store budget recommendations
+    const [budget_recommendations, setBudget_recommendations] = useState([])
+
+    // // data to send to the API
+    // const data = { 
+    //     'refreshToken': refreshToken['refreshToken'], 
+    //     'customer_id': customerId['customerID'], 
+    //     'country_code': country_code['country_code'], 
+    //     'language_code': language_code['language_code'],
+    //     'geo_target_names': JSON.stringify(geo_location['geo_location']),
+    //     'landing_page': landing_page['landing_page'],
+    //     'display_name': JSON.stringify(keyword_themes['keyword_themes'])
+    // }
+
+    // // get budget recommendation from API
+    // const budgetRecommendation = () => {
+    //     fetch('http://127.0.0.1:8000/api/get-budget-recommendation/', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Token ${token['mytoken']}`
+    //             },
+    //             body: JSON.stringify(data),
+                
+    //         })
+    //         .then(resp => resp.json())
+    //         .then(resp => setBudget_recommendations(resp))
+    //         .catch(error => console.log(error))
+
+    // }
+
+    // set location in location_input state
+    const changeBudget = (e) => {
+        setCustom_budget(e.target.value);
+    }
     
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
     useEffect(() => {
@@ -130,17 +78,59 @@ const Budget = () => {
         }
     }, [token])
 
+    // get budget recommendations
+    useEffect(() => {
+        if(geo_location['geo_location']) {
+            // tell user you are getting recommendations
+            setMessage(' Fetching recommendations for you... It will take a few seconds.')
 
+            // data to send to the API
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
+                'country_code': country_code['country_code'], 
+                'language_code': language_code['language_code'],
+                'geo_target_names': JSON.stringify(geo_location['geo_location']),
+                'landing_page': landing_page['landing_page'],
+                'display_name': JSON.stringify(keyword_themes['keyword_themes'])
+            }
+
+            // get recommendations from api
+            fetch('http://127.0.0.1:8000/api/get-budget-recommendation/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => setBudget_recommendations(resp))
+            .then(resp => {
+                if (resp !== null) {
+                    setMessage('')
+                } else {
+                    setMessageWarning('There was a problem and we could not get budget recommendations.')
+                }
+
+                })
+            .catch(error => console.log(error))
+
+        }
+    }, [geo_location, country_code, landing_page, customerId, keyword_themes, language_code, refreshToken, token])
+
+    
+    // back button
     const goStep4 = () => {
         history.push('/googleads/campaigns/location')
     }
 
-    const goStep5 = () => {
-        // save the selected keyword themes as cookies
-        setGeo_location("geo_location", location_targeting, { encode: String})
+    // next button
+    const createSmartCampaign = () => {
 
-        // and send user to the next step
-        history.push('/googleads/campaigns/create-campaign')}
+    }
+    
 
 
     return (
@@ -175,117 +165,96 @@ const Budget = () => {
 
         <br/>
         <p>
-            NEED TO DO THIS
+            You will never get charged more than the budget you set for a month. 
+            Daily spending might vary, 
+            some days spending more and others less, 
+            but the total amount per month 
+            will not be higher than the total budget for the month.
         </p>
         
         <br/>
-        <br/>
 
-        <label>Enter location</label>
-            <br/>
-            <textarea className="form-control" placeholder="Enter location..." 
-            id="location" rows="1"
-            onChange={onChangeLocation} ></textarea>
-            <small className= "form-text text-muted">
-                Enter country, state, province, city. 
-                Add 1 location at a time and add as many as you like.
-            </small> 
-            <br/>
-            <br/>
-            <button onClick={addLocation} className="btn btn-success">
-                Add location
-            </button>
-            
+        <div className="alert alert-warning" role="alert">
+            <i className="fas fa-info-circle fa-fw" style={{marginRight: '10px'}}></i>    
+            You can change the budget anytime you want  
+            and stop running the ad whenever you want.
+            </div>
 
         <br/>
-        <br/>
 
+        {/* <button onClick={budgetRecommendation} className="btn btn-success">
+                GET BUDGET
+        </button> */}
+        {message ? <Message msg={message} /> : null}
         {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
         <br/>
 
-        {location_targeting.length > 0 && 
-        <Fragment>
-            <label>Selected locations:</label>
+        <label>Budget in {budget_recommendations.currency}</label>
             <br/>
-            <div className="row">
-                    {location_targeting.map(item => {
-                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
-                        <button type="button" className="btn btn-primary btn-sm" 
-                        style={{whiteSpace: 'nowrap'}} 
-                        value={item} 
-                        key={item}
-                        onClick={removeLocation}>
-                            
-                            {item}
-                            <i className="fas fa-times fa-fw" 
-                            style={{marginLeft: '5px'}}
-                            key={item}></i>
-                        </button>
+            <br/>
+            <div className="list-group" role="group">
+                <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+                color: (budget === 'high') && 'rgb(30,136,229)'}}>
+                    <input className="form-check-input me-1" type="radio" value="high" 
+                    onChange={onChangeBudget} 
+                    checked={ budget === "high"}/>
+                    ${budget_recommendations.high/1000000} per day / 
+                    ${Math.ceil(budget_recommendations.high/1000000*30.4)} max per month  
+                    | Between {String(Math.round(budget_recommendations.high_min_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} and {String(Math.round(budget_recommendations.high_max_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} potential customers per month
+                </label>
+                <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+                color: (budget === 'recommended') && 'rgb(30,136,229)'}}>
+                    <input className="form-check-input me-1" type="radio" value="recommended" 
+                    onChange={onChangeBudget} 
+                    checked={ budget === "recommended"}/>
+                    ${budget_recommendations.recommended/1000000} per day / 
+                    ${Math.ceil(budget_recommendations.recommended/1000000*30.4)} max per month 
+                    | Between {String(Math.round(budget_recommendations.recommended_min_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} and {String(Math.round(budget_recommendations.recommended_max_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} potential customers per month
+                </label>
+                <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+                color: (budget === 'low') && 'rgb(30,136,229)'}}>
+                    <input className="form-check-input me-1" type="radio" value="low" 
+                    onChange={onChangeBudget} 
+                    checked={ budget === "low"}/>
+                    ${budget_recommendations.low/1000000} per day / 
+                    ${Math.ceil(budget_recommendations.low/1000000*30.4)} max per month 
+                    | Between {String(Math.round(budget_recommendations.low_min_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} and {String(Math.round(budget_recommendations.low_max_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} potential customers per month
+                </label>
+                <small className= "form-text text-muted">
+                    Every click to your ad is considered a potential customer.
+                </small>
+                <br/>
+                <br/>
+                <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+                color: (budget === 'custom') && 'rgb(30,136,229)'}}>
+                    <input className="form-check-input me-1" type="radio" value="custom" 
+                    onChange={onChangeBudget} 
+                    checked={ budget === "custom"}/>
+                    Enter other budget
+                </label>
+                {budget === "custom" && 
+                <Fragment>
+                    <br/>
+                    <label>Budget per day in {budget_recommendations.currency}</label>
+                    <br/>
+                    <div className="row">
+                        <div className="col-sm-2" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                            <input type="number" className="form-control" id="custom_budget" name="custom_budget"
+                            onChange={changeBudget} />
                         </div>
-                    })}
+                        <div className="col-sm-4" style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
+                            {custom_budget && <label>${Math.ceil(custom_budget*30.4)} max per month</label>}
+                        </div>
+                        {/* <small className= "form-text text-muted">
+                            Every click to your ad is considered a potential customer.
+                        </small> */}
+                    </div>
+                    
+                    
+                </Fragment>}
+                
             </div>
-        </Fragment>
-        }
-
-        {locationSuggestions.length > 0 && 
-        <Fragment>
-            <br/>
-            <label>Recommended locations:</label>
-            <br/>
-            <div className="row">
-                    {/* show recommended locations from the location input by user in the text field */} 
-                    {locationSuggestions.map(item => {
-                        // map value if item is not already in the recommendations
-                        if (location_targeting.indexOf(item.geo_name) === -1) {
-                            return <div className="col-sm" style={{paddingTop: '10px'}} key={item.geo_id}>
-                            <button type="button" className="btn btn-outline-primary btn-sm" 
-                            style={{whiteSpace: 'nowrap'}} 
-                            value={item.geo_name} 
-                            key={item.geo_id}
-                            onClick={addLocationRecommended}>
-                                <i className="fas fa-plus fa-fw" 
-                                style={{marginRight: '5px'}}
-                                key={item.geo_name}></i>
-
-                                {item.geo_name}
-                                
-                            </button>
-                            </div>
-
-                        } else {
-                            return console.log('Not showing item that is already selected.')
-                        }
-                        
-                    })}
-
-                    {/* show recommended locations from the last location selected by user from the recommendations */}
-                    {additional_locationSuggestions.map(item => {
-                        // map value if item is not already in the recommendations nor on the recommendations from text input
-                        if (location_targeting.indexOf(item.geo_name) === -1 &&
-                        locationSuggestions.indexOf(item.geo_name) === -1) {
-                            return <div className="col-sm" style={{paddingTop: '10px'}} key={item.geo_id}>
-                            <button type="button" className="btn btn-outline-primary btn-sm" 
-                            style={{whiteSpace: 'nowrap'}} 
-                            value={item.geo_name} 
-                            key={item.geo_id}
-                            onClick={addLocationRecommended}>
-                                <i className="fas fa-plus fa-fw" 
-                                style={{marginRight: '5px'}}
-                                key={item.geo_name}></i>
-
-                                {item.geo_name}
-                                
-                            </button>
-                            </div>
-
-                        } else {
-                            return console.log('Not showing item that is already selected.')
-                        }
-                        
-                    })}
-            </div>
-        </Fragment>
-        }
+            
 
         <br/>
         <br/>
@@ -303,7 +272,7 @@ const Budget = () => {
 
                 <div className="col" align="right">
 
-                    <button type="button" onClick={goStep5} 
+                    <button type="button" onClick={createSmartCampaign} 
                     className="btn btn-primary btn-block"  
                     style={{margin:'10px'}}>
                         Next
