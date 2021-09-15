@@ -4,6 +4,8 @@ import {useHistory} from 'react-router-dom';
 import ProgressionTracker from './ProgressionTracker';
 import Message from './Message';
 import MessageWarning from './MessageWarning';
+import MessageSuccess from './MessageSuccess';
+import MessageError from './MessageErrorNoClose';
 
 
 const Budget = () => {
@@ -12,22 +14,37 @@ const Budget = () => {
     const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
     let history = useHistory()
 
-    // cookies that have value to send to the backend to get 
-    // budget recommendation
+    // cookies that have value to send to the backend 
+    // to create campaign
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code'])
     const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
     const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
     const [keyword_themes, setKeyword_themes, removeKeyword_themes] = useCookies(['keyword_themes'])
+    const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
+    const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
+    const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
+    const [headline_2, setHeadline_2, removeHeadline_2] = useCookies(['headline_2'])
+    const [headline_3, setHeadline_3, removeHeadline_3] = useCookies(['headline_3'])
+    const [desc_1, setDesc_1, removeDesc_1] = useCookies(['desc_1'])
+    const [desc_2, setDesc_2, removeDesc_2] = useCookies(['desc_2'])
+
+
 
     const [message, setMessage] = useState('')
     const [messageWarning, setMessageWarning] = useState('')
+    const [messageSuccess, setMessageSuccess] = useState('')
+    const [messageError, setMessageError] = useState('')
+
+    // store success message saying campaign was created
+    const [successMessage, setSuccessMessage, removeSuccessMessage] = useCookies(['successMessage'])
 
 
     // store selected budget
     const [budget, setBudget] = useState("recommended")
     const [custom_budget, setCustom_budget] = useState("")
+    const [selected_budget, setSelected_budget] = useState()
     
     // set budget in budget state
     const onChangeBudget = (e) => {
@@ -36,34 +53,6 @@ const Budget = () => {
 
     // store budget recommendations
     const [budget_recommendations, setBudget_recommendations] = useState([])
-
-    // // data to send to the API
-    // const data = { 
-    //     'refreshToken': refreshToken['refreshToken'], 
-    //     'customer_id': customerId['customerID'], 
-    //     'country_code': country_code['country_code'], 
-    //     'language_code': language_code['language_code'],
-    //     'geo_target_names': JSON.stringify(geo_location['geo_location']),
-    //     'landing_page': landing_page['landing_page'],
-    //     'display_name': JSON.stringify(keyword_themes['keyword_themes'])
-    // }
-
-    // // get budget recommendation from API
-    // const budgetRecommendation = () => {
-    //     fetch('http://127.0.0.1:8000/api/get-budget-recommendation/', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': `Token ${token['mytoken']}`
-    //             },
-    //             body: JSON.stringify(data),
-                
-    //         })
-    //         .then(resp => resp.json())
-    //         .then(resp => setBudget_recommendations(resp))
-    //         .catch(error => console.log(error))
-
-    // }
 
     // set location in location_input state
     const changeBudget = (e) => {
@@ -95,6 +84,9 @@ const Budget = () => {
                 'display_name': JSON.stringify(keyword_themes['keyword_themes'])
             }
 
+            // create AbortController function to cancel fetch when it ends
+            const ac = new AbortController()
+
             // get recommendations from api
             fetch('http://127.0.0.1:8000/api/get-budget-recommendation/', {
                 method: 'POST',
@@ -115,11 +107,26 @@ const Budget = () => {
                 }
 
                 })
-            .catch(error => console.log(error))
+            .catch(error => console.log(error));
+
+            return () => ac.abort();
 
         }
     }, [geo_location, country_code, landing_page, customerId, keyword_themes, language_code, refreshToken, token])
 
+    // set selected budget
+    useEffect(() => {
+        if (budget === 'custom') {
+            setSelected_budget(custom_budget*1000000)
+        } else if (budget === 'high') {
+            setSelected_budget(budget_recommendations.high)
+        } else if (budget === 'recommended') {
+            setSelected_budget(budget_recommendations.recommended)
+        } else if (budget === 'low') {
+            setSelected_budget(budget_recommendations.low)
+        }
+
+    }, [selected_budget, budget, custom_budget, budget_recommendations.high, budget_recommendations.low, budget_recommendations.recommended])
     
     // back button
     const goStep4 = () => {
@@ -128,6 +135,59 @@ const Budget = () => {
 
     // next button
     const createSmartCampaign = () => {
+        
+        // tell user we are creating the campaign
+        setMessage(' Creating the campaign... It will take a few seconds.')
+
+        // data to send to the API
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'country_code': country_code['country_code'], 
+            'language_code': language_code['language_code'],
+            'geo_target_names': JSON.stringify(geo_location['geo_location']),
+            'landing_page': landing_page['landing_page'],
+            'display_name': JSON.stringify(keyword_themes['keyword_themes']),
+            'selected_budget': selected_budget.toString(),
+            'phone_number': phone_number['phone_number'],
+            'business_name': business_name['business_name'],
+            'headline_1_user': headline_1['headline_1'],
+            'headline_2_user': headline_2['headline_2'],
+            'headline_3_user': headline_3['headline_3'],
+            'desc_1_user': desc_1['desc_1'],
+            'desc_2_user': desc_2['desc_2'],
+            'campaign_name': business_name['business_name']
+        }
+
+        // create AbortController function to cancel fetch when it ends
+        const ac = new AbortController()
+
+        fetch('http://127.0.0.1:8000/api/create-campaign/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            if (resp === 'smart campaign created') {
+                // setMessage('')
+                // store success message in cookie to display in reporting page
+                setSuccessMessage('successMessage', 'ok')
+                history.push('/googleads/accounts/campaigns')
+                // setMessageSuccess('campaign created! REDIRECT USER')
+            }
+        })
+        .catch(error => {
+            console.log(error)
+            setMessage('')
+            setMessageError('something...')
+        });
+
+        return () => ac.abort();
 
     }
     
@@ -187,6 +247,8 @@ const Budget = () => {
         </button> */}
         {message ? <Message msg={message} /> : null}
         {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+        {messageSuccess ? <MessageSuccess msg={messageSuccess} /> : null}
+        {messageError ? <MessageError msg={messageError} /> : null}
         <br/>
 
         <label>Budget in {budget_recommendations.currency}</label>

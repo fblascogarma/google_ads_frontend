@@ -65,7 +65,7 @@ const GoogleAds = () => {
             
         }
         
-    }, [refreshToken, token, history, setRefreshToken])
+    }, [refreshToken, token, history, setRefreshToken, setCustomerId])
 
 
     // if user has a refresh token saved as a cookie,

@@ -4,6 +4,7 @@ import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import Message from './Message';
 import MessageWarning from './MessageWarning';
+import MessageSuccess from './MessageSuccess';
 
 
 
@@ -14,12 +15,26 @@ const Campaigns = () => {
     const [token, setToken, removeToken] = useCookies(['mytoken'])
     const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
     let history = useHistory()
+
+    // store campaign info from the api
     const [campaignInfo, setCampaignInfo] = useState([])
+
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
+
+    // to filter the table
     const [status, setStatus] = useState("All but removed")
+
+    // to filter the query to be sent to the api
     const [date, setDate] = useState("ALL_TIME")
+
+    // messages to inform users
     const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
     const [messageWarning, setMessageWarning] = useState('')
+    const [messageSuccess, setMessageSuccess] = useState('')
+
+    // success message saying campaign was created
+    // when user is redirected here after successfully creating a campaign
+    const [successMessage, setSuccessMessage, removeSuccessMessage] = useCookies(['successMessage'])
 
 
 
@@ -65,7 +80,7 @@ const Campaigns = () => {
                 } else if (resp === null) {
                     // console.log(resp);
                     setMessage('');
-                    setMessageWarning('You do not have campaigns. Create your first campaign in 5 easy steps')
+                    setMessageWarning('You do not have campaigns. Create a campaign that can start showing ads within one day.')
 
                 }
             })
@@ -113,6 +128,14 @@ const Campaigns = () => {
         }
         
     }
+
+    // if there is a successMessage in the cookies for creating a campaign
+    // show it to the user
+    useEffect(() => {
+        if (successMessage['successMessage']) {
+            setMessageSuccess('The ad was successfully created! Google is reviewing your ad. Generally, it takes one business day, and you will know when you see the status of your campaign as Active.')
+        }
+    }, [successMessage])
 
 
     return (
@@ -163,6 +186,9 @@ const Campaigns = () => {
 
         {message ? <Message msg={message} /> : null}
         {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+        {messageSuccess ? <MessageSuccess msg={messageSuccess} /> : null}
+        <br/>
+        <br/>
 
         <div className="container">
             <div className="row">
