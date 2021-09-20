@@ -7,7 +7,7 @@ import MessageWarning from './MessageWarning';
 import MessageSuccess from './MessageSuccess';
 
 
-const Campaigns = () => {
+const EditCampaign = () => {
 
     const [token, setToken, removeToken] = useCookies(['mytoken'])
     const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
@@ -18,9 +18,6 @@ const Campaigns = () => {
 
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [campaignId, setCampaignId, removeCampaignID] = useCookies(['campaign_id'])
-
-    // store billing status from the api
-    const [billingStatus, setBillingStatus] = useState('APPROVED')
 
 
     // to filter the table
@@ -33,10 +30,6 @@ const Campaigns = () => {
     const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
     const [messageWarning, setMessageWarning] = useState('')
     const [messageSuccess, setMessageSuccess] = useState('')
-
-    // success message saying campaign was created
-    // when user is redirected here after successfully creating a campaign
-    // const [successMessage, setSuccessMessage, removeSuccessMessage] = useCookies(['successMessage'])
 
 
 
@@ -93,41 +86,11 @@ const Campaigns = () => {
     }, [customerId, refreshToken, token, date])
 
     // if campaignInfo object has data, delete the 'fetching data' message
-    // and get the billing status
     useEffect(() => {
         if(campaignInfo.length > 0) {
-            setMessage('');
-
-            // data to send to the backend
-            const data2 = { 
-                'refreshToken': refreshToken['refreshToken'], 
-                'customer_id': customerId['customerID'], 
-                'date_range': "using same model of reporting"
-            }
-
-            fetch('http://127.0.0.1:8000/api/get-billing/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token['mytoken']}`
-                },
-                body: JSON.stringify(data2),
-                
-            })
-            .then(resp => resp.json())
-            .then(resp => {
-                if (resp !== null) {
-                    console.log(resp);
-                    setBillingStatus(resp);
-                } else if (resp === null) {
-                    console.log(resp);
-                    setBillingStatus(resp);
-
-                }
-            })
-            .catch(error => console.log(error))
+            setMessage('')
         }
-    }, [campaignInfo, customerId, refreshToken, token])
+    }, [campaignInfo])
 
 
     // filter campaigns by status
@@ -150,14 +113,9 @@ const Campaigns = () => {
     }
 
     // go back button
-    const goAccountsList = () => {
-        // if user has refresh token cookie, take them to Accounts page
-        if (refreshToken['refreshToken']) {
-            history.push('/googleads/accounts')
-        // if not, taking them to the home page
-        } else {
-            history.push('/')
-        }
+    const goBack = () => {
+        
+        history.push('/googleads/accounts/campaigns')
         
     }
 
@@ -167,7 +125,7 @@ const Campaigns = () => {
     const onClick = e => {
         const campaignID = e.currentTarget.id
         setCampaignId("campaignID", campaignID);
-        history.push('/googleads/campaigns/edit');
+        history.push('/googleads/accounts/campaigns');
 
     }
 
@@ -181,7 +139,7 @@ const Campaigns = () => {
 
     // useEffect(() => {
     //     if (history.location.state.from === '/googleads/campaigns/budget') {
-    //         setMessageSuccess('The ad was successfully created! All ads go through a quick policy check. This usually takes one business day, and you will know when you see the status of your campaign as Active.')
+    //         setMessageSuccess('The ad was successfully created! Google is reviewing your ad. Generally, it takes one business day, and you will know when you see the status of your campaign as Active.')
     //     }
     // }, [history])
 
@@ -192,56 +150,21 @@ const Campaigns = () => {
         
         <br/>
         <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
-            Campaigns Performance
+            Campaign Information
         </h4> 
 
         <br/>
         <button type="button" className="btn btn-link" name="go back" 
-        onClick={goAccountsList} 
+        onClick={goBack} 
         style={{ color: 'black' }}>
             <i className="fas fa-arrow-left fa-2x"></i>
         </button>
         <br/>
         <br/>
-        {/* if user does not have billing set up yet */}
-        {billingStatus === 'APPROVED' ? null : 
-        <Fragment>
-            <div className="alert alert-danger alert-dismissible fade show" 
-            role="alert" 
-            style={{ 
-                display: 'inline-block', 
-                font:"gotham-rounded-bold", 
-                fontSize:'16px' 
-                }}>
-                <i className="fas fa-exclamation-triangle fa-fw"
-                style={{marginRight: '5px'}}></i>
-                Your account cannot show ads. 
-                To start running your ads, 
-                <a href="https://ads.google.com/home/" className="alert-link"
-                target="_blank" rel="noopener noreferrer"> CLICK HERE </a> 
-                to enter your billing information. 
-                This link will open a new tab with Google Ads platform. 
-                Go to Settings in the top menu, 
-                and click on Billing & payments. 
-                When you finish, 
-                close that tab to continue working on Fran Ads.
-                
-            </div>
-        </Fragment>  }
-        {/* if user has campaigns, show this message */}
-        {campaignInfo.length > 0 ? 
-        <Fragment>
-            <p>See how your campaigns are performing. 
-            You can filter by campaign status and dates. 
-            Click a campaign if you want to edit it or see the current settings.
-            </p>
-        </Fragment> : 
-        // if user has zero campaigns yet, show this message
-        <Fragment>
-            <p>Oh! It seems you do not have ads running on Google yet. 
-                Create a campaign to achieve your business goals.
-            </p>
-        </Fragment>}
+        
+        <p>Select what you want to edit.
+        </p>
+        
         
 
         <br/>
@@ -337,12 +260,12 @@ const Campaigns = () => {
                             display: item.status === "Active" ? '' : 'none'  }}>
                                 
                             
-                                <td> <i className="fas fa-circle" style={{ color: billingStatus ==="APPROVED" ? 'green' : 'red', display: item.status==="Active" ? '' : 'none'}}></i>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
                                 <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
                                 <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
                                 <td> ${item.campaign_budget}</td>
-                                <td> {billingStatus ==="APPROVED" ? item.status : 'Inactive until billing is set up'}</td>
+                                <td> {item.status}</td>
                                 <td> {item.campaign_type}</td>
                                 <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
                                 <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
@@ -367,12 +290,12 @@ const Campaigns = () => {
                             display: item.status === "Active" || item.status === "Paused" ? '' : 'none'  }}>
                                 
                             
-                                <td> <i className="fas fa-circle" style={{ color: billingStatus ==="APPROVED" ? 'green' : 'red', display: item.status==="Active" ? '' : 'none'}}></i>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
                                 <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
                                 <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
                                 <td> ${item.campaign_budget}</td>
-                                <td> {billingStatus ==="APPROVED" ? item.status : 'Inactive until billing is set up'}</td>
+                                <td> {item.status}</td>
                                 <td> {item.campaign_type}</td>
                                 <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
                                 <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
@@ -397,12 +320,12 @@ const Campaigns = () => {
                             style={{ textAlign: 'center', cursor: 'pointer'}}>
                                 
                             
-                                <td> <i className="fas fa-circle" style={{ color: billingStatus ==="APPROVED" ? 'green' : 'red', display: item.status==="Active" ? '' : 'none'}}></i>
+                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
                                 <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
                                 <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
                                 <td> {item.campaign_name}</td>
                                 <td> ${item.campaign_budget}</td>
-                                <td> {billingStatus ==="APPROVED" ? item.status : 'Inactive until billing is set up'}</td>
+                                <td> {item.status}</td>
                                 <td> {item.campaign_type}</td>
                                 <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
                                 <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
@@ -429,4 +352,4 @@ const Campaigns = () => {
     </div>
 )}
 
-export default Campaigns;
+export default EditCampaign;

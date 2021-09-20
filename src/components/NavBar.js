@@ -46,6 +46,9 @@ export const NavBar = () => {
     // cookie from step 4 (not sure I want to remove it)
     const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
 
+    // cookie if user edited campaigns
+    const [campaignId, setCampaignId, removeCampaignID] = useCookies(['campaign_id'])
+
 
     // remove all cookies when user logsout
     const logoutBtn = () => {
@@ -63,6 +66,7 @@ export const NavBar = () => {
         removeDesc_2(['desc_2']);
         removeKeyword_themes(['keyword_themes']);
         removeGeo_location(['geo_location']);
+        removeCampaignID(['campaignID']);
 
     }
 

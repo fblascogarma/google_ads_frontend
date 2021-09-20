@@ -179,7 +179,10 @@ const AccessibleCustomers = () => {
 
                 return(
                     
-                <tr key={item.customer_id} onClick={item.account_type === 'Client' ? onClick : onClickManager} id={item.customer_id} value={item.customer_id} style={{ textAlign: 'center', cursor: 'pointer'}}>
+                <tr key={item.customer_id} 
+                onClick={item.account_type === 'Client' ? onClick : onClickManager} 
+                id={item.customer_id} value={item.customer_id} 
+                style={{ textAlign: 'center', cursor: 'pointer'}}>
                     
                 
                     <td key={item.customer_id}> {item.customer_id}</td>

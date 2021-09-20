@@ -175,9 +175,9 @@ const Budget = () => {
         .then(resp => {
             if (resp === 'smart campaign created') {
                 // setMessage('')
-                // store success message in cookie to display in reporting page
-                setSuccessMessage('successMessage', 'ok')
-                history.push('/googleads/accounts/campaigns')
+                // store success message in cookie to display in reporting page for 30 seconds
+                // setSuccessMessage('successMessage', 'ok', { maxAge: 30})
+                history.push('/googleads/accounts/campaigns', { from: '/googleads/campaigns/budget'})
                 // setMessageSuccess('campaign created! REDIRECT USER')
             }
         })
