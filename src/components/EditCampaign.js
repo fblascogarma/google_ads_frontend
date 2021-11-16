@@ -20,18 +20,40 @@ const EditCampaign = () => {
     const [campaignId, setCampaignId, removeCampaignID] = useCookies(['campaign_id'])
 
 
-    // to filter the table
-    const [status, setStatus] = useState("All but removed")
+    // to capture the status the user wants for the campaign
+    const [status, setStatus] = useState()
 
-    // to filter the query to be sent to the api
-    const [date, setDate] = useState("ALL_TIME")
+    // to store the campaign name if user changes it
+    const [campaignName, setCampaignName] = useState("")
+
+    // store headlines of the ad
+    const [headlineOne, setHeadlineOne] = useState("")
+    const [headlineTwo, setHeadlineTwo] = useState("")
+    const [headlineThree, setHeadlineThree] = useState("")
+
+    // count characters of the headlines
+    const [headlineOneCharacters, setHeadlineOneCharacters] = useState(0)
+    const [headlineTwoCharacters, setHeadlineTwoCharacters] = useState(0)
+    const [headlineThreeCharacters, setHeadlineThreeCharacters] = useState(0)
+
+    // store descriptions of the ad
+    const [descOne, setDescOne] = useState("")
+    const [descTwo, setDescTwo] = useState("")
+
+    // count characters of the descriptions
+    const [descOneCharacters, setDescOneCharacters] = useState(0)
+    const [descTwoCharacters, setDescTwoCharacters] = useState(0)
 
     // messages to inform users
     const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
     const [messageWarning, setMessageWarning] = useState('')
     const [messageSuccess, setMessageSuccess] = useState('')
 
-
+    // store the keyword themes suggestions that the user selects
+    const [selectedKeywordThemes, setSelectedKeywordThemes] = useState([])
+    
+    // capture the keyword themes suggestions sent by Google's API
+    const [keywordSuggestions, setKeywordSuggestions] = useState([])
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
     useEffect(() => {
@@ -41,23 +63,23 @@ const EditCampaign = () => {
         }
     }, [token])
 
-    // if there is a customer_id in the cookies
-    // send it to the backend with the refreshToken
-    // where they will be used to get the campaigns info associated with that customer_id and token
+    // if there is a campaign_id in the cookies
+    // send it to the backend with the refreshToken and customer_id
+    // where they will be used to get the campaigns settings associated with that campaign_id
     useEffect(() => {
-        if(customerId) {
+        if(campaignId) {
 
             // tell user you are fetching their data
-            setMessage(' Fetching your data... It will take a few seconds.');
+            setMessage(' Fetching your data... It can take a few seconds.');
             
             // data to send to the backend
             const data = { 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
-                'date_range': date
+                'campaign_id': campaignId['campaignID']
             }
 
-            fetch('http://127.0.0.1:8000/api/get-campaigns/', {
+            fetch('http://127.0.0.1:8000/api/get-campaign-settings/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,13 +91,13 @@ const EditCampaign = () => {
             .then(resp => resp.json())
             .then(resp => {
                 if (resp !== null) {
-                    // console.log(resp);
+                    console.log(resp);
                     setCampaignInfo(resp);
                     setMessage('')
                 } else if (resp === null) {
-                    // console.log(resp);
+                    console.log(resp);
                     setMessage('');
-                    setMessageWarning('You do not have campaigns. Create a campaign that can start showing ads within one day.')
+                    setMessageWarning('Error when trying to get your campaign settings')
 
                 }
             })
@@ -83,7 +105,7 @@ const EditCampaign = () => {
            
             
         }
-    }, [customerId, refreshToken, token, date])
+    }, [campaignId, customerId, refreshToken, token])
 
     // if campaignInfo object has data, delete the 'fetching data' message
     useEffect(() => {
@@ -93,18 +115,190 @@ const EditCampaign = () => {
     }, [campaignInfo])
 
 
-    // filter campaigns by status
+    // change state that holds the status of campaign
     const onChangeStatus = (e) => {
         setStatus(e.target.value)
+    }
+
+    // change state of the campaign
+    useEffect(() => {
+        if (status === 'Active') {
+            // tell user you are changing the status of the campaign
+            setMessage(' Activating campaign... It can take a few seconds.');
+                        
+            // data to send to the backend
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
+                'campaign_id': campaignId['campaignID']
+            }
+
+            fetch('http://127.0.0.1:8000/api/sc-settings/enable/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                if (resp !== null) {
+                    console.log(resp);
+                    setMessage('')
+                } else if (resp === null) {
+                    console.log(resp);
+                    setMessage('');
+                    setMessageWarning('Error when trying to change status')
+
+                }
+            })
+            .catch(error => console.log(error))
+
+        }
+
+        else if (status === 'Paused') {
+            // tell user you are changing the status of the campaign
+            setMessage(' Pausing campaign... It can take a few seconds.');
+                        
+            // data to send to the backend
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
+                'campaign_id': campaignId['campaignID']
+            }
+
+            fetch('http://127.0.0.1:8000/api/sc-settings/pause/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                if (resp !== null) {
+                    console.log(resp);
+                    setMessage('')
+                } else if (resp === null) {
+                    console.log(resp);
+                    setMessage('');
+                    setMessageWarning('Error when trying to change status')
+
+                }
+            })
+            .catch(error => console.log(error))
+
+        }
+
+        else if (status === 'Deleted') {
+            // tell user you are changing the status of the campaign
+            setMessage(' Deleting campaign... It can take a few seconds.');
+                        
+            // data to send to the backend
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
+                'campaign_id': campaignId['campaignID']
+            }
+
+            fetch('http://127.0.0.1:8000/api/sc-settings/delete/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                if (resp !== null) {
+                    console.log(resp);
+                    setMessage('')
+                } else if (resp === null) {
+                    console.log(resp);
+                    setMessage('');
+                    setMessageWarning('Error when trying to change status')
+
+                }
+            })
+            .catch(error => console.log(error))
+
+        }
+    }, [campaignId, customerId, refreshToken, status, token])
+
+    // set campaign name
+    const onChangeCampaignName = (e) => {
+        setCampaignName(e.target.value)
+    }
+
+    // set headline 1
+    const onChangeHeadlineOne = (e) => {
+        
+        setHeadlineOne(e.target.value); 
+        setHeadlineOneCharacters(e.target.value.length)}
+
+    // set headline 2
+    const onChangeHeadlineTwo = (e) => {
+        
+        setHeadlineTwo(e.target.value);
+        setHeadlineTwoCharacters(e.target.value.length)}
+
+    // set headline 3
+    const onChangeHeadlineThree = (e) => {
+        
+        setHeadlineThree(e.target.value);
+        setHeadlineThreeCharacters(e.target.value.length)}
+
+    // set description 1
+    const onChangeDescOne = (e) => {
+        
+        setDescOne(e.target.value); 
+        setDescOneCharacters(e.target.value.length)}
+    
+    // set description 2
+    const onChangeDescTwo = (e) => {
+        
+        setDescTwo(e.target.value);
+        setDescTwoCharacters(e.target.value.length)}
+
+    // object to store the locations selected by users
+    const [location_targeting, setLocation_targeting] = useState([])
+
+    // remove location from selected object
+    const removeLocation = (e) => {
+        const itemToRemove = e.currentTarget.value
+        const newArray = location_targeting.filter(el => el !== itemToRemove)
+        setLocation_targeting(newArray)
+    }
+
+    // object to manage location input
+    const [location_input, setLocation_input] = useState('')
+
+    // set location in location_input state
+    const onChangeLocation = (e) => {
+        setLocation_input(e.target.value);
+    }
+
+    // add location
+    const addLocation = (e) => {
 
     }
 
-    // filter campaigns by date
-    const onChangeDate = (e) => {
-        setDate(e.target.value);
-        setCampaignInfo([])
-
+    // remove the keyword themes from the selection
+    const removeSelectedKeyTheme = (e) => {
+        // remove it from the selected array
+        const itemToRemove = e.currentTarget.value
+        const newArray = selectedKeywordThemes.filter(el => el !== itemToRemove)
+        setSelectedKeywordThemes(newArray)
+        // add it again to the suggestion array
+        setKeywordSuggestions([...keywordSuggestions, itemToRemove])
     }
+
 
     // redirect to step 1 of campaign creation 
     // when user clicks on 'Create campaign' button
@@ -129,20 +323,6 @@ const EditCampaign = () => {
 
     }
 
-    // if there is a successMessage in the cookies for creating a campaign
-    // show it to the user
-    // useEffect(() => {
-    //     if (successMessage['successMessage']) {
-    //         setMessageSuccess('The ad was successfully created! Google is reviewing your ad. Generally, it takes one business day, and you will know when you see the status of your campaign as Active.')
-    //     }
-    // }, [successMessage])
-
-    // useEffect(() => {
-    //     if (history.location.state.from === '/googleads/campaigns/budget') {
-    //         setMessageSuccess('The ad was successfully created! Google is reviewing your ad. Generally, it takes one business day, and you will know when you see the status of your campaign as Active.')
-    //     }
-    // }, [history])
-
 
     return (
         
@@ -161,11 +341,183 @@ const EditCampaign = () => {
         </button>
         <br/>
         <br/>
+        {message ? <Message msg={message} /> : null}
+        {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+        {messageSuccess ? <MessageSuccess msg={messageSuccess} /> : null}
+        <br/>
+        <br/>
         
-        <p>Select what you want to edit.
-        </p>
-        
-        
+        {/* here starts the info about the campaign settings */}
+        {campaignInfo.map(item => {
+            return(
+                <div className="container" key={item.ad_id}>
+                    {/* card with campaign name, status, budget, and metrics starts here */}
+                    <div className="card">
+                        <div className="card-body">
+                            <h5 className="card-title" font="gotham-rounded-bold" 
+                            style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
+                                {item.campaign_name}
+                                <i className="fas fa-pencil-alt fa-fw fa-xs"
+                                style={{marginLeft: '5px', color:'black'}}></i>
+                            </h5>
+                            <br/>
+                            <div className="row">
+                                <div className="col-sm-1">
+                                    <label>
+                                        Status: 
+                                    </label>
+                                </div>
+                                <div className="col-sm-2">
+                                    <div className="btn-group" >
+                                        <select className="form-select form-select-sm" 
+                                        onChange={onChangeStatus} value={status ? status : item.status} 
+                                        aria-label="Change the status of the campaign"
+                                        style={{color: item.status === "Active" && 'white', 
+                                        backgroundColor: item.status === "Active" && 'rgb(112, 153, 21)'}}>
+                                            <option value="Active">Active</option>
+                                            <option value="Paused">Paused</option>
+                                            <option value="Deleted">Deleted</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="col-sm-2">
+                                    X impressions
+                                </div>
+                                <div className="col-sm-2">
+                                    Y clicks
+                                </div>
+                                <div className="col-sm-2">
+                                    Z conversions
+                                </div>
+                            </div>
+                            <br/>
+                            <div className="col-sm-4">
+                                Budget: ${item.budget_micros/1000000} per day
+                                <i className="fas fa-pencil-alt fa-fw"
+                                style={{marginLeft: '5px'}}></i>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                    {/* card with campaign name, status, budget, and metrics ends here */}
+                    
+                    {/* card with ad creative starts here */}
+                    <div className="card">
+                        <div className="card-body">
+                            <h5 className="card-title" font="gotham-rounded-bold" 
+                            style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
+                                Ad creative
+                            </h5>
+                            <br/>
+                            <p className="card-text">
+                                <strong>Ad</strong> • {item.final_url}
+                            </p>
+                            <p className="card-text" 
+                            style={{fontSize:'20px', color:'rgb(71,17,209)'}}>
+                                <strong>
+                                    {item.headline_1} | {item.headline_2} | {item.headline_3}
+                                </strong>
+                            </p>
+                            <p className="card-text" style={{fontSize:'16px'}}>
+                            {item.desc_1}. {item.desc_2}.
+                            </p>
+                            <br/>
+                            <button type="button" className="btn btn-outline-primary">
+                                EDIT
+                            </button>
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                    {/* card with ad creative ends here */}
+
+                    <div>
+
+                        {/* keyword themes settings starts */}
+                        <div className="card">
+                            <div className="card-body" font="gotham-rounded-bold">
+                                <h5 className="card-title" font="gotham-rounded-bold" 
+                                style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
+                                    Categories of keywords
+                                </h5>
+                                <p className="card-text">
+                                    Add up to 7 categories of keywords, and don't use 
+                                    punctuation marks, phone numbers, or webpage address (URL).
+                                </p>
+                                <Fragment>
+                                    <label>Selected category keywords:</label>
+                                    <br/>
+                                    {item.keyword_themes.length === 7 ? 
+                                    <small className= "form-text text-success">7 categories selected. 
+                                    If you want to add more, create a new campaign or delete selected ones.</small> :
+                                    <small className="form-text text-muted">
+                                        You can select {7 - item.keyword_themes.length} more.
+                                    </small>}
+                                </Fragment>
+                                <div className="row">
+                                    {item.keyword_themes.map(item => {
+                                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                        <button type="button" className="btn btn-outline-secondary btn-sm" 
+                                        style={{whiteSpace: 'nowrap'}} 
+                                        value={item} 
+                                        key={item}>
+                                            
+                                            {item}
+                                        </button>
+                                    </div>
+                                    })}
+                                </div>
+                                <br/>
+                                <br/>
+                                <button type="button" className="btn btn-outline-primary">
+                                    EDIT
+                                </button>
+                            </div>
+                        </div>
+                        <br/>
+                        <br/>
+
+                        {/* keyword themes settings ends */}
+
+                        {/* geo targeting location setting starts */}
+                        <div className="card" font="gotham-rounded-bold">
+                            <div className="card-body">
+                                <h5 className="card-title" 
+                                style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
+                                    Target locations
+                                </h5>
+                                <p className="card-text">
+                                    Your ads show to people physically or regularly in the locations you select, 
+                                    and to people who express interest in these locations.
+                                </p>
+                                <label>Selected locations:</label>
+                                <br/>
+                                <div className="row">
+                                    {item.geo_targets.map(item => {
+                                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                        <button type="button" className="btn btn-outline-secondary btn-sm" 
+                                        style={{whiteSpace: 'nowrap'}} 
+                                        value={item} 
+                                        key={item}>
+                                            
+                                            {item}
+                                        </button>
+                                    </div>
+                                    })}
+                                </div>
+                                <br/>
+                                <br/>
+                                <button type="button" className="btn btn-outline-primary">
+                                    EDIT
+                                </button>
+                            </div>
+                        </div>
+                        {/* geo targeting location setting ends */}
+                    </div>
+                </div>
+            )
+        })}
 
         <br/>
         <br/>
@@ -173,179 +525,14 @@ const EditCampaign = () => {
         <div className="container" align="left">
             
                 <div className="col-6">
-                    <button onClick={create} className="btn btn-success">Create campaign</button>
+                    <button onClick={goBack} className="btn btn-outline-primary">BACK</button>
                 </div>
             
         </div>
         <br/>
         <br/>
 
-        {message ? <Message msg={message} /> : null}
-        {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
-        {messageSuccess ? <MessageSuccess msg={messageSuccess} /> : null}
-        <br/>
-        <br/>
-
-        <div className="container">
-            <div className="row">
-                <div className="col-sm">
-                    <p><i className="fas fa-filter"></i>  Filter by campaign status</p>
-            
-                    <div className="btn-group">
-                        
-                        <select className="form-select form-select-sm" onChange={onChangeStatus} value={status} aria-label="Filter table by campaign status">
-                            
-                            <option value="All">All</option>
-                            <option value="All active">All active</option>
-                            <option value="All but removed">All but removed</option>
-                        </select>
-                    </div>
-
-                </div>
-
-                <div className="col-sm" align='right'>
-                    <p><i className="fas fa-filter"></i>  Filter by date</p>
-            
-                    <div className="btn-group" >
-                        
-                    <select className="form-select form-select-sm" onChange={onChangeDate} value={date} aria-label="Filter table by date">
-                            
-                            <option value="TODAY">Today</option>
-                            <option value="YESTERDAY">Yesterday</option>
-                            <option value="THIS_WEEK_SUN_TODAY">This week (Sun - Today)</option>
-                            <option value="LAST_7_DAYS">Last 7 days</option>
-                            <option value="LAST_14_DAYS">Last 14 days</option>
-                            <option value="THIS_MONTH">This month</option>
-                            <option value="LAST_30_DAYS">Last 30 days</option>
-                            <option value="LAST_MONTH">Last month</option>
-                            <option value="ALL_TIME">All time</option>
-                        </select>
-                    </div>
-
-                </div>
-            </div>
-        </div>
         
-
-        <br/>
-        <br/>
-
-        <table className="table table-bordered table-hover table-responsive">
-            <thead className="thead-light" style={{backgroundColor: 'rgb(248,172,6)'}}>
-                <tr key="accounts_table" style={{ textAlign: 'center', verticalAlign: 'top'}}>
-                    
-                    <th key="campaign_name" scope="col" colSpan={2}>Campaign</th>
-                    <th key="budget" scope="col">Budget per day</th>
-                    <th key="status" scope="col">Status</th>
-                    <th key="campaign_type" scope="col">Campaign type</th>
-                    <th key="impressions" scope="col">Impr.</th>
-                    <th key="interactions" scope="col">Interactions</th>
-                    <th key="interaction_rate" scope="col">Interaction rate</th>
-                    <th key="avg_cost" scope="col">Avg. cost</th>
-                    <th key="total_cost" scope="col">Cost</th>
-                    <th key="conversions" scope="col">Conversions</th>
-                    <th key="cost_per_conversion" scope="col">Cost / conv.</th>
-                    <th key="conversion_rate" scope="col">Conv. rate</th>
-                </tr>
-            </thead>
-           
-            <tbody>
-                {campaignInfo.length > 0 && campaignInfo.map(item => {
-                    if (status === "All active") {
-                        return(
-                    
-                            <tr key={item.campaign_id} id={item.campaign_id} value={item.campaign_id} 
-                            onClick={onClick}
-                            style={{ textAlign: 'center', cursor: 'pointer', 
-                            display: item.status === "Active" ? '' : 'none'  }}>
-                                
-                            
-                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
-                                <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
-                                <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
-                                <td> {item.campaign_name}</td>
-                                <td> ${item.campaign_budget}</td>
-                                <td> {item.status}</td>
-                                <td> {item.campaign_type}</td>
-                                <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {item.interaction_rate}%</td>
-                                <td> ${item.cpc}</td>
-                                <td> ${String(item.cost).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {String(item.conv).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> ${item.cost_per_conv}</td>
-                                <td> {item.conv_rate}%</td>
-            
-                                
-                            </tr>
-                            
-                            )
-
-                    } else if (status === "All but removed") {
-                        return(
-                    
-                            <tr key={item.campaign_id} id={item.campaign_id} value={item.campaign_id} 
-                            onClick={onClick}
-                            style={{ textAlign: 'center', cursor: 'pointer', 
-                            display: item.status === "Active" || item.status === "Paused" ? '' : 'none'  }}>
-                                
-                            
-                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
-                                <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
-                                <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
-                                <td> {item.campaign_name}</td>
-                                <td> ${item.campaign_budget}</td>
-                                <td> {item.status}</td>
-                                <td> {item.campaign_type}</td>
-                                <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {item.interaction_rate}%</td>
-                                <td> ${item.cpc}</td>
-                                <td> ${String(item.cost).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {String(item.conv).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> ${item.cost_per_conv}</td>
-                                <td> {item.conv_rate}%</td>
-            
-                                
-                            </tr>
-
-                            
-                            
-                            )
-                    } else {
-                        return(
-                    
-                            <tr key={item.campaign_id} id={item.campaign_id} value={item.campaign_id} 
-                            onClick={onClick}
-                            style={{ textAlign: 'center', cursor: 'pointer'}}>
-                                
-                            
-                                <td> <i className="fas fa-circle" style={{ color: 'green', display: item.status==="Active" ? '' : 'none'}}></i>
-                                <i className="fas fa-pause-circle" style={{ color: '', display: item.status==="Paused" ? '' : 'none'}}></i>
-                                <i className="fas fa-times-circle" style={{ color: 'red', display: item.status==="Removed" ? '' : 'none'}}></i></td>
-                                <td> {item.campaign_name}</td>
-                                <td> ${item.campaign_budget}</td>
-                                <td> {item.status}</td>
-                                <td> {item.campaign_type}</td>
-                                <td> {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {item.interaction_rate}%</td>
-                                <td> ${item.cpc}</td>
-                                <td> ${String(item.cost).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> {String(item.conv).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
-                                <td> ${item.cost_per_conv}</td>
-                                <td> {item.conv_rate}%</td>
-            
-                                
-                            </tr>
-                            
-                            )
-                    }
-                
-                })}
-
-            </tbody>
-        </table>
 
         <br/>
         
