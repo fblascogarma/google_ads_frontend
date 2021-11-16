@@ -55,7 +55,7 @@ const Campaigns = () => {
         if(customerId) {
 
             // tell user you are fetching their data
-            setMessage(' Fetching your data... It will take a few seconds.');
+            setMessage(' Fetching your data... It can take a few seconds.');
             
             // data to send to the backend
             const data = { 

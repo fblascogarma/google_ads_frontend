@@ -35,7 +35,7 @@ const AccessibleCustomers = () => {
         if(refreshToken) {
 
             // tell user you are fetching their data
-            setMessage(' Fetching your data... It will take a few seconds.');
+            setMessage(' Fetching your data... It can take a few seconds.');
             
             // data to send to the backend
             const data = { 'mytoken': token['mytoken'], 'refreshToken': refreshToken['refreshToken']}

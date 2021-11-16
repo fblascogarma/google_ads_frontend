@@ -231,9 +231,54 @@ const EditCampaign = () => {
         }
     }, [campaignId, customerId, refreshToken, status, token])
 
+    // when user clicks on pencil icon to edit campaign name
+    // change the h5 tag to a input button to capture name changes
+    const [showEditName, setShowEditName] = useState(false)
+    const enableNameChange = () => setShowEditName(showEditName ? false : true)
+    
     // set campaign name
     const onChangeCampaignName = (e) => {
         setCampaignName(e.target.value)
+    }
+
+    // send new campaign name to backend and to Google's API
+    const onClickSendNewName = () => {
+        // show again the h5 tag
+        setShowEditName(false)
+        // tell user you are changing the name of the campaign
+        setMessage(' Changing campaign name... It can take a few seconds.');
+                        
+        // data to send to the backend
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'campaign_name': campaignName
+        }
+
+        fetch('http://127.0.0.1:8000/api/sc-settings/edit-name/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            if (resp !== null) {
+                console.log(resp);
+                setMessage('')
+            } else if (resp === null) {
+                console.log(resp);
+                setMessage('');
+                setMessageWarning('Error when trying to change name')
+
+            }
+        })
+        .catch(error => console.log(error))
+
     }
 
     // set headline 1
@@ -299,13 +344,6 @@ const EditCampaign = () => {
         setKeywordSuggestions([...keywordSuggestions, itemToRemove])
     }
 
-
-    // redirect to step 1 of campaign creation 
-    // when user clicks on 'Create campaign' button
-    const create = () => {
-        history.push('/googleads/campaigns/create-campaign')
-    }
-
     // go back button
     const goBack = () => {
         
@@ -354,12 +392,48 @@ const EditCampaign = () => {
                     {/* card with campaign name, status, budget, and metrics starts here */}
                     <div className="card">
                         <div className="card-body">
+                            {showEditName ? 
+                            // button to edit campaign name when user clicks on pencil icon
+                            <Fragment>
+                            <div className="row">
+                                <div className="col-sm-9">
+                                    <input type="text" className="form-control" id="enter_campaign_name"
+                                    name="enter_campaign_name" placeholder={item.campaign_name}
+                                    value={campaignName ? campaignName : item.campaign_name}
+                                    onChange={onChangeCampaignName}></input>
+                                </div>
+                                <div className="col-sm-1">
+                                    <button type="button" className="btn btn-primary"
+                                    onClick={onClickSendNewName}>
+                                        SAVE
+                                    </button>
+                                </div>
+                                <div className="col-sm-1">
+                                    <button type="button" className="btn btn-outline-primary"
+                                    onClick={enableNameChange}>
+                                        CANCEL
+                                    </button>
+                                </div>
+
+                            </div>
+                            
+                            </Fragment> :
+                            // campaign name used as title 
                             <h5 className="card-title" font="gotham-rounded-bold" 
+                            style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
+                                {campaignName ? campaignName : item.campaign_name}
+                                <i className="fas fa-pencil-alt fa-fw fa-xs"
+                                style={{marginLeft: '5px', color:'black', cursor: 'pointer'}}
+                                onClick={enableNameChange}></i>
+                            </h5>
+                            }
+                            {/* <h5 className="card-title" font="gotham-rounded-bold" 
                             style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
                                 {item.campaign_name}
                                 <i className="fas fa-pencil-alt fa-fw fa-xs"
-                                style={{marginLeft: '5px', color:'black'}}></i>
-                            </h5>
+                                style={{marginLeft: '5px', color:'black', cursor: 'pointer'}}
+                                onClick={enableNameChange}></i>
+                            </h5> */}
                             <br/>
                             <div className="row">
                                 <div className="col-sm-1">
