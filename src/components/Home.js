@@ -74,7 +74,7 @@ const Home = () => {
         <br/>
         <br/>
         <p className="mb-0" font="gotham-rounded-bold" align="center" style={{color:'black', fontSize:'20px'}}>
-        FranAds is a free app that that will <strong style={{color:'rgb(248,172,6)'}} >help you promote your business </strong>on Google Search, 
+        FranAds is a free app that that will <strong style={{color:'rgb(248,172,6)'}} >help you sell more by promoting your business </strong>on Google Search, 
         Google Maps, YouTube, Gmail, and Google partner websites.
         </p>
 

@@ -112,7 +112,12 @@ const Budget = () => {
             return () => ac.abort();
 
         }
-    }, [geo_location, country_code, landing_page, customerId, keyword_themes, language_code, refreshToken, token])
+    }, [
+        geo_location, country_code, landing_page, 
+        customerId, keyword_themes, language_code, 
+        refreshToken, token
+        ]
+    )
 
     // set selected budget
     useEffect(() => {
@@ -137,7 +142,7 @@ const Budget = () => {
     const createSmartCampaign = () => {
         
         // tell user we are creating the campaign
-        setMessage(' Creating the campaign... It will take a few seconds.')
+        setMessage(' Creating the campaign... It can take a few seconds.')
 
         // data to send to the API
         const data = { 

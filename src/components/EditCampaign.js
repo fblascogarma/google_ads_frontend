@@ -5,6 +5,9 @@ import {useHistory} from 'react-router-dom';
 import Message from './Message';
 import MessageWarning from './MessageWarning';
 import MessageSuccess from './MessageSuccess';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+// import EditBudget from './EditBudget';
 
 
 const EditCampaign = () => {
@@ -45,7 +48,7 @@ const EditCampaign = () => {
     const [descTwoCharacters, setDescTwoCharacters] = useState(0)
 
     // messages to inform users
-    const [message, setMessage] = useState(' Fetching your data... It will take a few seconds.')
+    const [message, setMessage] = useState(' Fetching your data... It can take a few seconds.')
     const [messageWarning, setMessageWarning] = useState('')
     const [messageSuccess, setMessageSuccess] = useState('')
 
@@ -241,6 +244,9 @@ const EditCampaign = () => {
         setCampaignName(e.target.value)
     }
 
+    // store new campaign name returned from API
+    const [newCampaignName, setNewCampaignName] = useState()
+
     // send new campaign name to backend and to Google's API
     const onClickSendNewName = () => {
         // show again the h5 tag
@@ -269,6 +275,7 @@ const EditCampaign = () => {
         .then(resp => {
             if (resp !== null) {
                 console.log(resp);
+                setNewCampaignName(resp);
                 setMessage('')
             } else if (resp === null) {
                 console.log(resp);
@@ -280,6 +287,149 @@ const EditCampaign = () => {
         .catch(error => console.log(error))
 
     }
+    // end of edit campaign name
+
+    // start of edit budget config
+
+    // when user clicks on pencil icon to edit campaign budget
+    // open modal with budget settings
+    const [modalShow, setModalShow] = useState(false)
+
+    // store budget recommendations
+    const [budget_recommendations, setBudget_recommendations] = useState([])
+
+    // store selected budget
+    const [budget, setBudget] = useState("recommended")
+    const [custom_budget, setCustom_budget] = useState("")
+    const [selected_budget, setSelected_budget] = useState()
+
+    // store new budget return from API
+    const [newBudget, setNewBudget] = useState()
+    
+    // set budget in custom_budget state
+    const changeBudget = (e) => {
+        setCustom_budget(e.target.value);
+    }
+    
+    // set budget in budget state
+    const onChangeBudget = (e) => {
+        setBudget(e.target.value);
+    }
+
+    const getBudgetRecomm = () => {
+        // open modal
+        setModalShow(true)
+
+        // tell user you are getting recommendations
+        setMessage(' Fetching recommendations for you... It can take a few seconds.')
+
+        // data to send to the API
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'country_code': campaignInfo[0].country_code, 
+            'language_code': campaignInfo[0].language_code,
+            'geo_target_names': JSON.stringify(campaignInfo[0].geo_targets),
+            'landing_page': campaignInfo[0].final_url,
+            'display_name': JSON.stringify(campaignInfo[0].keyword_themes)
+        }
+        console.log(data)
+        console.log(campaignInfo)
+
+        // create AbortController function to cancel fetch when it ends
+        const ac = new AbortController()
+
+        // get recommendations from api
+        fetch('http://127.0.0.1:8000/api/get-budget-recommendation/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => setBudget_recommendations(resp))
+        .then(resp => {
+            if (resp !== null) {
+                setMessage('')
+            } else {
+                setMessageWarning('There was a problem and we could not get budget recommendations.')
+            }
+
+            })
+        .catch(error => console.log(error));
+
+        return () => ac.abort();
+    }
+
+    // send new budget to backend and to Google's API
+    const onClickEditBudget = () => {
+        // close modal
+        setModalShow(false)
+
+        // tell user you are changing the budget of the campaign
+        setMessage(' Changing campaign budget... It can take a few seconds.');
+                        
+        // data to send to the backend
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'new_budget': selected_budget,
+            'budget_id': campaignInfo[0].budget_id
+        }
+        console.log(data)
+
+        fetch('http://127.0.0.1:8000/api/sc-settings/edit-budget/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            if (resp !== null) {
+                console.log(resp);
+                setNewBudget(resp);
+                setMessage('')
+            } else if (resp === null) {
+                console.log(resp);
+                setMessage('');
+                setMessageWarning('Error when trying to change name')
+
+            }
+        })
+        .catch(error => console.log(error))
+
+    }
+
+    // set selected budget
+    useEffect(() => {
+        if (budget === 'custom') {
+            setSelected_budget(custom_budget*1000000)
+        } else if (budget === 'high') {
+            setSelected_budget(budget_recommendations.high)
+        } else if (budget === 'recommended') {
+            setSelected_budget(budget_recommendations.recommended)
+        } else if (budget === 'low') {
+            setSelected_budget(budget_recommendations.low)
+        }
+
+    }, [
+        selected_budget, 
+        budget, custom_budget, 
+        budget_recommendations.high, 
+        budget_recommendations.low, 
+        budget_recommendations.recommended
+        ]
+    )
+
+    // end of edit budget config
 
     // set headline 1
     const onChangeHeadlineOne = (e) => {
@@ -421,19 +571,12 @@ const EditCampaign = () => {
                             // campaign name used as title 
                             <h5 className="card-title" font="gotham-rounded-bold" 
                             style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-                                {campaignName ? campaignName : item.campaign_name}
+                                {newCampaignName ? newCampaignName[0].new_campaign_name : item.campaign_name}
                                 <i className="fas fa-pencil-alt fa-fw fa-xs"
                                 style={{marginLeft: '5px', color:'black', cursor: 'pointer'}}
                                 onClick={enableNameChange}></i>
                             </h5>
                             }
-                            {/* <h5 className="card-title" font="gotham-rounded-bold" 
-                            style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-                                {item.campaign_name}
-                                <i className="fas fa-pencil-alt fa-fw fa-xs"
-                                style={{marginLeft: '5px', color:'black', cursor: 'pointer'}}
-                                onClick={enableNameChange}></i>
-                            </h5> */}
                             <br/>
                             <div className="row">
                                 <div className="col-sm-1">
@@ -466,10 +609,92 @@ const EditCampaign = () => {
                             </div>
                             <br/>
                             <div className="col-sm-4">
-                                Budget: ${item.budget_micros/1000000} per day
+                                Budget: ${newBudget ? 
+                                newBudget[0].new_budget_micros/1000000 :
+                                item.budget_micros/1000000} per day
                                 <i className="fas fa-pencil-alt fa-fw"
-                                style={{marginLeft: '5px'}}></i>
+                                style={{marginLeft: '5px', cursor: 'pointer'}}
+                                onClick={getBudgetRecomm}></i>
                             </div>
+
+                            {/* start of budget modal */}
+                            
+                            <Modal show={modalShow} size="lg" centered
+                                aria-labelledby="contained-modal-title-vcenter">
+                                <Modal.Header closeButton>
+                                <Modal.Title id="contained-modal-title-vcenter">
+                                    Edit budget ({budget_recommendations.currency})
+                                </Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                {message ? <Message msg={message} /> : null}
+                                {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+                                <p>Current budget: ${campaignInfo[0].budget_micros/1000000} per day</p>
+                                <br/>
+                                <br/>
+                                <div className="list-group" role="group">
+                                    <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+                                    color: (budget === 'high') && 'rgb(30,136,229)'}}>
+                                        <input className="form-check-input me-1" type="radio" value="high" 
+                                        onChange={onChangeBudget} 
+                                        checked={ budget === "high"}/>
+                                        ${budget_recommendations.high/1000000} per day / 
+                                        ${Math.ceil(budget_recommendations.high/1000000*30.4)} max per month  
+                                        | Between {String(Math.round(budget_recommendations.high_min_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} and {String(Math.round(budget_recommendations.high_max_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} potential customers per month
+                                    </label>
+                                    <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+                                    color: (budget === 'recommended') && 'rgb(30,136,229)'}}>
+                                        <input className="form-check-input me-1" type="radio" value="recommended" 
+                                        onChange={onChangeBudget} 
+                                        checked={ budget === "recommended"}/>
+                                        ${budget_recommendations.recommended/1000000} per day / 
+                                        ${Math.ceil(budget_recommendations.recommended/1000000*30.4)} max per month 
+                                        | Between {String(Math.round(budget_recommendations.recommended_min_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} and {String(Math.round(budget_recommendations.recommended_max_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} potential customers per month
+                                    </label>
+                                    <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+                                    color: (budget === 'low') && 'rgb(30,136,229)'}}>
+                                        <input className="form-check-input me-1" type="radio" value="low" 
+                                        onChange={onChangeBudget} 
+                                        checked={ budget === "low"}/>
+                                        ${budget_recommendations.low/1000000} per day / 
+                                        ${Math.ceil(budget_recommendations.low/1000000*30.4)} max per month 
+                                        | Between {String(Math.round(budget_recommendations.low_min_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} and {String(Math.round(budget_recommendations.low_max_clicks*30.4)).replace(/(.)(?=(\d{3})+$)/g,'$1,')} potential customers per month
+                                    </label>
+                                    <small className= "form-text text-muted">
+                                        Every click to your ad is considered a potential customer.
+                                    </small>
+                                    <br/>
+                                    <br/>
+                                    <label className="list-group-item list-group-item-action" style={{ cursor: 'pointer', 
+                                    color: (budget === 'custom') && 'rgb(30,136,229)'}}>
+                                        <input className="form-check-input me-1" type="radio" value="custom" 
+                                        onChange={onChangeBudget} 
+                                        checked={ budget === "custom"}/>
+                                        Enter other budget
+                                    </label>
+                                    {budget === "custom" && 
+                                    <Fragment>
+                                        <br/>
+                                        <label>Budget per day in {budget_recommendations.currency}</label>
+                                        <br/>
+                                        <div className="row">
+                                            <div className="col-sm-2" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                                <input type="number" className="form-control" id="custom_budget" name="custom_budget"
+                                                onChange={changeBudget} />
+                                            </div>
+                                            <div className="col-sm-4" style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
+                                                {custom_budget && <label>${Math.ceil(custom_budget*30.4)} max per month</label>}
+                                            </div>
+                                        </div>
+                                    </Fragment>}
+                                </div>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={() => setModalShow(false)}>CLOSE</Button>
+                                <Button variant="primary" onClick={onClickEditBudget}>SAVE</Button>
+                                </Modal.Footer>
+                            </Modal>
+                            {/* end of budget modal */}
                         </div>
                     </div>
                     <br/>
