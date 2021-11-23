@@ -608,13 +608,16 @@ const EditCampaign = () => {
                                     </div>
                                 </div>
                                 <div className="col-sm-2">
-                                    X impressions
+                                    {String(item.impressions).replace(/(.)(?=(\d{3})+$)/g,'$1,')} impressions
                                 </div>
                                 <div className="col-sm-2">
-                                    Y clicks
+                                    {String(item.interactions).replace(/(.)(?=(\d{3})+$)/g,'$1,')} clicks
                                 </div>
                                 <div className="col-sm-2">
-                                    Z conversions
+                                    {String(item.conv).replace(/(.)(?=(\d{3})+$)/g,'$1,')} conversions
+                                </div>
+                                <div className="col-sm-2">
+                                    ${String(item.conv_value).replace(/(.)(?=(\d{3})+$)/g,'$1,')} conversions
                                 </div>
                             </div>
                             <br/>
@@ -732,7 +735,7 @@ const EditCampaign = () => {
                                 </strong>
                             </p>
                             <p className="card-text" style={{fontSize:'16px'}}>
-                            {item.desc_1}. {item.desc_2}.
+                            {item.desc_1} {item.desc_2}
                             </p>
                             <br/>
                             <button type="button" className="btn btn-outline-primary">

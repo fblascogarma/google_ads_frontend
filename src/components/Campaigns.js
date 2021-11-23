@@ -233,13 +233,13 @@ const Campaigns = () => {
         <Fragment>
             <p>See how your campaigns are performing. 
             You can filter by campaign status and dates. 
-            Click a campaign if you want to edit it or see the current settings.
+            Click a campaign if you want to make changes or see the current settings.
             </p>
         </Fragment> : 
         // if user has zero campaigns yet, show this message
         <Fragment>
             <p>Oh! It seems you do not have ads running on Google yet. 
-                Create a campaign to achieve your business goals.
+                Create a campaign to start selling more!
             </p>
         </Fragment>}
         
