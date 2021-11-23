@@ -5,6 +5,7 @@ import {useHistory} from 'react-router-dom';
 import Message from './Message';
 import MessageWarning from './MessageWarning';
 import MessageSuccess from './MessageSuccess';
+import MessageError from './MessageErrorNoClose';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 // import EditBudget from './EditBudget';
@@ -51,6 +52,7 @@ const EditCampaign = () => {
     const [message, setMessage] = useState(' Fetching your data... It can take a few seconds.')
     const [messageWarning, setMessageWarning] = useState('')
     const [messageSuccess, setMessageSuccess] = useState('')
+    const [messageError, setMessageError] = useState('')
 
     // store the keyword themes suggestions that the user selects
     const [selectedKeywordThemes, setSelectedKeywordThemes] = useState([])
@@ -366,46 +368,54 @@ const EditCampaign = () => {
 
     // send new budget to backend and to Google's API
     const onClickEditBudget = () => {
-        // close modal
-        setModalShow(false)
+        if (selected_budget> 0) {
+            // close modal
+            setModalShow(false)
 
-        // tell user you are changing the budget of the campaign
-        setMessage(' Changing campaign budget... It can take a few seconds.');
-                        
-        // data to send to the backend
-        const data = { 
-            'refreshToken': refreshToken['refreshToken'], 
-            'customer_id': customerId['customerID'], 
-            'campaign_id': campaignId['campaignID'],
-            'new_budget': selected_budget,
-            'budget_id': campaignInfo[0].budget_id
-        }
-        console.log(data)
-
-        fetch('http://127.0.0.1:8000/api/sc-settings/edit-budget/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token['mytoken']}`
-            },
-            body: JSON.stringify(data),
-            
-        })
-        .then(resp => resp.json())
-        .then(resp => {
-            if (resp !== null) {
-                console.log(resp);
-                setNewBudget(resp);
-                setMessage('')
-            } else if (resp === null) {
-                console.log(resp);
-                setMessage('');
-                setMessageWarning('Error when trying to change name')
-
+            // tell user you are changing the budget of the campaign
+            setMessage(' Changing campaign budget... It can take a few seconds.');
+            setMessageError('')
+                            
+            // data to send to the backend
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
+                'campaign_id': campaignId['campaignID'],
+                'new_budget': selected_budget,
+                'budget_id': campaignInfo[0].budget_id
             }
-        })
-        .catch(error => console.log(error))
+            console.log(data)
 
+            fetch('http://127.0.0.1:8000/api/sc-settings/edit-budget/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                if (resp !== null) {
+                    console.log(resp);
+                    setNewBudget(resp);
+                    setMessage('')
+                } else if (resp === null) {
+                    console.log(resp);
+                    setMessage('');
+                    setMessageWarning('Error when trying to change name')
+
+                }
+            })
+            .catch(error => console.log(error))
+
+        }
+
+        else if (selected_budget < 0 || selected_budget === 0) {
+            setMessageError('Provide a valid budget. More than $0.')
+        }
+        
     }
 
     // set selected budget
@@ -621,7 +631,7 @@ const EditCampaign = () => {
                             
                             <Modal show={modalShow} size="lg" centered
                                 aria-labelledby="contained-modal-title-vcenter">
-                                <Modal.Header closeButton>
+                                <Modal.Header closeButton onClick={() => setModalShow(false)}>
                                 <Modal.Title id="contained-modal-title-vcenter">
                                     Edit budget ({budget_recommendations.currency})
                                 </Modal.Title>
@@ -629,7 +639,9 @@ const EditCampaign = () => {
                                 <Modal.Body>
                                 {message ? <Message msg={message} /> : null}
                                 {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
-                                <p>Current budget: ${campaignInfo[0].budget_micros/1000000} per day</p>
+                                <p>Current budget: ${newBudget ? 
+                                newBudget[0].new_campaign_budget/1000000 : 
+                                campaignInfo[0].budget_micros/1000000} per day</p>
                                 <br/>
                                 <br/>
                                 <div className="list-group" role="group">
@@ -677,10 +689,11 @@ const EditCampaign = () => {
                                         <br/>
                                         <label>Budget per day in {budget_recommendations.currency}</label>
                                         <br/>
+                                        {messageError && <MessageError msg={messageError} />}
                                         <div className="row">
                                             <div className="col-sm-2" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                                                 <input type="number" className="form-control" id="custom_budget" name="custom_budget"
-                                                onChange={changeBudget} />
+                                                min="0" onChange={changeBudget} />
                                             </div>
                                             <div className="col-sm-4" style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
                                                 {custom_budget && <label>${Math.ceil(custom_budget*30.4)} max per month</label>}
