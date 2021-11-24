@@ -494,6 +494,105 @@ const EditCampaign = () => {
 
     }
 
+    // info for search terms report modal start here
+
+    // to filter the query to be sent to the api
+    const [date, setDate] = useState("ALL_TIME")
+
+    // store search terms performance info from api
+    const [searchTerms, setSearchTerms] = useState([])
+
+    // filter search terms report by date
+    const onChangeDate = (e) => {
+        setDate(e.target.value);
+        setSearchTerms([])
+
+    }
+
+    // messages to inform users
+    const [messageSearchTerms, setMessageSearchTerms] = useState(' Fetching your data... It can take a few seconds.')
+
+    // when user clicks on search terms report button
+    // open modal with search terms report
+    const [modalSearchTermShow, setModalSearchTermShow] = useState(false)
+
+    const getSearchTermsReport = () => {
+        // open modal
+        setModalSearchTermShow(true)
+
+        // tell user you are getting info
+        setMessageSearchTerms(' Fetching information on search terms... It can take a few seconds.')
+
+        // data to send to the API
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'date_range': date
+        }
+        console.log(data)
+
+        // get search terms report from api
+        fetch('http://127.0.0.1:8000/api/get-search-terms-report/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => setSearchTerms(resp))
+        .then(resp => {
+            if (resp !== null) {
+                setMessageSearchTerms('')
+            } else {
+                setMessageWarning('There was a problem and we could not get budget recommendations.')
+            }
+
+            })
+        .catch(error => console.log(error));
+    }
+
+    // fetch data to API when user selects a new date to filter the info
+    useEffect(() => {
+        // tell user you are getting info
+        setMessageSearchTerms(' Fetching information on search terms... It can take a few seconds.')
+
+        // data to send to the API
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'date_range': date
+        }
+        console.log(data)
+
+        // get search terms report from api
+        fetch('http://127.0.0.1:8000/api/get-search-terms-report/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => setSearchTerms(resp))
+        .then(resp => {
+            if (resp !== null) {
+                setMessageSearchTerms('')
+            } else {
+                setMessageWarning('There was a problem and we could not get budget recommendations.')
+            }
+
+            })
+        .catch(error => console.log(error));
+
+    }, [date, campaignId, customerId, refreshToken, token])
+
     // remove the keyword themes from the selection
     const removeSelectedKeyTheme = (e) => {
         // remove it from the selected array
@@ -509,16 +608,6 @@ const EditCampaign = () => {
         
         history.push('/googleads/accounts/campaigns')
         
-    }
-
-    // when user clicks on a row, the campaign_id will be saved as a cookie
-    // so we show the details of that campaign in the next page
-    // also, it will be used to update the campaign
-    const onClick = e => {
-        const campaignID = e.currentTarget.id
-        setCampaignId("campaignID", campaignID);
-        history.push('/googleads/accounts/campaigns');
-
     }
 
 
@@ -749,86 +838,159 @@ const EditCampaign = () => {
 
                     <div>
 
-                        {/* keyword themes settings starts */}
-                        <div className="card">
-                            <div className="card-body" font="gotham-rounded-bold">
-                                <h5 className="card-title" font="gotham-rounded-bold" 
-                                style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-                                    Categories of keywords
-                                </h5>
-                                <p className="card-text">
-                                    Add up to 7 categories of keywords, and don't use 
-                                    punctuation marks, phone numbers, or webpage address (URL).
-                                </p>
-                                <Fragment>
-                                    <label>Selected category keywords:</label>
-                                    <br/>
-                                    {item.keyword_themes.length === 7 ? 
-                                    <small className= "form-text text-success">7 categories selected. 
-                                    If you want to add more, create a new campaign or delete selected ones.</small> :
-                                    <small className="form-text text-muted">
-                                        You can select {7 - item.keyword_themes.length} more.
-                                    </small>}
-                                </Fragment>
-                                <div className="row">
-                                    {item.keyword_themes.map(item => {
-                                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
-                                        <button type="button" className="btn btn-outline-secondary btn-sm" 
-                                        style={{whiteSpace: 'nowrap'}} 
-                                        value={item} 
-                                        key={item}>
+                    {/* keyword themes settings starts */}
+                    <div className="card">
+                        <div className="card-body" font="gotham-rounded-bold">
+                            <h5 className="card-title" font="gotham-rounded-bold" 
+                            style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
+                                Categories of keywords
+                            </h5>
+                            <p className="card-text">
+                                Add up to 7 categories of keywords, and don't use 
+                                punctuation marks, phone numbers, or webpage address (URL).
+                            </p>
+                            <Fragment>
+                                <label>Selected category keywords:</label>
+                                <br/>
+                                {item.keyword_themes.length === 7 ? 
+                                <small className= "form-text text-success">7 categories selected. 
+                                If you want to add more, create a new campaign or delete selected ones.</small> :
+                                <small className="form-text text-muted">
+                                    You can select {7 - item.keyword_themes.length} more.
+                                </small>}
+                            </Fragment>
+                            <div className="row">
+                                {item.keyword_themes.map(item => {
+                                    return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                    <button type="button" className="btn btn-outline-secondary btn-sm" 
+                                    style={{whiteSpace: 'nowrap'}} 
+                                    value={item} 
+                                    key={item}>
+                                        
+                                        {item}
+                                    </button>
+                                </div>
+                                })}
+                            </div>
+                            <br/>
+                            <br/>
+                            {/* start of search terms modal */}
+                            <Modal show={modalSearchTermShow} size="lg" centered
+                                aria-labelledby="contained-modal-title-vcenter">
+                                <Modal.Header closeButton onClick={() => setModalSearchTermShow(false)}>
+                                <Modal.Title id="contained-modal-title-vcenter">
+                                    Search terms report
+                                </Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                {messageSearchTerms ? <Message msg={messageSearchTerms} /> : null}
+                                {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+                                <p>Here's what people searched for before seeing and clicking your ads.</p>
+                                {/* filter by date starts */}
+                                <div className="col-sm" align='left'>
+                                    <p><i className="fas fa-filter"></i>  Filter by date</p>
+                            
+                                    <div className="btn-group" >
+                                        
+                                    <select className="form-select form-select-sm" onChange={onChangeDate} value={date} aria-label="Filter table by date">
                                             
-                                            {item}
-                                        </button>
+                                            <option value="TODAY">Today</option>
+                                            <option value="YESTERDAY">Yesterday</option>
+                                            <option value="THIS_WEEK_SUN_TODAY">This week (Sun - Today)</option>
+                                            <option value="LAST_7_DAYS">Last 7 days</option>
+                                            <option value="LAST_14_DAYS">Last 14 days</option>
+                                            <option value="THIS_MONTH">This month</option>
+                                            <option value="LAST_30_DAYS">Last 30 days</option>
+                                            <option value="LAST_MONTH">Last month</option>
+                                            <option value="ALL_TIME">All time</option>
+                                        </select>
                                     </div>
-                                    })}
                                 </div>
                                 <br/>
                                 <br/>
+                                {/* filter by date starts */}
+
+                                {/* search terms table starts */}
+                                <table className="table table-bordered table-hover table-responsive">
+                                    <thead className="thead-light" style={{backgroundColor: 'rgb(248,172,6)'}}>
+                                    <tr key="search_terms_table" style={{ textAlign: 'center', verticalAlign: 'top'}}>
+                                        <th key="search_terms" scope="col">Search terms</th>
+                                        <th key="clicks" scope="col">Clicks</th>
+                                        <th key="cost" scope="col">Spend</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {searchTerms.map(item => {
+                                            return <tr key={item.search_term} id={item.search_term} value={item.search_term} 
+                                            style={{ textAlign: 'center'}}>
+                                                <td> {item.search_term}</td>
+                                                <td> {String(item.search_term_clicks).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                                <td> ${String(item.search_term_cost).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+                                            </tr>
+                                        })}  
+                                    </tbody>        
+                                </table>
+                                {/* search terms table ends */}
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={() => setModalSearchTermShow(false)}>CLOSE</Button>
+                                </Modal.Footer>
+                            </Modal>
+                            {/* end of search terms modal */}
+                            <div className="row">
+                                <div className="col-sm-2">
                                 <button type="button" className="btn btn-outline-primary">
                                     EDIT
                                 </button>
-                            </div>
-                        </div>
-                        <br/>
-                        <br/>
-
-                        {/* keyword themes settings ends */}
-
-                        {/* geo targeting location setting starts */}
-                        <div className="card" font="gotham-rounded-bold">
-                            <div className="card-body">
-                                <h5 className="card-title" 
-                                style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-                                    Target locations
-                                </h5>
-                                <p className="card-text">
-                                    Your ads show to people physically or regularly in the locations you select, 
-                                    and to people who express interest in these locations.
-                                </p>
-                                <label>Selected locations:</label>
-                                <br/>
-                                <div className="row">
-                                    {item.geo_targets.map(item => {
-                                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
-                                        <button type="button" className="btn btn-outline-secondary btn-sm" 
-                                        style={{whiteSpace: 'nowrap'}} 
-                                        value={item} 
-                                        key={item}>
-                                            
-                                            {item}
-                                        </button>
-                                    </div>
-                                    })}
                                 </div>
-                                <br/>
-                                <br/>
-                                <button type="button" className="btn btn-outline-primary">
-                                    EDIT
-                                </button>
+                                <div className="col-sm-4">
+                                <button type="button" className="btn btn-primary" 
+                                onClick={getSearchTermsReport}>
+                                    SEARCH TERMS REPORT
+                                </button> 
+                                </div>
                             </div>
                         </div>
-                        {/* geo targeting location setting ends */}
+                    </div>
+                    <br/>
+                    <br/>
+
+                    {/* keyword themes settings ends */}
+
+                    {/* geo targeting location setting starts */}
+                    <div className="card" font="gotham-rounded-bold">
+                        <div className="card-body">
+                            <h5 className="card-title" 
+                            style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
+                                Target locations
+                            </h5>
+                            <p className="card-text">
+                                Your ads show to people physically or regularly in the locations you select, 
+                                and to people who express interest in these locations.
+                            </p>
+                            <label>Selected locations:</label>
+                            <br/>
+                            <div className="row">
+                                {item.geo_targets.map(item => {
+                                    return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                    <button type="button" className="btn btn-outline-secondary btn-sm" 
+                                    style={{whiteSpace: 'nowrap'}} 
+                                    value={item} 
+                                    key={item}>
+                                        
+                                        {item}
+                                    </button>
+                                </div>
+                                })}
+                            </div>
+                            <br/>
+                            <br/>
+                            <button type="button" className="btn btn-outline-primary">
+                                EDIT
+                            </button>
+                        </div>
+                    </div>
+                    {/* geo targeting location setting ends */}
                     </div>
                 </div>
             )
