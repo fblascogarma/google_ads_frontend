@@ -18,6 +18,7 @@ const KeywordThemes = () => {
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
     const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
+    const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
 
     // alert messages to give feedback to users
     const [message, setMessage] = useState('')
@@ -106,6 +107,7 @@ const KeywordThemes = () => {
     'customer_id': customerId['customerID'],
     'final_url': landing_page['landing_page'],
     'business_name': business_name['business_name'],
+    'geo_target_names': JSON.stringify(geo_location['geo_location']),
     }
     
     
@@ -206,33 +208,23 @@ const KeywordThemes = () => {
         }
     }, [keyword_themes])
 
-    // redirect to step 4 of campaign creation
+    // redirect to step 5 of campaign creation
     // when user clicks on 'Next' button
-    const goStep4 = () => {
+    const goStep5 = () => {
         if (selectedKeywordThemes.length > 0) {
             // save the selected keyword themes as cookies
             setKeyword_themes("keyword_themes", selectedKeywordThemes, { encode: String})
 
             // and send user to the next step
-            history.push('/googleads/campaigns/location')
+            history.push('/googleads/campaigns/budget')
 
             } else (setMessageWarning3('Please select at least one category of keywords to go to the next setp.'))
         }
 
     // redirect to user to previous or next step,
     // also used for progression tracker
-    const goStep2 = () => {
-        history.push('/googleads/write-smart-ad')}
-
-    // const goStep1 = () => {
-    //     history.push('/googleads/campaigns/create-campaign')}
-
-    // const goStep3 = () => {
-    //     history.push('/googleads/campaigns/keyword-themes')
-    // }
-
-    // const goStep5 = () => {
-    //     history.push('/googleads/campaigns/create-campaign')}
+    const goStep3 = () => {
+        history.push('/googleads/campaigns/location')}
 
 
     return (
@@ -247,13 +239,13 @@ const KeywordThemes = () => {
 
         <br/>
 
-        <ProgressionTracker step="step3" />
+        <ProgressionTracker step="step4" />
         
         <br/>
         <br/>
 
         <button type="button" className="btn btn-link" name="go back" 
-        onClick={goStep2} 
+        onClick={goStep3} 
         style={{ color: 'black' }}>
             <i className="fas fa-arrow-left fa-2x"></i>
         </button>
@@ -262,7 +254,7 @@ const KeywordThemes = () => {
 
         <h6 className="display-4 text-left mb-4" font="gotham-rounded-bold" 
         style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-            3. Select categories of keywords
+            4. Select categories of keywords
         </h6>
 
         <br/>
@@ -435,7 +427,7 @@ const KeywordThemes = () => {
             <div className="row">
                 <div className="col">
 
-                    <button type="button" onClick={goStep2} 
+                    <button type="button" onClick={goStep3} 
                     className="btn btn-outline-primary btn-block" 
                     style={{margin:'10px'}}>Back
                     </button>
@@ -444,7 +436,7 @@ const KeywordThemes = () => {
 
                 <div className="col" align="right">
 
-                    <button type="button" onClick={goStep4} 
+                    <button type="button" onClick={goStep5} 
                     className="btn btn-primary btn-block"  
                     style={{margin:'10px'}}>
                         Next

@@ -127,6 +127,7 @@ const WriteSmartAd = () => {
     }, [language_code])
 
     // when user clicks on 'Next' button
+    // take user to set location targets
     const goStep3 = () => {
         if (
             // if required fields are completed
@@ -146,24 +147,13 @@ const WriteSmartAd = () => {
                     setHeadline_3("headline_3", headlineThree, { encode: String});
                     setDesc_1("desc_1", descOne, { encode: String});
                     setDesc_2("desc_2", descTwo, { encode: String});
-                    history.push('/googleads/campaigns/keyword-themes');
+                    history.push('/googleads/campaigns/location');
                 } else {setMessageError('You need to fill out all fields to continue.');}
     }
 
-    // redirect to user to previous or next step,
+    // redirect to user to previous step,
     // also used for progression tracker
     const goStep1 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
-        
-
-    const goStep2 = () => {
-        history.push('/googleads/write-smart-ad')
-    }
-
-    const goStep4 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
-
-    const goStep5 = () => {
         history.push('/googleads/campaigns/create-campaign')}
 
 

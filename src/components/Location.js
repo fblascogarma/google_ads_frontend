@@ -149,16 +149,16 @@ const Location = () => {
     }, [geo_location])
 
 
-    const goStep3 = () => {
-        history.push('/googleads/campaigns/keyword-themes')
+    const goStep2 = () => {
+        history.push('/googleads/write-smart-ad')
     }
 
-    const goStep5 = () => {
-        if (location_targeting.length > 0) {
+    const goStep4 = () => {
+        if (location_targeting.length > 0 || geo_location['geo_location']) {
             // save the selected keyword themes as cookies
             setGeo_location("geo_location", location_targeting, { encode: String})
             // and send user to the next step
-            history.push('/googleads/campaigns/budget')
+            history.push('/googleads/campaigns/keyword-themes')
         } else {
             setMessageWarning('Add at least one location, please.')
         }
@@ -177,13 +177,13 @@ const Location = () => {
 
         <br/>
 
-        <ProgressionTracker step="step4" />
+        <ProgressionTracker step="step3" />
         
         <br/>
         <br/>
 
         <button type="button" className="btn btn-link" name="go back" 
-        onClick={goStep3} 
+        onClick={goStep2} 
         style={{ color: 'black' }}>
             <i className="fas fa-arrow-left fa-2x"></i>
         </button>
@@ -192,7 +192,7 @@ const Location = () => {
 
         <h6 className="display-4 text-left mb-4" font="gotham-rounded-bold" 
         style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-            4. Select location
+            3. Select location
         </h6>
 
         <br/>
@@ -317,7 +317,7 @@ const Location = () => {
             <div className="row">
                 <div className="col">
 
-                    <button type="button" onClick={goStep3} 
+                    <button type="button" onClick={goStep2} 
                     className="btn btn-outline-primary btn-block" 
                     style={{margin:'10px'}}>Back
                     </button>
@@ -326,7 +326,7 @@ const Location = () => {
 
                 <div className="col" align="right">
 
-                    <button type="button" onClick={goStep5} 
+                    <button type="button" onClick={goStep4} 
                     className="btn btn-primary btn-block"  
                     style={{margin:'10px'}}>
                         Next
