@@ -886,6 +886,8 @@ const EditCampaign = () => {
                                 {messageSearchTerms ? <Message msg={messageSearchTerms} /> : null}
                                 {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
                                 <p>Here's what people searched for before seeing and clicking your ads.</p>
+                                <br/>
+                                <br/>
                                 {/* filter by date starts */}
                                 <div className="col-sm" align='left'>
                                     <p><i className="fas fa-filter"></i>  Filter by date</p>
@@ -906,7 +908,6 @@ const EditCampaign = () => {
                                         </select>
                                     </div>
                                 </div>
-                                <br/>
                                 <br/>
                                 {/* filter by date starts */}
 

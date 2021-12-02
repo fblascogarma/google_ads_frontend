@@ -15,6 +15,9 @@ const KeywordThemes = () => {
     // cookies that have value to send to the backend to get keyword themes recommendations
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code'])
     const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
+    const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
+    const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
+    const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
 
     // alert messages to give feedback to users
     const [message, setMessage] = useState('')
@@ -99,7 +102,11 @@ const KeywordThemes = () => {
     const data = { 'refreshToken': refreshToken['refreshToken'], 
     'keyword_text': keywordOne, 
     'country_code': country_code['country_code'], 
-    'language_code': language_code['language_code']}
+    'language_code': language_code['language_code'],
+    'customer_id': customerId['customerID'],
+    'final_url': landing_page['landing_page'],
+    'business_name': business_name['business_name'],
+    }
     
     
     // get keyword themes suggestions from API
@@ -119,6 +126,7 @@ const KeywordThemes = () => {
         } else if (selectedKeywordThemes.length > 6) {
             setMessageWarning2('Remove one category to add this one.');
         }
+        console.log(data)
 
             fetch('http://127.0.0.1:8000/api/keywords-recommendations/', {
                 method: 'POST',
