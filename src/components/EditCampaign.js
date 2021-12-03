@@ -945,7 +945,7 @@ const EditCampaign = () => {
                                 </button>
                                 </div>
                                 <div className="col-sm-4">
-                                <button type="button" className="btn btn-primary" 
+                                <button type="button" className="btn btn-link" 
                                 onClick={getSearchTermsReport}>
                                     SEARCH TERMS REPORT
                                 </button> 

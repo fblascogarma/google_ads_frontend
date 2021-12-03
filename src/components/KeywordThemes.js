@@ -118,7 +118,7 @@ const KeywordThemes = () => {
         setMessageWarning2('');
         setMessageWarning3('');
         // tell user it can take a few seconds to show results
-        setMessage(' Fetching your data... It will take a few seconds.');
+        setMessage(' Fetching your data... It can take a few seconds.');
 
         // if keyword theme is already selected, do not add it again to the object
         if ((selectedKeywordThemes.indexOf(keywordOne) === -1) && 
