@@ -149,11 +149,11 @@ const Location = () => {
     }, [geo_location])
 
 
-    const goStep2 = () => {
-        history.push('/googleads/write-smart-ad')
+    const goStep1 = () => {
+        history.push('/googleads/campaigns/create-campaign')
     }
 
-    const goStep4 = () => {
+    const goStep3 = () => {
         if (location_targeting.length > 0 || geo_location['geo_location']) {
             // save the selected keyword themes as cookies
             setGeo_location("geo_location", location_targeting, { encode: String})
@@ -177,13 +177,13 @@ const Location = () => {
 
         <br/>
 
-        <ProgressionTracker step="step3" />
+        <ProgressionTracker step="step2" />
         
         <br/>
         <br/>
 
         <button type="button" className="btn btn-link" name="go back" 
-        onClick={goStep2} 
+        onClick={goStep1} 
         style={{ color: 'black' }}>
             <i className="fas fa-arrow-left fa-2x"></i>
         </button>
@@ -192,7 +192,7 @@ const Location = () => {
 
         <h6 className="display-4 text-left mb-4" font="gotham-rounded-bold" 
         style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-            3. Select location
+            2. Select location
         </h6>
 
         <br/>
@@ -317,7 +317,7 @@ const Location = () => {
             <div className="row">
                 <div className="col">
 
-                    <button type="button" onClick={goStep2} 
+                    <button type="button" onClick={goStep1} 
                     className="btn btn-outline-primary btn-block" 
                     style={{margin:'10px'}}>Back
                     </button>
@@ -326,7 +326,7 @@ const Location = () => {
 
                 <div className="col" align="right">
 
-                    <button type="button" onClick={goStep4} 
+                    <button type="button" onClick={goStep3} 
                     className="btn btn-primary btn-block"  
                     style={{margin:'10px'}}>
                         Next

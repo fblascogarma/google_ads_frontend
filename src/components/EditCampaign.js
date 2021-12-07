@@ -27,6 +27,10 @@ const EditCampaign = () => {
     // to capture the status the user wants for the campaign
     const [status, setStatus] = useState()
 
+    // to capture the new status of the campaign in the response
+    // that comes from the backend
+    const [new_status, setNewStatus] = useState()
+
     // to store the campaign name if user changes it
     const [campaignName, setCampaignName] = useState("")
 
@@ -151,6 +155,7 @@ const EditCampaign = () => {
             .then(resp => {
                 if (resp !== null) {
                     console.log(resp);
+                    setNewStatus(resp)
                     setMessage('')
                 } else if (resp === null) {
                     console.log(resp);
@@ -187,6 +192,7 @@ const EditCampaign = () => {
             .then(resp => {
                 if (resp !== null) {
                     console.log(resp);
+                    setNewStatus(resp)
                     setMessage('')
                 } else if (resp === null) {
                     console.log(resp);
@@ -223,6 +229,7 @@ const EditCampaign = () => {
             .then(resp => {
                 if (resp !== null) {
                     console.log(resp);
+                    setNewStatus(resp)
                     setMessage('')
                 } else if (resp === null) {
                     console.log(resp);
@@ -688,8 +695,13 @@ const EditCampaign = () => {
                                         <select className="form-select form-select-sm" 
                                         onChange={onChangeStatus} value={status ? status : item.status} 
                                         aria-label="Change the status of the campaign"
-                                        style={{color: item.status === "Active" && 'white', 
-                                        backgroundColor: item.status === "Active" && 'rgb(112, 153, 21)'}}>
+                                        style={{color: new_status ? 
+                                            (new_status[0].new_status === "Active") && 'white' : 
+                                            (item.status === "Active") && 'white', 
+                                        backgroundColor: new_status ? 
+                                        (new_status[0].new_status === "Active") && 'rgb(112, 153, 21)' : 
+                                        (item.status === "Active") && 'rgb(112, 153, 21)'}}
+                                        >
                                             <option value="Active">Active</option>
                                             <option value="Paused">Paused</option>
                                             <option value="Deleted">Deleted</option>
@@ -885,6 +897,7 @@ const EditCampaign = () => {
                                 <Modal.Body>
                                 {messageSearchTerms ? <Message msg={messageSearchTerms} /> : null}
                                 {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+                                {(searchTerms && searchTerms.length < 1) && <MessageWarning msg="No search terms data to show yet." />}
                                 <p>Here's what people searched for before seeing and clicking your ads.</p>
                                 <br/>
                                 <br/>

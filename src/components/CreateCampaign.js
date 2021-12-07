@@ -105,7 +105,7 @@ const CreateCampaign = () => {
                     setLanding_page("landing_page", landingPage, { encode: String});
                     setCountry_code("country_code", countryCode);
                     setPhone_number("phone_number", phoneNumber);
-                    history.push('/googleads/write-smart-ad');
+                    history.push('/googleads/campaigns/location');
                 } else {setMessageError('You need to fill out all fields to continue.');}
         }
 

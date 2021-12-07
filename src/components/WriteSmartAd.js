@@ -128,7 +128,7 @@ const WriteSmartAd = () => {
 
     // when user clicks on 'Next' button
     // take user to set location targets
-    const goStep3 = () => {
+    const goStep5 = () => {
         if (
             // if required fields are completed
             // or there are cookies of the fields
@@ -147,14 +147,14 @@ const WriteSmartAd = () => {
                     setHeadline_3("headline_3", headlineThree, { encode: String});
                     setDesc_1("desc_1", descOne, { encode: String});
                     setDesc_2("desc_2", descTwo, { encode: String});
-                    history.push('/googleads/campaigns/location');
+                    history.push('/googleads/campaigns/budget');
                 } else {setMessageError('You need to fill out all fields to continue.');}
     }
 
     // redirect to user to previous step,
     // also used for progression tracker
-    const goStep1 = () => {
-        history.push('/googleads/campaigns/create-campaign')}
+    const goStep3 = () => {
+        history.push('/googleads/campaigns/keyword-themes')}
 
 
     return (
@@ -171,14 +171,14 @@ const WriteSmartAd = () => {
         
         {/* start of progression tracker */}
 
-        <ProgressionTracker step="step2" />
+        <ProgressionTracker step="step4" />
         
         {/* end of progression tracker */}
 
         <br/>
         <br/>
         <button type="button" className="btn btn-link" name="go back" 
-        onClick={goStep1} 
+        onClick={goStep3} 
         style={{ color: 'black' }}>
             <i className="fas fa-arrow-left fa-2x"></i>
         </button>
@@ -187,7 +187,7 @@ const WriteSmartAd = () => {
 
         <h6 className="display-4 text-left mb-4" font="gotham-rounded-bold" 
         style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-            2. Write your ad
+            4. Write your ad
         </h6>
 
         <label>Select language of your ad</label>
@@ -280,7 +280,7 @@ const WriteSmartAd = () => {
             <div className="row">
                     <div className="col">
 
-                        <button type="button" onClick={goStep1} 
+                        <button type="button" onClick={goStep3} 
                         className="btn btn-outline-primary btn-block" 
                         style={{margin:'10px'}}>Back
                         </button>
@@ -289,7 +289,7 @@ const WriteSmartAd = () => {
 
                     <div className="col" align="right">
 
-                        <button type="button" onClick={goStep3} 
+                        <button type="button" onClick={goStep5} 
                         className="btn btn-primary btn-block"  
                         style={{margin:'10px'}}>
                             Next

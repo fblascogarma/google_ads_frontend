@@ -125,7 +125,11 @@ const Campaigns = () => {
 
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+                setMessage('')
+                setMessageWarning(toString(error))
+            })
         }
     }, [campaignInfo, customerId, refreshToken, token])
 

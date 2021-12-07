@@ -41,6 +41,7 @@ const ProgressionTracker = ({ step }) => {
     }
 
     // user can go to step 2 if cookies are already saved with the necessary data
+    // cookies from step 1 - General Information
     const goStep2 = () => {
         if (
             (country_code['country_code']) &&
@@ -48,12 +49,31 @@ const ProgressionTracker = ({ step }) => {
             (landing_page['landing_page']) && 
             (phone_number['phone_number'])
             ) {
-                history.push('/googleads/write-smart-ad');
+                history.push('/googleads/campaigns/location');
             } 
     }
 
     // user can go to step 3 if cookies are already save with the necessary data
+    // cookies from step 2 - Select Location
     const goStep3 = () => {
+        if (geo_location["geo_location"]) {
+            history.push('/googleads/campaigns/keyword-themes')
+            }
+        
+    }
+
+    // user can go to step 4 if there is a cookie saved with the necessary data
+    // cookies from step 3 - Select Keywords
+    const goStep4 = () => {
+        if (keyword_themes['keyword_themes']) {
+            history.push('/googleads/write-smart-ad')
+        }
+        
+    }
+        
+    // user can go to step 5 if there is a cookie saved with the necessary data
+    // cookies from step 4 - Write Ad
+    const goStep5 = () => {
         if (
             headline_1['headline_1'] && 
             headline_2['headline_2'] && 
@@ -62,22 +82,9 @@ const ProgressionTracker = ({ step }) => {
             desc_2['desc_2']) 
                 
                 {
-                    history.push('/googleads/campaigns/location');
+                    history.push('/googleads/campaigns/budget');
                 }
-    }
-
-    // user can go to step 4 if there is a cookie saved with the necessary data
-    const goStep4 = () => {
-        if (geo_location["geo_location"]) {
-            history.push('/googleads/campaigns/keyword-themes')
-            }
-    }
         
-    // user can go to step 5 if there is a cookie saved with the necessary data
-    const goStep5 = () => {
-        if (keyword_themes['keyword_themes']) {
-            history.push('/googleads/campaigns/budget')
-        }
     }
 
 
@@ -116,7 +123,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">2</strong>
                 </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Write ad</span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Select location</span>
                 </button>
                 </div>
 
@@ -133,7 +140,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">3</strong>
                 </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select location</span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Select keywords</span>
                 </button>
                 </div>
 
@@ -150,7 +157,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">4</strong>
                 </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select keywords</span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Write ad</span>
                 </button>
                 </div>
 
@@ -207,7 +214,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">2</strong>
                 </span>
-                <span style={{ color: 'rgb(30,144,255)'}}>Write ad</span>
+                <span style={{ color: 'rgb(30,144,255)'}}>Select location</span>
                 </button>
                 </div>
 
@@ -224,7 +231,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">3</strong>
                 </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select location</span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Select keywords</span>
                 </button>
                 </div>
 
@@ -241,7 +248,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">4</strong>
                 </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select keywords</span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Write ad</span>
                 </button>
                 </div>
 
@@ -299,7 +306,7 @@ const ProgressionTracker = ({ step }) => {
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
                     <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'green'}}>Write ad</span>
+                <span style={{ color: 'green'}}>Select location</span>
                 </button>
                 </div>
 
@@ -316,7 +323,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">3</strong>
                 </span>
-                <span style={{ color: 'rgb(30,144,255)'}}>Select location</span>
+                <span style={{ color: 'rgb(30,144,255)'}}>Select keywords</span>
                 </button>
                 </div>
 
@@ -333,7 +340,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">4</strong>
                 </span>
-                <span style={{ color: 'rgb(176,196,222)'}}>Select keywords</span>
+                <span style={{ color: 'rgb(176,196,222)'}}>Write ad</span>
                 </button>
                 </div>
 
@@ -391,7 +398,7 @@ const ProgressionTracker = ({ step }) => {
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
                     <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'green'}}>Write ad</span>
+                <span style={{ color: 'green'}}>Select location</span>
                 </button>
                 </div>
 
@@ -407,7 +414,7 @@ const ProgressionTracker = ({ step }) => {
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
                     <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'green'}}>Select location</span>
+                <span style={{ color: 'green'}}>Select keywords</span>
                 </button>
                 </div>
 
@@ -424,7 +431,7 @@ const ProgressionTracker = ({ step }) => {
                     <i className="fa fa-circle-o fa-stack-2x"></i>
                     <strong className="fa-stack-1x">4</strong>
                 </span>
-                <span style={{ color: 'rgb(30,144,255)'}}>Select keywords</span>
+                <span style={{ color: 'rgb(30,144,255)'}}>Write ad</span>
                 </button>
                 </div>
 
@@ -484,7 +491,7 @@ const ProgressionTracker = ({ step }) => {
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
                     <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'green'}}>Write ad</span>
+                <span style={{ color: 'green'}}>Select location</span>
                 </button>
                 </div>
 
@@ -502,7 +509,7 @@ const ProgressionTracker = ({ step }) => {
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
                     <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'green'}}>Select location</span>
+                <span style={{ color: 'green'}}>Select keywords</span>
                 </button>
                 </div>
 
@@ -520,7 +527,7 @@ const ProgressionTracker = ({ step }) => {
                 <span className="fa-stack fa-2x" style={{ color: 'rgb(30,144,255)'}}>
                     <i className="fas fa-check-circle fa-2x" style={{ color: 'green' }}></i>  
                 </span>
-                <span style={{ color: 'green'}}>Select keywords</span>
+                <span style={{ color: 'green'}}>Write ad</span>
                 </button>
                 </div>
 

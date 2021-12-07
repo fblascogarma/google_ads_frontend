@@ -71,7 +71,7 @@ const Budget = () => {
     useEffect(() => {
         if(geo_location['geo_location']) {
             // tell user you are getting recommendations
-            setMessage(' Fetching recommendations for you... It will take a few seconds.')
+            setMessage(' Fetching recommendations for you... It can take a few seconds.')
 
             // data to send to the API
             const data = { 
@@ -81,7 +81,8 @@ const Budget = () => {
                 'language_code': language_code['language_code'],
                 'geo_target_names': JSON.stringify(geo_location['geo_location']),
                 'landing_page': landing_page['landing_page'],
-                'display_name': JSON.stringify(keyword_themes['keyword_themes'])
+                'display_name': JSON.stringify(keyword_themes['keyword_themes']),
+                'business_name': business_name['business_name']
             }
 
             // create AbortController function to cancel fetch when it ends
@@ -131,11 +132,18 @@ const Budget = () => {
             setSelected_budget(budget_recommendations.low)
         }
 
-    }, [selected_budget, budget, custom_budget, budget_recommendations.high, budget_recommendations.low, budget_recommendations.recommended])
+    }, [selected_budget, 
+        budget, 
+        custom_budget, 
+        budget_recommendations.high, 
+        budget_recommendations.low, 
+        budget_recommendations.recommended
+        ]
+    )
     
     // back button
     const goStep4 = () => {
-        history.push('/googleads/campaigns/location')
+        history.push('/googleads/write-smart-ad')
     }
 
     // next button

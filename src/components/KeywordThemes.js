@@ -208,22 +208,22 @@ const KeywordThemes = () => {
         }
     }, [keyword_themes])
 
-    // redirect to step 5 of campaign creation
+    // redirect to step 4 of campaign creation
     // when user clicks on 'Next' button
-    const goStep5 = () => {
+    const goStep4 = () => {
         if (selectedKeywordThemes.length > 0) {
             // save the selected keyword themes as cookies
             setKeyword_themes("keyword_themes", selectedKeywordThemes, { encode: String})
 
             // and send user to the next step
-            history.push('/googleads/campaigns/budget')
+            history.push('/googleads/write-smart-ad')
 
             } else (setMessageWarning3('Please select at least one category of keywords to go to the next setp.'))
         }
 
     // redirect to user to previous or next step,
     // also used for progression tracker
-    const goStep3 = () => {
+    const goStep2 = () => {
         history.push('/googleads/campaigns/location')}
 
 
@@ -239,13 +239,13 @@ const KeywordThemes = () => {
 
         <br/>
 
-        <ProgressionTracker step="step4" />
+        <ProgressionTracker step="step3" />
         
         <br/>
         <br/>
 
         <button type="button" className="btn btn-link" name="go back" 
-        onClick={goStep3} 
+        onClick={goStep2} 
         style={{ color: 'black' }}>
             <i className="fas fa-arrow-left fa-2x"></i>
         </button>
@@ -254,7 +254,7 @@ const KeywordThemes = () => {
 
         <h6 className="display-4 text-left mb-4" font="gotham-rounded-bold" 
         style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
-            4. Select categories of keywords
+            3. Select categories of keywords
         </h6>
 
         <br/>
@@ -427,7 +427,7 @@ const KeywordThemes = () => {
             <div className="row">
                 <div className="col">
 
-                    <button type="button" onClick={goStep3} 
+                    <button type="button" onClick={goStep2} 
                     className="btn btn-outline-primary btn-block" 
                     style={{margin:'10px'}}>Back
                     </button>
@@ -436,7 +436,7 @@ const KeywordThemes = () => {
 
                 <div className="col" align="right">
 
-                    <button type="button" onClick={goStep5} 
+                    <button type="button" onClick={goStep4} 
                     className="btn btn-primary btn-block"  
                     style={{margin:'10px'}}>
                         Next
