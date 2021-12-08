@@ -17,12 +17,14 @@ const CreateCampaign = () => {
     const [landingPage, setLandingPage] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
     const [countryCode, setCountryCode] = useState("US")
+    const [languageCode, setLanguageCode] = useState("en")
 
     // cookies from step 1
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code', "US"])
     const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
     const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
     const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
+    const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
     
     const [messageError, setMessageError] = useState('')
 
@@ -58,6 +60,11 @@ const CreateCampaign = () => {
         removeCountry_code(['country_code']);
         setCountryCode(e.target.value)}
 
+    // set language code
+    const onChangeLanguageCode = (e) => {
+        removeLanguage_code(['language_code']);
+        setLanguageCode(e.target.value)}
+
     // if there are field values saved as cookies, setState
     useEffect(() => {
         if(business_name['business_name']) {
@@ -87,6 +94,13 @@ const CreateCampaign = () => {
         }
     }, [country_code])
 
+    useEffect(() => {
+        if(language_code['language_code']) {
+            
+            setLanguageCode(language_code['language_code'])
+        }
+    }, [language_code])
+
     // when user clicks on 'Next' button
     const goStep2 = () => {
         if (
@@ -101,6 +115,7 @@ const CreateCampaign = () => {
                
                 {
                     // save values as cookies to use later and send user to step 2
+                    setLanguage_code("language_code", languageCode, { encode: String});
                     setBusiness_name("business_name", businessName, { encode: String});
                     setLanding_page("landing_page", landingPage, { encode: String});
                     setCountry_code("country_code", countryCode);
@@ -205,6 +220,19 @@ const CreateCampaign = () => {
             Copy the page address (URL) and paste it here 
             to make sure there are no mistakes.
         </small>
+        <br/>
+        <br/>
+        <br/>
+
+        <label>Select language of your ad</label>
+        <br/>
+        <br/>
+            <select className="form-select form-select" onChange={onChangeLanguageCode} 
+            value={language_code ? language_code['language_code'] : languageCode} aria-label="Choose language for your ad">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="pt">Portuguese</option>
+            </select>
         <br/>
         <br/>
         <br/>

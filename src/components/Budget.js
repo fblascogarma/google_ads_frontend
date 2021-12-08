@@ -116,7 +116,7 @@ const Budget = () => {
     }, [
         geo_location, country_code, landing_page, 
         customerId, keyword_themes, language_code, 
-        refreshToken, token
+        refreshToken, token, business_name
         ]
     )
 

@@ -32,6 +32,7 @@ export const NavBar = () => {
     const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
     const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
     const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
+    const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
     
     // cookies from step 2
     const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
@@ -59,6 +60,7 @@ export const NavBar = () => {
         removeBusiness_name(['business_name']);
         removeLanding_page(['landing_page']);
         removePhone_number(['phone_number']);
+        removeLanguage_code(['language_code']);
         removeHeadline_1(['headline_1']);
         removeHeadline_2(['headline_2']);
         removeHeadline_3(['headline_3']);

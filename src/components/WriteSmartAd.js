@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
+import Message from './Message';
+import MessageWarning from './MessageWarning';
 import MessageError from './MessageErrorNoClose';
 import ProgressionTracker from './ProgressionTracker';
 
@@ -9,8 +11,10 @@ import ProgressionTracker from './ProgressionTracker';
 const WriteSmartAd = () => {
 
     const [token, setToken, removeToken] = useCookies(['mytoken'])
+    const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
     let history = useHistory()
 
+    // store headlines and descriptions recommendations from Google
     const [headlineOne, setHeadlineOne] = useState("")
     const [headlineTwo, setHeadlineTwo] = useState("")
     const [headlineThree, setHeadlineThree] = useState("")
@@ -25,18 +29,41 @@ const WriteSmartAd = () => {
     const [descOneCharacters, setDescOneCharacters] = useState(0)
     const [descTwoCharacters, setDescTwoCharacters] = useState(0)
 
-    const [languageCode, setLanguageCode] = useState("en")
+    // store headlines and descriptions edited by users
+    const [headlineOneUser, setHeadlineOneUser] = useState("")
+    const [headlineTwoUser, setHeadlineTwoUser] = useState("")
+    const [headlineThreeUser, setHeadlineThreeUser] = useState("")
 
-    // cookies
-    const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
+    const [headlineOneUserCharacters, setHeadlineOneUserCharacters] = useState(0)
+    const [headlineTwoUserCharacters, setHeadlineTwoUserCharacters] = useState(0)
+    const [headlineThreeUserCharacters, setHeadlineThreeUserCharacters] = useState(0)
+
+    const [descOneUser, setDescOneUser] = useState("")
+    const [descTwoUser, setDescTwoUser] = useState("")
+
+    const [descOneUserCharacters, setDescOneUserCharacters] = useState(0)
+    const [descTwoUserCharacters, setDescTwoUserCharacters] = useState(0)
+
+    // cookies from this step
     const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
     const [headline_2, setHeadline_2, removeHeadline_2] = useCookies(['headline_2'])
     const [headline_3, setHeadline_3, removeHeadline_3] = useCookies(['headline_3'])
     const [desc_1, setDesc_1, removeDesc_1] = useCookies(['desc_1'])
     const [desc_2, setDesc_2, removeDesc_2] = useCookies(['desc_2'])
 
+    // cookies that have value to send to the backend to get ad creative recommendations
+    const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code'])
+    const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
+    const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
+    const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
+    const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
+    const [geo_location, setGeo_location, removeGeo_location] = useCookies(['geo_location'])
+    const [keyword_themes, setKeyword_themes, removeKeyword_themes] = useCookies(['keyword_themes'])
+
+    // messages to communicate to users
+    const [message, setMessage] = useState('')
+    const [messageWarning, setMessageWarning] = useState('')
     const [messageError, setMessageError] = useState('')
-   
 
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -50,81 +77,117 @@ const WriteSmartAd = () => {
     // set headline 1
     const onChangeHeadlineOne = (e) => {
         removeHeadline_1(['headline_1']);
-        setHeadlineOne(e.target.value); 
-        setHeadlineOneCharacters(e.target.value.length)}
+        setHeadlineOneUser(e.target.value); 
+        setHeadlineOneUserCharacters(e.target.value.length)}
 
     // set headline 2
     const onChangeHeadlineTwo = (e) => {
         removeHeadline_2(['headline_2']);
-        setHeadlineTwo(e.target.value);
-        setHeadlineTwoCharacters(e.target.value.length)}
+        setHeadlineTwoUser(e.target.value);
+        setHeadlineTwoUserCharacters(e.target.value.length)}
 
     // set headline 3
     const onChangeHeadlineThree = (e) => {
         removeHeadline_3(['headline_3']);
-        setHeadlineThree(e.target.value);
-        setHeadlineThreeCharacters(e.target.value.length)}
+        setHeadlineThreeUser(e.target.value);
+        setHeadlineThreeUserCharacters(e.target.value.length)}
 
     // set description 1
     const onChangeDescOne = (e) => {
         removeDesc_1(['desc_1']);
-        setDescOne(e.target.value); 
-        setDescOneCharacters(e.target.value.length)}
+        setDescOneUser(e.target.value); 
+        setDescOneUserCharacters(e.target.value.length)}
     
     // set description 2
     const onChangeDescTwo = (e) => {
         removeDesc_2(['desc_2']);
-        setDescTwo(e.target.value);
-        setDescTwoCharacters(e.target.value.length)}
+        setDescTwoUser(e.target.value);
+        setDescTwoUserCharacters(e.target.value.length)}
 
-    // set language code
-    const onChangeLanguageCode = (e) => {
-        removeLanguage_code(['language_code']);
-        setLanguageCode(e.target.value)}
-
-    // if there are field values saved as cookies, setState
+    // get ad creative recommendations (headlines & descriptions)
     useEffect(() => {
-        if(headline_1['headline_1']) {
-            
-            setHeadlineOne(headline_1['headline_1'])
-        }
-    }, [headline_1])
+        // fetch the recommendations only once
+        if(!headlineOne) {
+            // tell user you are getting recommendations
+            setMessage(' Fetching recommendations for you... It can take a few seconds.')
 
-    useEffect(() => {
-        if(headline_2['headline_2']) {
-            
-            setHeadlineTwo(headline_2['headline_2'])
-        }
-    }, [headline_2])
+            // data to send to the API
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
+                'country_code': country_code['country_code'], 
+                'language_code': language_code['language_code'],
+                'geo_target_names': JSON.stringify(geo_location['geo_location']),
+                'landing_page': landing_page['landing_page'],
+                'display_name': JSON.stringify(keyword_themes['keyword_themes']),
+                'business_name': business_name['business_name']
+            }
 
-    useEffect(() => {
-        if(headline_3['headline_3']) {
-            
-            setHeadlineThree(headline_3['headline_3'])
-        }
-    }, [headline_3])
+            // get recommendations from api
+            fetch('http://127.0.0.1:8000/api/get-ad-recommendation/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                console.log(resp)
+                // set headline values with recommendations
+                if (resp.headlines[0]) {
+                    console.log(resp.headlines[0])
+                    setHeadlineOne(resp.headlines[0]) 
+                    setHeadlineOneCharacters(resp.headlines[0].length)
+                    }
+                if (resp.headlines[1]) {
+                    console.log(resp.headlines[1])
+                    setHeadlineTwo(resp.headlines[1]) 
+                    setHeadlineTwoCharacters(resp.headlines[1].length)
+                    }
+                if (resp.headlines[2]) {
+                    console.log(resp.headlines[2])
+                    setHeadlineThree(resp.headlines[2]) 
+                    setHeadlineThreeCharacters(resp.headlines[2].length)
+                    }
+                // set description values with recommendations
+                if (resp.descriptions[0]) {
+                    console.log(resp.descriptions[0])
+                    setDescOne(resp.descriptions[0]) 
+                    setDescOneCharacters(resp.descriptions[0].length)
+                    }
+                if (resp.descriptions[1]) {
+                    console.log(resp.descriptions[1])
+                    setDescTwo(resp.descriptions[1]) 
+                    setDescTwoCharacters(resp.descriptions[1].length)
+                    }
+                
+                }
+                )
+            .then(resp => {
+                if (resp !== null) {
+                    setMessage('')
+                } else {
+                    setMessageWarning('There were no recommendations at this moment.')
+                }
 
-    useEffect(() => {
-        if(desc_1['desc_1']) {
-            
-            setDescOne(desc_1['desc_1'])
-        }
-    }, [desc_1])
+                })
+            .catch(error => {
+                console.log(error)
+                setMessage('')
+                }
+                );
 
-    useEffect(() => {
-        if(desc_2['desc_2']) {
-            
-            setDescTwo(desc_2['desc_2'])
         }
-    }, [desc_2])
+    }, [
+        geo_location, country_code, landing_page, 
+        customerId, keyword_themes, language_code, 
+        refreshToken, token, business_name, headlineOne
+        ]
+    )
 
-    // if user has the language code cookie, use it for the state
-    useEffect(() => {
-        if(language_code['language_code']) {
-            
-            setLanguageCode(language_code['language_code'])
-        }
-    }, [language_code])
 
     // when user clicks on 'Next' button
     // take user to set location targets
@@ -134,21 +197,63 @@ const WriteSmartAd = () => {
             // or there are cookies of the fields
             // send user to the next step
             // if not, error message
-            ((headlineOne.length !== 0) && (headlineTwo.length !== 0) && (headlineThree.length !== 0) && 
-            (descOne.length !== 0) && (descTwo.length !== 0)) || 
-            ((headline_1['headline_1']) && (headline_2['headline_2']) && (headline_3['headline_3']) && 
-            (desc_1['desc_1']) && (desc_2['desc_2']))) 
+            (
+                (headlineOne.length !== 0) && (headlineTwo.length !== 0) && (headlineThree.length !== 0) && 
+                (descOne.length !== 0) && (descTwo.length !== 0)
+            ) || 
+            (
+                (headline_1['headline_1']) && (headline_2['headline_2']) && (headline_3['headline_3']) && 
+                (desc_1['desc_1']) && (desc_2['desc_2'])
+            )
+            ) 
                 
                 { 
                     // save values as cookies to use later and send user to next step
-                    setLanguage_code("language_code", languageCode, { encode: String});
-                    setHeadline_1("headline_1", headlineOne, { encode: String});
-                    setHeadline_2("headline_2", headlineTwo, { encode: String});
-                    setHeadline_3("headline_3", headlineThree, { encode: String});
-                    setDesc_1("desc_1", descOne, { encode: String});
-                    setDesc_2("desc_2", descTwo, { encode: String});
+                    // check if the user edited the recommendations, and if they did
+                    // take that value to be saved in the cookie
+
+                    // headline 1
+                    if (headlineOneUser) {
+                        setHeadline_1("headline_1", headlineOneUser, { encode: String})
+                    }
+                    else {
+                        setHeadline_1("headline_1", headlineOne, { encode: String})
+                    }
+                    // headline 2
+                    if (headlineTwoUser) {
+                        setHeadline_2("headline_2", headlineTwoUser, { encode: String})
+                    }
+                    else {
+                        setHeadline_2("headline_2", headlineTwo, { encode: String})
+                    }
+                    // headline 3
+                    if (headlineThreeUser) {
+                        setHeadline_3("headline_3", headlineThreeUser, { encode: String})
+                    }
+                    else {
+                        setHeadline_3("headline_3", headlineThree, { encode: String})
+                    }
+                    // description 1
+                    if (descOneUser) {
+                        setDesc_1("desc_1", descOneUser, { encode: String})
+                    }
+                    else {
+                        setDesc_1("desc_1", descOne, { encode: String})
+                    }
+                    // description 2
+                    if (descTwoUser) {
+                        setDesc_2("desc_2", descTwoUser, { encode: String})
+                    }
+                    else {
+                        setDesc_2("desc_2", descTwo, { encode: String})
+                    }
+                    
+                    // send user to the next step
                     history.push('/googleads/campaigns/budget');
-                } else {setMessageError('You need to fill out all fields to continue.');}
+                } 
+        else {
+            setMessageError('You need to fill out all fields to continue.')
+        }
     }
 
     // redirect to user to previous step,
@@ -190,31 +295,49 @@ const WriteSmartAd = () => {
             4. Write your ad
         </h6>
 
-        <label>Select language of your ad</label>
-        <br/>
-        <br/>
-            <select className="form-select form-select" onChange={onChangeLanguageCode} 
-            value={language_code ? language_code['language_code'] : languageCode} aria-label="Choose language for your ad">
-                <option value="en">English</option>
-                <option value="es">Spanish</option>
-                <option value="pt">Portuguese</option>
-            </select>
-        <br/>
-        <br/>
         <br/>
 
+        {message ? <Message msg={message} /> : null}
+        {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+
         <div>
-        <p>Your headlines are what your customers will focus on. 
+        <p>
+            Your headlines are what your customers will focus on. 
             Keep them simple, clear, and related to what they're are searching for.
         </p>
+        <p>
+            You can edit the recommendations below.
+        </p>
+        {/* card with ad creative starts here */}
+        <div className="card">
+            <div className="card-body">
+                <p className="card-text">
+                    <strong>Ad</strong> • {landing_page['landing_page']}
+                </p>
+                <p className="card-text" 
+                style={{fontSize:'20px', color:'rgb(71,17,209)'}}>
+                    <strong>
+                    {headlineOneUser ? headlineOneUser : headlineOne} | {headlineTwoUser ? headlineTwoUser : headlineTwo} | {headlineThreeUser ? headlineThreeUser : headlineThree}
+                    </strong>
+                </p>
+                <p className="card-text" style={{fontSize:'16px'}}>
+                {descOneUser ? descOneUser : descOne} {descTwoUser ? descTwoUser : descTwo}
+                </p>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        {/* card with ad creative ends here */}
             <label>Headline 1</label>
             <br/>
             <textarea className="form-control" placeholder="Enter first headline for your ad..." 
             id="headline_1" rows="1" maxLength="30"
             onChange={onChangeHeadlineOne} 
-            value={headline_1 ? headline_1['headline_1'] : headlineOne}></textarea>
+            value={headlineOneUser ? headlineOneUser : headlineOne}></textarea>
             <small className="form-text text-muted">
-                {headlineOneCharacters}/30 characters.
+                {headlineOneUserCharacters ? 
+                headlineOneUserCharacters : 
+                headlineOneCharacters}/30 characters.
             </small>
             <br/>
             <br/>
@@ -224,9 +347,11 @@ const WriteSmartAd = () => {
             <textarea className="form-control" placeholder="Enter second headline for your ad..." 
             id="headline_2" rows="1" maxLength="30"
             onChange={onChangeHeadlineTwo} 
-            value={headline_2 ? headline_2['headline_2'] : headlineTwo}></textarea>
+            value={headlineTwoUser ? headlineTwoUser : headlineTwo}></textarea>
             <small className="form-text text-muted">
-                {headlineTwoCharacters}/30 characters.
+                {headlineTwoUserCharacters ? 
+                headlineTwoUserCharacters : 
+                headlineTwoCharacters}/30 characters.
             </small>
             <br/>
             <br/>
@@ -236,9 +361,11 @@ const WriteSmartAd = () => {
             <textarea className="form-control" placeholder="Enter third headline for your ad..." 
             id="headline_3" rows="1" maxLength="30"
             onChange={onChangeHeadlineThree} 
-            value={headline_3 ? headline_3['headline_3'] : headlineThree}></textarea>
+            value={headlineThreeUser ? headlineThreeUser : headlineThree}></textarea>
             <small className="form-text text-muted">
-                {headlineThreeCharacters}/30 characters.
+                {headlineThreeUserCharacters ? 
+                headlineThreeUserCharacters : 
+                headlineThreeCharacters}/30 characters.
             </small>
             <br/>
             <br/>
@@ -252,9 +379,11 @@ const WriteSmartAd = () => {
             <textarea className="form-control" placeholder="Enter first description for your ad..." 
             id="desc_1" rows="2" maxLength="90"
             onChange={onChangeDescOne} 
-            value={desc_1 ? desc_1['desc_1'] : descOne}></textarea>
+            value={descOneUser ? descOneUser : descOne}></textarea>
             <small className="form-text text-muted">
-                {descOneCharacters}/90 characters.
+                {descOneUserCharacters ? 
+                descOneUserCharacters : 
+                descOneCharacters}/90 characters.
             </small>
             <br/>
             <br/>
@@ -264,9 +393,11 @@ const WriteSmartAd = () => {
             <textarea className="form-control" placeholder="Enter second description for your ad..." 
             id="desc_2" rows="2" maxLength="90"
             onChange={onChangeDescTwo} 
-            value={desc_2 ? desc_2['desc_2'] : descTwo}></textarea>
+            value={descTwoUser ? descTwoUser : descTwo}></textarea>
             <small className="form-text text-muted">
-                {descTwoCharacters}/90 characters.
+                {descTwoUserCharacters ? 
+                descTwoUserCharacters : 
+                descTwoCharacters}/90 characters.
             </small>
             <br/>
             <br/>
