@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import Message from './Message';
@@ -43,6 +43,9 @@ const WriteSmartAd = () => {
 
     const [descOneUserCharacters, setDescOneUserCharacters] = useState(0)
     const [descTwoUserCharacters, setDescTwoUserCharacters] = useState(0)
+
+    // store state if already tried to fetch recommendations from api
+    const [getRecomm, setGetRecomm] = useState(true)
 
     // cookies from this step
     const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
@@ -107,7 +110,7 @@ const WriteSmartAd = () => {
     // get ad creative recommendations (headlines & descriptions)
     useEffect(() => {
         // fetch the recommendations only once
-        if(!headlineOne) {
+        if(getRecomm) {
             // tell user you are getting recommendations
             setMessage(' Fetching recommendations for you... It can take a few seconds.')
 
@@ -136,6 +139,7 @@ const WriteSmartAd = () => {
             .then(resp => resp.json())
             .then(resp => {
                 console.log(resp)
+                setGetRecomm(false)
                 // set headline values with recommendations
                 if (resp.headlines[0]) {
                     console.log(resp.headlines[0])
@@ -205,52 +209,50 @@ const WriteSmartAd = () => {
                 (headline_1['headline_1']) && (headline_2['headline_2']) && (headline_3['headline_3']) && 
                 (desc_1['desc_1']) && (desc_2['desc_2'])
             )
-            ) 
-                
-                { 
-                    // save values as cookies to use later and send user to next step
-                    // check if the user edited the recommendations, and if they did
-                    // take that value to be saved in the cookie
+        )   { 
+                // save values as cookies to use later and send user to next step
+                // check if the user edited the recommendations, and if they did
+                // take that value to be saved in the cookie
 
-                    // headline 1
-                    if (headlineOneUser) {
-                        setHeadline_1("headline_1", headlineOneUser, { encode: String})
-                    }
-                    else {
-                        setHeadline_1("headline_1", headlineOne, { encode: String})
-                    }
-                    // headline 2
-                    if (headlineTwoUser) {
-                        setHeadline_2("headline_2", headlineTwoUser, { encode: String})
-                    }
-                    else {
-                        setHeadline_2("headline_2", headlineTwo, { encode: String})
-                    }
-                    // headline 3
-                    if (headlineThreeUser) {
-                        setHeadline_3("headline_3", headlineThreeUser, { encode: String})
-                    }
-                    else {
-                        setHeadline_3("headline_3", headlineThree, { encode: String})
-                    }
-                    // description 1
-                    if (descOneUser) {
-                        setDesc_1("desc_1", descOneUser, { encode: String})
-                    }
-                    else {
-                        setDesc_1("desc_1", descOne, { encode: String})
-                    }
-                    // description 2
-                    if (descTwoUser) {
-                        setDesc_2("desc_2", descTwoUser, { encode: String})
-                    }
-                    else {
-                        setDesc_2("desc_2", descTwo, { encode: String})
-                    }
-                    
-                    // send user to the next step
-                    history.push('/googleads/campaigns/budget');
-                } 
+                // headline 1
+                if (headlineOneUser) {
+                    setHeadline_1("headline_1", headlineOneUser, { encode: String})
+                }
+                else {
+                    setHeadline_1("headline_1", headlineOne, { encode: String})
+                }
+                // headline 2
+                if (headlineTwoUser) {
+                    setHeadline_2("headline_2", headlineTwoUser, { encode: String})
+                }
+                else {
+                    setHeadline_2("headline_2", headlineTwo, { encode: String})
+                }
+                // headline 3
+                if (headlineThreeUser) {
+                    setHeadline_3("headline_3", headlineThreeUser, { encode: String})
+                }
+                else {
+                    setHeadline_3("headline_3", headlineThree, { encode: String})
+                }
+                // description 1
+                if (descOneUser) {
+                    setDesc_1("desc_1", descOneUser, { encode: String})
+                }
+                else {
+                    setDesc_1("desc_1", descOne, { encode: String})
+                }
+                // description 2
+                if (descTwoUser) {
+                    setDesc_2("desc_2", descTwoUser, { encode: String})
+                }
+                else {
+                    setDesc_2("desc_2", descTwo, { encode: String})
+                }
+                
+                // send user to the next step
+                history.push('/googleads/campaigns/budget');
+            } 
         else {
             setMessageError('You need to fill out all fields to continue.')
         }
@@ -309,24 +311,30 @@ const WriteSmartAd = () => {
             You can edit the recommendations below.
         </p>
         {/* card with ad creative starts here */}
+        {/* show ad creative preview if there is a recommendation of ad creative */}
+        {/* or when the user inputs the headline 1 */}
+        {((headlineOne.length !== 0) || (headlineOneUser.length !== 0)) &&
+        <Fragment>
+        <label>Ad preview:</label>
         <div className="card">
-            <div className="card-body">
-                <p className="card-text">
-                    <strong>Ad</strong> • {landing_page['landing_page']}
-                </p>
-                <p className="card-text" 
-                style={{fontSize:'20px', color:'rgb(71,17,209)'}}>
-                    <strong>
-                    {headlineOneUser ? headlineOneUser : headlineOne} | {headlineTwoUser ? headlineTwoUser : headlineTwo} | {headlineThreeUser ? headlineThreeUser : headlineThree}
-                    </strong>
-                </p>
-                <p className="card-text" style={{fontSize:'16px'}}>
-                {descOneUser ? descOneUser : descOne} {descTwoUser ? descTwoUser : descTwo}
-                </p>
-            </div>
+        <div className="card-body">
+            <p className="card-text">
+                <strong>Ad</strong> • {landing_page['landing_page']}
+            </p>
+            <p className="card-text" 
+            style={{fontSize:'20px', color:'rgb(71,17,209)'}}>
+                <strong>
+                {headlineOneUser ? headlineOneUser : headlineOne} | {headlineTwoUser ? headlineTwoUser : headlineTwo} | {headlineThreeUser ? headlineThreeUser : headlineThree}
+                </strong>
+            </p>
+            <p className="card-text" style={{fontSize:'16px'}}>
+            {descOneUser ? descOneUser : descOne} {descTwoUser ? descTwoUser : descTwo}
+            </p>
         </div>
-        <br/>
-        <br/>
+    </div>
+    <br/>
+    <br/>
+    </Fragment>}
         {/* card with ad creative ends here */}
             <label>Headline 1</label>
             <br/>

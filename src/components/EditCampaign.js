@@ -52,6 +52,21 @@ const EditCampaign = () => {
     const [descOneCharacters, setDescOneCharacters] = useState(0)
     const [descTwoCharacters, setDescTwoCharacters] = useState(0)
 
+    // store headlines and descriptions edited by users
+    const [headlineOneUser, setHeadlineOneUser] = useState("")
+    const [headlineTwoUser, setHeadlineTwoUser] = useState("")
+    const [headlineThreeUser, setHeadlineThreeUser] = useState("")
+
+    const [headlineOneUserCharacters, setHeadlineOneUserCharacters] = useState(0)
+    const [headlineTwoUserCharacters, setHeadlineTwoUserCharacters] = useState(0)
+    const [headlineThreeUserCharacters, setHeadlineThreeUserCharacters] = useState(0)
+
+    const [descOneUser, setDescOneUser] = useState("")
+    const [descTwoUser, setDescTwoUser] = useState("")
+
+    const [descOneUserCharacters, setDescOneUserCharacters] = useState(0)
+    const [descTwoUserCharacters, setDescTwoUserCharacters] = useState(0)
+
     // messages to inform users
     const [message, setMessage] = useState(' Fetching your data... It can take a few seconds.')
     const [messageWarning, setMessageWarning] = useState('')
@@ -312,7 +327,7 @@ const EditCampaign = () => {
     const [custom_budget, setCustom_budget] = useState("")
     const [selected_budget, setSelected_budget] = useState()
 
-    // store new budget return from API
+    // store new budget returned from API
     const [newBudget, setNewBudget] = useState()
     
     // set budget in custom_budget state
@@ -411,7 +426,7 @@ const EditCampaign = () => {
                 } else if (resp === null) {
                     console.log(resp);
                     setMessage('');
-                    setMessageWarning('Error when trying to change name')
+                    setMessageWarning('Error when trying to change budget. Please try again.')
 
                 }
             })
@@ -451,32 +466,106 @@ const EditCampaign = () => {
     // set headline 1
     const onChangeHeadlineOne = (e) => {
         
-        setHeadlineOne(e.target.value); 
-        setHeadlineOneCharacters(e.target.value.length)}
+        setHeadlineOneUser(e.target.value); 
+        setHeadlineOneUserCharacters(e.target.value.length)}
 
     // set headline 2
     const onChangeHeadlineTwo = (e) => {
         
-        setHeadlineTwo(e.target.value);
-        setHeadlineTwoCharacters(e.target.value.length)}
+        setHeadlineTwoUser(e.target.value);
+        setHeadlineTwoUserCharacters(e.target.value.length)}
 
     // set headline 3
     const onChangeHeadlineThree = (e) => {
         
-        setHeadlineThree(e.target.value);
-        setHeadlineThreeCharacters(e.target.value.length)}
+        setHeadlineThreeUser(e.target.value);
+        setHeadlineThreeUserCharacters(e.target.value.length)}
 
     // set description 1
     const onChangeDescOne = (e) => {
         
-        setDescOne(e.target.value); 
-        setDescOneCharacters(e.target.value.length)}
+        setDescOneUser(e.target.value); 
+        setDescOneUserCharacters(e.target.value.length)}
     
     // set description 2
     const onChangeDescTwo = (e) => {
         
-        setDescTwo(e.target.value);
-        setDescTwoCharacters(e.target.value.length)}
+        setDescTwoUser(e.target.value);
+        setDescTwoUserCharacters(e.target.value.length)}
+
+    // store new ad creative returned from API
+    const [newAdCreative, setNewAdCreative] = useState()
+    
+    // send new ad creative to backend and to Google's API
+    const onClickEditAdCreative = () => {
+       
+        // close modal
+        setModalAdCreative(false)
+
+        // tell user you are changing the ad creative of the campaign
+        setMessage(' Changing campaign ad creative... It can take a few seconds.');
+        setMessageError('')
+
+        // prepare data to send to the backend
+        if (headlineOneUser) {
+            setHeadlineOne(headlineOneUser)
+        }
+
+        if (headlineTwoUser) {
+            setHeadlineTwo(headlineTwoUser)
+        }
+
+        if (headlineThreeUser) {
+            setHeadlineThree(headlineThreeUser)
+        }
+
+        if (descOneUser) {
+            setDescOne(descOneUser)
+        }
+
+        if (descTwoUser) {
+            setDescTwo(descTwoUser)
+        }
+                        
+        // data to send to the backend
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'new_headline_1': headlineOneUser,
+            'new_headline_2': headlineTwoUser,
+            'new_headline_3': headlineThreeUser,
+            'new_desc_1': descOneUser,
+            'new_desc_2': descTwoUser
+        }
+        console.log(data)
+
+        fetch('http://127.0.0.1:8000/api/sc-settings/edit-ad-creative/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            if (resp !== null) {
+                console.log(resp);
+                setNewAdCreative(resp);
+                setMessage('')
+            } else if (resp === null) {
+                console.log(resp);
+                setMessage('');
+                setMessageWarning('Error when trying to change ad creative. Please try again.')
+
+            }
+        })
+        .catch(error => console.log(error))
+        
+    }
+
 
     // object to store the locations selected by users
     const [location_targeting, setLocation_targeting] = useState([])
@@ -599,6 +688,10 @@ const EditCampaign = () => {
         .catch(error => console.log(error));
 
     }, [date, campaignId, customerId, refreshToken, token])
+
+    // when user clicks on EDIT button of Ad creative card
+    // open modal to offer edits
+    const [modalAdCreative, setModalAdCreative] = useState(false)
 
     // remove the keyword themes from the selection
     const removeSelectedKeyTheme = (e) => {
@@ -832,18 +925,143 @@ const EditCampaign = () => {
                             <p className="card-text" 
                             style={{fontSize:'20px', color:'rgb(71,17,209)'}}>
                                 <strong>
-                                    {item.headline_1} | {item.headline_2} | {item.headline_3}
+                                    {newAdCreative ? newAdCreative[0].new_head_1_api : item.headline_1} | {newAdCreative ? newAdCreative[0].new_head_2_api : item.headline_2} | {newAdCreative ? newAdCreative[0].new_head_3_api : item.headline_3}
                                 </strong>
                             </p>
                             <p className="card-text" style={{fontSize:'16px'}}>
-                            {item.desc_1} {item.desc_2}
+                            {newAdCreative ? newAdCreative[0].new_desc_1_api : item.desc_1} {newAdCreative ? newAdCreative[0].new_desc_2_api : item.desc_2}
                             </p>
                             <br/>
-                            <button type="button" className="btn btn-outline-primary">
+                            <button type="button" className="btn btn-outline-primary"
+                            onClick={() => setModalAdCreative(true)}>
                                 EDIT
                             </button>
                         </div>
                     </div>
+                    {/* start of edit ad creatives modal */}
+                    <Modal show={modalAdCreative} size="lg" centered
+                        aria-labelledby="contained-modal-title-vcenter">
+                        <Modal.Header closeButton onClick={() => setModalAdCreative(false)}>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                            Edit your ad
+                        </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                        
+                        <p>
+                            Your headlines are what your customers will focus on. 
+                            Keep them simple, clear, and related to what they're are searching for.
+                        </p>
+                        <p>
+                            You can edit the recommendations below.
+                        </p>
+                        {/* card with ad creative starts here */}
+                        {/* show ad creative preview if there is a recommendation of ad creative */}
+                        {/* or when the user inputs the headline 1 */}
+                        {((item.headline_1.length !== 0) || (headlineOneUser.length !== 0)) &&
+                        <Fragment>
+                        <label>Ad preview:</label>
+                        <div className="card">
+                        <div className="card-body">
+                            <p className="card-text">
+                                <strong>Ad</strong> • {item.final_url}
+                            </p>
+                            <p className="card-text" 
+                            style={{fontSize:'20px', color:'rgb(71,17,209)'}}>
+                                <strong>
+                                {headlineOneUser ? headlineOneUser : item.headline_1} | {headlineTwoUser ? headlineTwoUser : item.headline_2} | {headlineThreeUser ? headlineThreeUser : item.headline_3}
+                                </strong>
+                            </p>
+                            <p className="card-text" style={{fontSize:'16px'}}>
+                            {descOneUser ? descOneUser : item.desc_1} {descTwoUser ? descTwoUser : item.desc_2}
+                            </p>
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                    </Fragment>}
+                        {/* card with ad creative ends here */}
+                            <label>Headline 1</label>
+                            <br/>
+                            <textarea className="form-control" placeholder="Enter first headline for your ad..." 
+                            id="headline_1" rows="1" maxLength="30"
+                            onChange={onChangeHeadlineOne} 
+                            value={headlineOneUser ? headlineOneUser : item.headline_1}></textarea>
+                            <small className="form-text text-muted">
+                                {headlineOneUserCharacters ? 
+                                headlineOneUserCharacters : 
+                                item.headline_1.length}/30 characters.
+                            </small>
+                            <br/>
+                            <br/>
+
+                            <label>Headline 2</label>
+                            <br/>
+                            <textarea className="form-control" placeholder="Enter second headline for your ad..." 
+                            id="headline_2" rows="1" maxLength="30"
+                            onChange={onChangeHeadlineTwo} 
+                            value={headlineTwoUser ? headlineTwoUser : item.headline_2}></textarea>
+                            <small className="form-text text-muted">
+                                {headlineTwoUserCharacters ? 
+                                headlineTwoUserCharacters : 
+                                item.headline_2.length}/30 characters.
+                            </small>
+                            <br/>
+                            <br/>
+
+                            <label>Headline 3</label>
+                            <br/>
+                            <textarea className="form-control" placeholder="Enter third headline for your ad..." 
+                            id="headline_3" rows="1" maxLength="30"
+                            onChange={onChangeHeadlineThree} 
+                            value={headlineThreeUser ? headlineThreeUser : item.headline_3}></textarea>
+                            <small className="form-text text-muted">
+                                {headlineThreeUserCharacters ? 
+                                headlineThreeUserCharacters : 
+                                item.headline_3.length}/30 characters.
+                            </small>
+                            <br/>
+                            <br/>
+                            <br/>
+                            
+                        <p>Your descriptions should highlight what sets you apart from your competition. 
+                            Check spelling and grammar.
+                        </p>
+                            <label>Description 1</label>
+                            <br/>
+                            <textarea className="form-control" placeholder="Enter first description for your ad..." 
+                            id="desc_1" rows="2" maxLength="90"
+                            onChange={onChangeDescOne} 
+                            value={descOneUser ? descOneUser : item.desc_1}></textarea>
+                            <small className="form-text text-muted">
+                                {descOneUserCharacters ? 
+                                descOneUserCharacters : 
+                                item.desc_1.length}/90 characters.
+                            </small>
+                            <br/>
+                            <br/>
+
+                            <label>Description 2</label>
+                            <br/>
+                            <textarea className="form-control" placeholder="Enter second description for your ad..." 
+                            id="desc_2" rows="2" maxLength="90"
+                            onChange={onChangeDescTwo} 
+                            value={descTwoUser ? descTwoUser : item.desc_2}></textarea>
+                            <small className="form-text text-muted">
+                                {descTwoUserCharacters ? 
+                                descTwoUserCharacters : 
+                                item.desc_2.length}/90 characters.
+                            </small>
+                            <br/>
+                            <br/>
+                            {messageError && <MessageError msg={messageError} />}
+                        </Modal.Body>
+                        <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setModalAdCreative(false)}>CLOSE</Button>
+                        <Button variant="primary" onClick={onClickEditAdCreative}>SAVE</Button>
+                        </Modal.Footer>
+                    </Modal>
+                    {/* end of edit ad creatives modal */}
                     <br/>
                     <br/>
                     {/* card with ad creative ends here */}
