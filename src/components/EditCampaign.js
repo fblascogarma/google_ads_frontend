@@ -71,13 +71,8 @@ const EditCampaign = () => {
     const [message, setMessage] = useState(' Fetching your data... It can take a few seconds.')
     const [messageWarning, setMessageWarning] = useState('')
     const [messageSuccess, setMessageSuccess] = useState('')
-    const [messageError, setMessageError] = useState('')
-
-    // store the keyword themes suggestions that the user selects
-    const [selectedKeywordThemes, setSelectedKeywordThemes] = useState([])
-    
-    // capture the keyword themes suggestions sent by Google's API
-    const [keywordSuggestions, setKeywordSuggestions] = useState([])
+    const [messageError, setMessageError] = useState('') 
+    const [messageEditingKeywords, setMessageEditingKeywords] = useState('')
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
     useEffect(() => {
@@ -116,13 +111,14 @@ const EditCampaign = () => {
             .then(resp => {
                 if (resp !== null) {
                     console.log(resp);
+                    // save campaign info in campaignInfo object
                     setCampaignInfo(resp);
                     setMessage('')
+                    
                 } else if (resp === null) {
                     console.log(resp);
                     setMessage('');
                     setMessageWarning('Error when trying to get your campaign settings')
-
                 }
             })
             .catch(error => console.log(error))
@@ -131,10 +127,13 @@ const EditCampaign = () => {
         }
     }, [campaignId, customerId, refreshToken, token])
 
-    // if campaignInfo object has data, delete the 'fetching data' message
+    // if campaignInfo object has data
     useEffect(() => {
         if(campaignInfo.length > 0) {
+            // delete the 'fetching data' message
             setMessage('')
+            // save keyword themes of campaign to selectedKeywordThemes object
+            setSelectedKeywordThemes(campaignInfo[0].keyword_themes)
         }
     }, [campaignInfo])
 
@@ -651,6 +650,16 @@ const EditCampaign = () => {
         .catch(error => console.log(error));
     }
 
+    // function to transform user's keyword input into title case
+    function toTitleCase(str) {
+        return str.replace(
+          /\w\S*/g,
+          function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          }
+        );
+      }
+
     // fetch data to API when user selects a new date to filter the info
     useEffect(() => {
         // tell user you are getting info
@@ -687,21 +696,166 @@ const EditCampaign = () => {
             })
         .catch(error => console.log(error));
 
-    }, [date, campaignId, customerId, refreshToken, token])
+    }, [date])
 
     // when user clicks on EDIT button of Ad creative card
     // open modal to offer edits
     const [modalAdCreative, setModalAdCreative] = useState(false)
 
-    // remove the keyword themes from the selection
+    // when user clicks on EDIT button of keyword themes card
+    // open modal to offer edits
+    const [modalKeywords, setModalKeywords] = useState(false)
+
+    // keyword themes state management
+    const [keywordOne, setKeywordOne] = useState("")
+
+    // to display number of characters for each keyword theme
+    const [keywordOneCharacters, setKeywordOneCharacters] = useState(0)
+
+    // capture the keyword themes suggestions sent by Google's API
+    const [keywordSuggestions, setKeywordSuggestions] = useState([])
+
+    // store the keyword themes suggestions that the user selects
+    const [selectedKeywordThemes, setSelectedKeywordThemes] = useState([])
+
+    // store the updated keyword themes after making changes
+    const [updatedKeywordThemes, setUpdatedKeywordThemes] = useState([])
+
+    // set first keyword theme
+    const onChangeKeywordOne = (e) => {
+        setKeywordOne(e.target.value);
+        setKeywordOneCharacters(e.target.value.length)}
+
+    const [messageWarning2, setMessageWarning2] = useState('')
+
+    // get keyword themes suggestions from API
+    const keywordThemesSuggestions = () => {
+        // if there was a warning message, remove it
+        setMessageWarning('');
+        setMessageWarning2('');
+        // tell user it can take a few seconds to show results
+        setMessage(' Fetching your data... It can take a few seconds.');
+
+        // data to send to Google to get keyword theme recommendations
+        const data_keywords = { 
+            'refreshToken': refreshToken['refreshToken'],
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'keyword_text': keywordOne, 
+            'country_code': campaignInfo[0].country_code, 
+            'language_code': campaignInfo[0].language_code,
+            'final_url': campaignInfo[0].final_url,
+            'business_name': campaignInfo[0].business_name,
+            'geo_target_names': JSON.stringify(campaignInfo[0].geo_targets),
+        }
+
+        // if keyword theme is already selected, do not add it again to the object
+        if ((selectedKeywordThemes.indexOf(toTitleCase(keywordOne)) === -1) && 
+        keywordOneCharacters > 0 && 
+        selectedKeywordThemes.length < 7) {
+            setSelectedKeywordThemes([...selectedKeywordThemes, toTitleCase(keywordOne)])
+        } else if (selectedKeywordThemes.length > 6) {
+            setMessageWarning2('Remove one category to add this one.');
+        }
+        console.log(data_keywords)
+
+        fetch('http://127.0.0.1:8000/api/keywords-recommendations/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data_keywords),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            // console.log(resp)
+            if (resp.length > 0) {
+                setKeywordSuggestions(resp)
+                setMessage('')
+            } else if (resp.length === 0) {
+                setMessageWarning('Please try again. No recommendations for that category.')
+            }
+        })
+        .catch(error => console.log(error))
+
+    }
+
+    // add the keyword themes selected from the suggestions
+    const addSelectedKeyTheme = (e) => {
+        if (selectedKeywordThemes.length < 7) {
+            // remove warning message
+            setMessageWarning('')
+            // add it to the selected array
+            setSelectedKeywordThemes([...selectedKeywordThemes, e.currentTarget.value]);
+            // remove it from the suggestion array
+            const itemToRemove = e.currentTarget.value
+            const newArray = keywordSuggestions.filter(el => el !== itemToRemove);
+            setKeywordSuggestions(newArray);
+        } else {
+            setMessageWarning('Remove selected categories to add new ones.')
+        }
+        
+    }
+    
+    // remove the keyword theme from the selection
     const removeSelectedKeyTheme = (e) => {
         // remove it from the selected array
         const itemToRemove = e.currentTarget.value
         const newArray = selectedKeywordThemes.filter(el => el !== itemToRemove)
         setSelectedKeywordThemes(newArray)
-        // add it again to the suggestion array
-        setKeywordSuggestions([...keywordSuggestions, itemToRemove])
+        // add it again to the suggestion array if it's not already there
+        if (keywordSuggestions.indexOf(itemToRemove) === -1) {
+            setKeywordSuggestions([...keywordSuggestions, itemToRemove])
+        } 
+        
     }
+
+    // send changes of keywords to Google's servers
+    const onClickEditKeywords = () => {
+        // close modal
+        setModalKeywords(false)
+
+        // tell user you are changing the keyword themes of the campaign
+        setMessageEditingKeywords(' Changing the categories of keywords... It can take a few seconds.')
+
+        // data to send to Google to edit keyword themes
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'],
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'display_name': JSON.stringify(selectedKeywordThemes), 
+        }
+
+        fetch('http://127.0.0.1:8000/api/sc-settings/edit-keywords/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            // console.log(resp)
+            if (resp.length > 0) {
+                setUpdatedKeywordThemes(resp)
+                setMessageEditingKeywords('')
+            } 
+        })
+        .catch(error => console.log(error))
+
+    }
+
+    // // if updatedKeywordThemes object has data
+    // useEffect(() => {
+    //     if(updatedKeywordThemes.length > 0) {
+    //         // save updated keyword themes of campaign to selectedKeywordThemes object
+    //         setSelectedKeywordThemes(updatedKeywordThemes)
+    //     }
+    // }, [updatedKeywordThemes])
 
     // go back button
     const goBack = () => {
@@ -1075,21 +1229,56 @@ const EditCampaign = () => {
                             style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
                                 Categories of keywords
                             </h5>
-                            <p className="card-text">
-                                Add up to 7 categories of keywords, and don't use 
-                                punctuation marks, phone numbers, or webpage address (URL).
-                            </p>
+                            {messageEditingKeywords && 
                             <Fragment>
+                            <br/>
+                            <Message msg={messageEditingKeywords} />
+                            <br/>
+                            </Fragment>
+                            }
+                            <Fragment>
+                                <br/>
                                 <label>Selected category keywords:</label>
                                 <br/>
-                                {item.keyword_themes.length === 7 ? 
-                                <small className= "form-text text-success">7 categories selected. 
-                                If you want to add more, create a new campaign or delete selected ones.</small> :
-                                <small className="form-text text-muted">
-                                    You can select {7 - item.keyword_themes.length} more.
-                                </small>}
+                                {updatedKeywordThemes.length > 1 ? 
+                                <Fragment>
+                                    {
+                                    updatedKeywordThemes.length === 7 ? 
+                                    <small className= "form-text text-success">7 categories selected. 
+                                    If you want to add more, create a new campaign or delete selected ones.</small> :
+                                    <small className="form-text text-muted">
+                                        You can select {7 - updatedKeywordThemes.length} more.
+                                    </small>
+                                    }
+                                </Fragment> :
+                                <Fragment>
+                                    {
+                                    item.keyword_themes.length === 7 ? 
+                                    <small className= "form-text text-success">7 categories selected. 
+                                    If you want to add more, create a new campaign or delete selected ones.</small> :
+                                    <small className="form-text text-muted">
+                                        You can select {7 - item.keyword_themes.length} more.
+                                    </small>
+                                    }
+                                </Fragment>
+                                }
                             </Fragment>
                             <div className="row">
+                            {updatedKeywordThemes.length > 1 ?
+                                <Fragment>
+                                {updatedKeywordThemes.map(item => {
+                                    return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                    <button type="button" className="btn btn-outline-secondary btn-sm" 
+                                    style={{whiteSpace: 'nowrap'}} 
+                                    value={item} 
+                                    key={item}>
+                                        
+                                        {item}
+                                    </button>
+                                </div>
+                                })}
+                                </Fragment> :
+                                <Fragment>
                                 {item.keyword_themes.map(item => {
                                     return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
                                     <button type="button" className="btn btn-outline-secondary btn-sm" 
@@ -1101,9 +1290,155 @@ const EditCampaign = () => {
                                     </button>
                                 </div>
                                 })}
+                                </Fragment>
+                            }
                             </div>
                             <br/>
                             <br/>
+                            {/* start of edit keywords modal */}
+                            <Modal show={modalKeywords} size="lg" centered
+                                aria-labelledby="contained-modal-title-vcenter">
+                                <Modal.Header closeButton onClick={() => setModalKeywords(false)}>
+                                <Modal.Title id="contained-modal-title-vcenter">
+                                    Edit your categories of keywords
+                                </Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                
+                                <p><strong>Edit categories of keywords</strong></p>
+
+                                <p>Add up to 7 categories of keywords, and don't use 
+                                    punctuation marks, phone numbers, or webpage address (URL).
+                                </p>
+                                <br/>
+
+                                <div className="alert alert-info" role="alert">
+                                <i className="fas fa-info-circle fa-fw" style={{marginRight: '10px'}}></i>    
+                                If there are certain words or phrases your customers use, 
+                                    consider including them as a category of keywords.
+                                </div>
+
+                                <br/>
+                                <label>Category of keywords</label>
+                                <br/>
+                                    <textarea className="form-control" placeholder="Enter category of keywords..." 
+                                    id="keyword_text" rows="1" maxLength="30"
+                                    onChange={onChangeKeywordOne} value={keywordOne}></textarea>
+                                    {(keywordOneCharacters > 20) ? 
+                                    <small className= "form-text text-danger">
+                                        {keywordOneCharacters}/30 characters. You can have up to 30 characters, 
+                                        but best practices suggest a max of 20.
+                                    </small> : 
+                                    <small className= "form-text text-muted">
+                                        {keywordOneCharacters}/30 characters.
+                                    </small>}
+                                    <br/>
+                                    <br/>
+                                    {keywordOneCharacters > 0 && 
+                                    <Fragment>
+                                        <button onClick={keywordThemesSuggestions} className="btn btn-success">
+                                        ADD & RECOMMEND
+                                        </button>
+                                        <br/>
+                                        <small className= "form-text text-muted">
+                                            Recommendations come from your category of keywords.
+                                        </small>
+                                        <br/>
+                                        <br/>
+                                    </Fragment>
+                                    }
+                                    {message ? <Message msg={message} /> : null}
+                                    {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+                                    {messageWarning2 ? <MessageWarning msg={messageWarning2} /> : null}
+                                    <br/>
+                                <Fragment>
+                                <label>Selected category keywords:</label>
+                                <br/>
+                                {selectedKeywordThemes.length === 7 ? 
+                                <small className= "form-text text-success">7 categories selected. 
+                                If you want to add more, create a new campaign or delete selected ones.</small> :
+                                <small className="form-text text-muted">
+                                    You can select {7 - selectedKeywordThemes.length} more.
+                                </small>}
+                                </Fragment>
+                                <div className="row">
+                                    {selectedKeywordThemes.map(item => {
+                                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                        <button type="button" className="btn btn-primary btn-sm" 
+                                        style={{whiteSpace: 'nowrap'}} 
+                                        value={item} 
+                                        key={item}
+                                        onClick={removeSelectedKeyTheme}>
+                                            
+                                            {item}
+                                            <i className="fas fa-times fa-fw" 
+                                            style={{marginLeft: '5px'}}
+                                            key={item}></i>
+                                        </button>
+                                    </div>
+                                    })}
+                                   
+                                    <br/>
+                                    <br/>
+                                    {selectedKeywordThemes.length > 0 && 
+            
+                                    <Fragment>
+                                    
+                                        {keywordSuggestions.length > 0 && 
+                                        <Fragment>
+                                            <br/>
+                                            <br/>
+                                            <label>Recommended category keywords:</label>
+                                            <br/>
+                                            {keywordOne ? 
+                                            <small className="form-text text-muted">
+                                                {keywordSuggestions.length} recommendations for {keywordOne}.
+                                            </small> :
+                                            <small className="form-text text-muted">
+                                                Enter a new category to get more recommendations.
+                                            </small>
+                                            }
+                                        </Fragment>
+                                        }
+                                        <div className="container">
+                                            <div className="row">
+                                            {keywordSuggestions.length > 0 && keywordSuggestions.map(item => {
+                                                // map value if item is not already in the recommendations
+                                                if (selectedKeywordThemes.indexOf(item) === -1) {
+                                                    return  <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                                            <button type="button" className="btn btn-outline-primary btn-sm" 
+                                                            style={{whiteSpace: 'nowrap'}} 
+                                                            value={item} 
+                                                            key={item}
+                                                            onClick={addSelectedKeyTheme}>
+                                                                <i className="fas fa-plus fa-fw" 
+                                                                style={{marginRight: '5px'}}
+                                                                key={item}></i>
+
+                                                                {item}
+                                                            </button>
+                                                        </div>
+                                                } else {
+                                                    return console.log('Not showing item that is already selected.')
+                                                }
+                                                
+                                            })}
+                                            </div>
+                                        </div>
+                                    </Fragment>
+                                }
+                                </div>
+                               
+                                    <br/>
+                                    <br/>
+                                    {messageError && <MessageError msg={messageError} />}
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={() => setModalKeywords(false)}>CLOSE</Button>
+                                <Button variant="primary" onClick={onClickEditKeywords}>SAVE</Button>
+                                </Modal.Footer>
+                            </Modal>
+                            {/* end of edit keywords modal */}
                             {/* start of search terms modal */}
                             <Modal show={modalSearchTermShow} size="lg" centered
                                 aria-labelledby="contained-modal-title-vcenter">
@@ -1171,7 +1506,8 @@ const EditCampaign = () => {
                             {/* end of search terms modal */}
                             <div className="row">
                                 <div className="col-sm-2">
-                                <button type="button" className="btn btn-outline-primary">
+                                <button type="button" className="btn btn-outline-primary"
+                                onClick={() => setModalKeywords(true)}>
                                     EDIT
                                 </button>
                                 </div>

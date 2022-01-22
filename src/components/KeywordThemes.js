@@ -96,10 +96,21 @@ const KeywordThemes = () => {
     // set first keyword theme
     const onChangeKeywordOne = (e) => {
         setKeywordOne(e.target.value);
-        setKeywordOneCharacters(e.target.value.length)}
+        setKeywordOneCharacters(e.target.value.length)
+    }
+
+    // function to transform user's keyword input into title case
+    function toTitleCase(str) {
+        return str.replace(
+            /\w\S*/g,
+            function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        );
+    }
 
 
-    // data to send to the backend and then to the API
+    // data to send to Google to get keyword theme recommendations
     const data = { 'refreshToken': refreshToken['refreshToken'], 
     'keyword_text': keywordOne, 
     'country_code': country_code['country_code'], 
@@ -121,35 +132,35 @@ const KeywordThemes = () => {
         setMessage(' Fetching your data... It can take a few seconds.');
 
         // if keyword theme is already selected, do not add it again to the object
-        if ((selectedKeywordThemes.indexOf(keywordOne) === -1) && 
+        if ((selectedKeywordThemes.indexOf(toTitleCase(keywordOne)) === -1) && 
         keywordOneCharacters > 0 && 
         selectedKeywordThemes.length < 7) {
-            setSelectedKeywordThemes([...selectedKeywordThemes, keywordOne])
+            setSelectedKeywordThemes([...selectedKeywordThemes, toTitleCase(keywordOne)])
         } else if (selectedKeywordThemes.length > 6) {
             setMessageWarning2('Remove one category to add this one.');
         }
         console.log(data)
 
-            fetch('http://127.0.0.1:8000/api/keywords-recommendations/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token['mytoken']}`
-                },
-                body: JSON.stringify(data),
-                
-            })
-            .then(resp => resp.json())
-            .then(setMessage(''))
-            .then(resp => {
-                // console.log(resp)
-                if (resp.length > 0) {
-                    setKeywordSuggestions(resp)
-                } else if (resp.length === 0) {
-                    setMessageWarning('Please try again. No recommendations for that category.')
-                }
-            })
-            .catch(error => console.log(error))
+        fetch('http://127.0.0.1:8000/api/keywords-recommendations/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(setMessage(''))
+        .then(resp => {
+            // console.log(resp)
+            if (resp.length > 0) {
+                setKeywordSuggestions(resp)
+            } else if (resp.length === 0) {
+                setMessageWarning('Please try again. No recommendations for that category.')
+            }
+        })
+        .catch(error => console.log(error))
 
     }
 
@@ -311,11 +322,11 @@ const KeywordThemes = () => {
             onChange={onChangeKeywordOne} value={keywordOne}></textarea>
             {(keywordOneCharacters > 20) ? 
             <small className= "form-text text-danger">
-                {keywordOneCharacters}/20 characters. You can have up to 30 characters, 
+                {keywordOneCharacters}/30 characters. You can have up to 30 characters, 
                 but best practices suggest a max of 20.
             </small> : 
             <small className= "form-text text-muted">
-                {keywordOneCharacters}/20 characters.
+                {keywordOneCharacters}/30 characters.
             </small>}
             <br/>
             <br/>
