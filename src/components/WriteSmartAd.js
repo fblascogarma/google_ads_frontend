@@ -200,11 +200,15 @@ const WriteSmartAd = () => {
             // if required fields are completed
             // or there are cookies of the fields
             // send user to the next step
-            // if not, error message
+            // if not, error message 
             (
                 (headlineOne.length !== 0) && (headlineTwo.length !== 0) && (headlineThree.length !== 0) && 
                 (descOne.length !== 0) && (descTwo.length !== 0)
             ) || 
+            (
+                (headlineOneUser.length !== 0) && (headlineTwoUser.length !== 0) && (headlineThreeUser.length !== 0) && 
+                (descOneUser.length !== 0) && (descTwoUser.length !== 0)
+            ) ||
             (
                 (headline_1['headline_1']) && (headline_2['headline_2']) && (headline_3['headline_3']) && 
                 (desc_1['desc_1']) && (desc_2['desc_2'])

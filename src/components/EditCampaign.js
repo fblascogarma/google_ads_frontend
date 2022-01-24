@@ -771,7 +771,7 @@ const EditCampaign = () => {
         .then(resp => resp.json())
         .then(resp => {
             // console.log(resp)
-            if (resp.length > 0) {
+            if (resp.length > 0 && resp.isArray()) {
                 setKeywordSuggestions(resp)
                 setMessage('')
             } else if (resp.length === 0) {
@@ -1401,7 +1401,34 @@ const EditCampaign = () => {
                                         </Fragment>
                                         }
                                         <div className="container">
-                                            <div className="row">
+                                            {keywordSuggestions.length > 0 &&
+                                            <Fragment>
+                                                <div className="row">
+                                                {keywordSuggestions.map(item => {
+                                                    // map value if item is not already in the recommendations
+                                                    if (selectedKeywordThemes.indexOf(item) === -1) {
+                                                        return  <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                                                <button type="button" className="btn btn-outline-primary btn-sm" 
+                                                                style={{whiteSpace: 'nowrap'}} 
+                                                                value={item} 
+                                                                key={item}
+                                                                onClick={addSelectedKeyTheme}>
+                                                                    <i className="fas fa-plus fa-fw" 
+                                                                    style={{marginRight: '5px'}}
+                                                                    key={item}></i>
+
+                                                                    {item}
+                                                                </button>
+                                                            </div>
+                                                    } else {
+                                                        return console.log('Not showing item that is already selected.')
+                                                    }
+                                                    
+                                                })}
+                                                </div>
+                                            </Fragment>
+                                            }
+                                            {/* <div className="row">
                                             {keywordSuggestions.length > 0 && keywordSuggestions.map(item => {
                                                 // map value if item is not already in the recommendations
                                                 if (selectedKeywordThemes.indexOf(item) === -1) {
@@ -1423,7 +1450,7 @@ const EditCampaign = () => {
                                                 }
                                                 
                                             })}
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </Fragment>
                                 }
