@@ -23,6 +23,11 @@ If this project helped you, please give it a star, and if you have suggestions, 
 
 I’ll use Django (Python framework) for the backend, React (JavaScript framework/library) for the frontend, and Bootstrap for CSS.
 
+# App Architecture
+
+![app architecture](https://user-images.githubusercontent.com/62343770/151630725-253d241a-6239-405f-9355-cf5dbfd381f9.png)
+
+
 # Installation
 
 You need to [install NodeJS](https://nodejs.org/en/download/) if you haven't done this already.
