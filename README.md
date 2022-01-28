@@ -17,7 +17,7 @@ If this project helped you, please give it a star, and if you have suggestions, 
 
 3) You already have a basic/standard developer token access. If you haven’t, go [here](https://developers.google.com/google-ads/api/docs/first-call/dev-token). I have the basic access that gives me 15,000 operations / day (15k resources/day) and 1,000 requests / day, which is more than enough for this tutorial.
 
-4) You already have a web app functioning where you can develop this Google Ads solution. If you haven't, use my [backend starter](https://github.com/fblascogarma/backend_starter) and my [frontend starter](https://github.com/fblascogarma/frontend_starter). NOTE TO SELF: INCLUDE THE LIBRARIES AND PACKAGES NEEDED, SUCH AS react-boostrap that is not included in the frontend starter project.
+4) You already have a web app functioning where you can develop this Google Ads solution. If you haven't, use my [backend starter](https://github.com/fblascogarma/backend_starter) and my [frontend starter](https://github.com/fblascogarma/frontend_starter).
 
 5) You know Python, JavaScript, full-stack web development, and APIs.
 
