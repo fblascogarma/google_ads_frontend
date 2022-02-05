@@ -24,6 +24,7 @@ const Budget = () => {
     const [keyword_themes, setKeyword_themes, removeKeyword_themes] = useCookies(['keyword_themes'])
     const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
     const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
+    const [business_location_id, setBusiness_location_id, removeBusiness_location_id] = useCookies(['business_location_id'])
     const [headline_1, setHeadline_1, removeHeadline_1] = useCookies(['headline_1'])
     const [headline_2, setHeadline_2, removeHeadline_2] = useCookies(['headline_2'])
     const [headline_3, setHeadline_3, removeHeadline_3] = useCookies(['headline_3'])
@@ -164,6 +165,7 @@ const Budget = () => {
             'selected_budget': selected_budget.toString(),
             'phone_number': phone_number['phone_number'],
             'business_name': business_name['business_name'],
+            'business_location_id': business_location_id['business_location_id'],
             'headline_1_user': headline_1['headline_1'],
             'headline_2_user': headline_2['headline_2'],
             'headline_3_user': headline_3['headline_3'],

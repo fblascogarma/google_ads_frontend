@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
+import Message from './Message';
 import MessageError from './MessageErrorNoClose';
 import ProgressionTracker from './ProgressionTracker';
 
@@ -9,11 +10,16 @@ import ProgressionTracker from './ProgressionTracker';
 const CreateCampaign = () => {
 
     const [token, setToken, removeToken] = useCookies(['mytoken'])
+    const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
     let history = useHistory()
+
+    // to store the Google My Business info in case user has GMB
+    const [accountInfo, setAccountInfo] = useState([])
 
     // fields to be completed by user
     const [goal, setGoal] = useState("sales_signups")
     const [businessName, setBusinessName] = useState("")
+    const [businessLocationId, setBusinessLocationId] = useState("")
     const [landingPage, setLandingPage] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
     const [countryCode, setCountryCode] = useState("US")
@@ -22,11 +28,13 @@ const CreateCampaign = () => {
     // cookies from step 1
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code', "US"])
     const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
+    const [business_location_id, setBusiness_location_id, removeBusiness_location_id] = useCookies(['business_location_id'])
     const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
     const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
     const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
     
     const [messageError, setMessageError] = useState('')
+    const [message, setMessage] = useState('')
 
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -37,22 +45,102 @@ const CreateCampaign = () => {
         }
     }, [token])
 
+    // if there is a refresh token in the cookies
+    // send it to the backend with the mytoken
+    // and get information of the Google My Business
+    useEffect(() => {
+        if(refreshToken) {
+
+            // tell user you are fetching their data
+            setMessage(' Fetching your data... It can take a few seconds.');
+            
+            // data to send to the backend
+            const data = { 
+                'mytoken': token['mytoken'], 
+                'refreshToken': refreshToken['refreshToken']
+            }
+
+            fetch('http://127.0.0.1:8000/api/get-business-info/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                console.log(resp)
+                setAccountInfo(resp)
+                setBusinessLocationId(resp[0].business_location_id)
+                setMessage('')
+                })
+            .catch(error => {
+                console.log(error);
+                setMessage('');
+                })
+            
+              
+        }
+    }, [token, refreshToken])
+
     // set advertising goal
     const onChangeGoal = (e) => {setGoal(e.target.value)}
 
     // set business name
     const onChangeBusName = (e) => {
-        removeBusiness_name(['business_name']);
+        // removeBusiness_name(['business_name']);
+        // if accountInfo.business_name exists, remove it
+        console.log('changing bus name')
+        if(accountInfo.length > 0 && accountInfo[0].business_name) {
+            console.log('inside if statement')
+            const itemToRemove = accountInfo[0].business_name
+            console.log('itemToRemove')
+            console.log(itemToRemove)
+            const newArray = accountInfo.filter(el => el.business_name !== itemToRemove)
+            console.log('newArray')
+            console.log(newArray)
+            setAccountInfo(newArray)
+            console.log('accountInfo')
+            console.log(accountInfo)
+        }
         setBusinessName(e.target.value)}
 
     // set business name
     const onChangeLanding = (e) => {
         removeLanding_page(['landing_page']);
+        // if accountInfo.final_url exists, remove it
+        if(accountInfo.length > 0) {
+            console.log('inside if statement')
+            const itemToRemove = accountInfo[0].final_url
+            console.log('itemToRemove')
+            console.log(itemToRemove)
+            const newArray = accountInfo.filter(el => el.final_url !== itemToRemove)
+            console.log('newArray')
+            console.log(newArray)
+            setAccountInfo(newArray)
+            console.log('accountInfo')
+            console.log(accountInfo)
+        }
         setLandingPage(e.target.value)}
 
     // set phone number
     const onChangePhoneNumber = (e) => {
         removePhone_number(['phone_number']);
+        // if accountInfo.phone_number exists, remove it
+        if(accountInfo.length > 0) {
+            console.log('inside if statement')
+            const itemToRemove = accountInfo[0].phone_number
+            console.log('itemToRemove')
+            console.log(itemToRemove)
+            const newArray = accountInfo.filter(el => el.phone_number !== itemToRemove)
+            console.log('newArray')
+            console.log(newArray)
+            setAccountInfo(newArray)
+            console.log('accountInfo')
+            console.log(accountInfo)
+        }
         setPhoneNumber(e.target.value)}
 
     // set country code for phone number
@@ -65,27 +153,40 @@ const CreateCampaign = () => {
         removeLanguage_code(['language_code']);
         setLanguageCode(e.target.value)}
 
-    // if there are field values saved as cookies, setState
+    // if there are field values saved as cookies, populate fields with those values
+    // or if the user has GMB and we get their Business Profile info, use those values
     useEffect(() => {
         if(business_name['business_name']) {
             
             setBusinessName(business_name['business_name'])
+        } 
+        else if(accountInfo.length > 0) {
+            
+            setBusinessName(accountInfo[0].business_name)
         }
-    }, [business_name])
+    }, [business_name, accountInfo]) 
 
     useEffect(() => {
         if(landing_page['landing_page']) {
             
             setLandingPage(landing_page['landing_page'])
         }
-    }, [landing_page])
+        else if(accountInfo.length > 0) {
+            
+            setLandingPage(accountInfo[0].final_url)
+        }
+    }, [landing_page, accountInfo])
 
     useEffect(() => {
         if(phone_number['phone_number']) {
             
             setPhoneNumber(phone_number['phone_number'])
         }
-    }, [phone_number])
+        else if(accountInfo.length > 0) {
+            
+            setPhoneNumber(accountInfo[0].phone_number)
+        }
+    }, [phone_number, accountInfo])
 
     useEffect(() => {
         if(country_code['country_code']) {
@@ -117,6 +218,7 @@ const CreateCampaign = () => {
                     // save values as cookies to use later and send user to step 2
                     setLanguage_code("language_code", languageCode, { encode: String});
                     setBusiness_name("business_name", businessName, { encode: String});
+                    setBusiness_location_id("business_location_id", businessLocationId);
                     setLanding_page("landing_page", landingPage, { encode: String});
                     setCountry_code("country_code", countryCode);
                     setPhone_number("phone_number", phoneNumber);
@@ -159,10 +261,16 @@ const CreateCampaign = () => {
         style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
             1. General Information
         </h6>
+        {message ? 
+        <Fragment>
+        <Message msg={message} />
+        <br/>
+        </Fragment>
+         : null}
 
         {/* all fields in this section will be pre-populated 
         if user already filled them in another section
-        and didn't remove all cookies */}
+        and didn't remove all cookies, or user has GMB profile */}
         <label>What do you want to accomplish from this Google ad?</label>
         <br/>
         <br/>
@@ -199,9 +307,20 @@ const CreateCampaign = () => {
         <label>Enter name of your business</label>
         <br/>
         <br/>
-        <textarea className="form-control" placeholder="Enter name of your business..." id="business_name" rows="1" maxLength="1000"
+        {/* {accountInfo.length > 0 ? 
+        <textarea className="form-control" placeholder="Enter name of your business..." 
+        id="business_name" rows="1" maxLength="1000"
+        onChange={onChangeBusName} 
+        value={accountInfo[0].business_name ? accountInfo[0].business_name : businessName}></textarea> :
+        <textarea className="form-control" placeholder="Enter name of your business..." 
+        id="business_name" rows="1" maxLength="1000"
         onChange={onChangeBusName} 
         value={business_name ? business_name['business_name'] : businessName}></textarea>
+        } */}
+        <textarea className="form-control" placeholder="Enter name of your business..." 
+        id="business_name" rows="1" maxLength="1000"
+        onChange={onChangeBusName} 
+        value={accountInfo.length > 0 ? accountInfo[0].business_name : businessName}></textarea>
         <small className="form-text text-muted">
             This helps Google show your ad when people search for your business by name.
         </small>
@@ -212,9 +331,17 @@ const CreateCampaign = () => {
         <label>Tell us where people go after they click your ad</label>
         <br/>
         <br/>
+        {accountInfo.length > 0 ? 
+        <textarea className="form-control" placeholder="https://www.example.com" id="landing_page_url" rows="1" maxLength="1000"
+        onChange={onChangeLanding} 
+        value={accountInfo[0].final_url ? accountInfo[0].final_url : landingPage}></textarea> :
         <textarea className="form-control" placeholder="https://www.example.com" id="landing_page_url" rows="1" maxLength="1000"
         onChange={onChangeLanding} 
         value={landing_page ? landing_page['landing_page'] : landingPage}></textarea>
+        }
+        {/* <textarea className="form-control" placeholder="https://www.example.com" id="landing_page_url" rows="1" maxLength="1000"
+        onChange={onChangeLanding} 
+        value={landing_page ? landing_page['landing_page'] : landingPage}></textarea> */}
         <small className="form-text text-muted">
             This might be your homepage, or a more specific page. 
             Copy the page address (URL) and paste it here 
@@ -253,10 +380,16 @@ const CreateCampaign = () => {
                     </div>
                     <div className="col">
                         <label>Enter phone number for your business</label>
+                        {accountInfo.length > 0 ? 
+                        <textarea className="form-control" placeholder="Enter phone number..." 
+                        id="phone_number" rows="1" maxLength="100"
+                        onChange={onChangePhoneNumber} 
+                        value={accountInfo[0].phone_number ? accountInfo[0].phone_number : phoneNumber}></textarea> :
                         <textarea className="form-control" placeholder="Enter phone number..." 
                             id="phone_number" rows="1" maxLength="100"
                             onChange={onChangePhoneNumber} 
                             value={phone_number ? phone_number['phone_number'] : phoneNumber}></textarea>
+                            }
                     </div>
                 </div>
             </div>
