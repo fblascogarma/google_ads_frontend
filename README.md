@@ -28,6 +28,8 @@ I’ll use Django (Python framework) for the backend, React (JavaScript framewor
 
 # Installation
 
+See [here](https://youtu.be/WvP3vtc_o7Q) a video tutorial on how to set up this web app.
+
 You need to [install NodeJS](https://nodejs.org/en/download/) if you haven't done this already.
 
 Clone this repo and the repo for the [backend](https://github.com/fblascogarma/google_ads_backend). To create the backend, follow the steps on the README file on that repo.
