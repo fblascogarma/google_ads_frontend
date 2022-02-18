@@ -22,7 +22,6 @@ import MessageSuccess from './MessageSuccess';
 import MessageError from './MessageErrorNoClose';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-// import EditBudget from './EditBudget';
 
 
 const EditCampaign = () => {
@@ -36,7 +35,6 @@ const EditCampaign = () => {
 
     const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     const [campaignId, setCampaignId, removeCampaignID] = useCookies(['campaign_id'])
-
 
     // to capture the status the user wants for the campaign
     const [status, setStatus] = useState()
@@ -87,6 +85,10 @@ const EditCampaign = () => {
     const [messageSuccess, setMessageSuccess] = useState('')
     const [messageError, setMessageError] = useState('') 
     const [messageEditingKeywords, setMessageEditingKeywords] = useState('')
+    const [messageEditingGeoTargets, setMessageEditingGeoTargets] = useState('')
+    const [messageGeoTargetRecommendations, setMessageGeoTargetRecommendations] = useState('')
+    const [messageAddKeyword, setMessageAddKeyword] = useState('')
+
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
     useEffect(() => {
@@ -148,6 +150,8 @@ const EditCampaign = () => {
             setMessage('')
             // save keyword themes of campaign to selectedKeywordThemes object
             setSelectedKeywordThemes(campaignInfo[0].keyword_themes)
+            // save geo targets of campaign to selectedGeoTargets object
+            setLocation_targeting(campaignInfo[0].geo_targets)
         }
     }, [campaignInfo])
 
@@ -480,31 +484,36 @@ const EditCampaign = () => {
     const onChangeHeadlineOne = (e) => {
         
         setHeadlineOneUser(e.target.value); 
-        setHeadlineOneUserCharacters(e.target.value.length)}
+        setHeadlineOneUserCharacters(e.target.value.length)
+    }
 
     // set headline 2
     const onChangeHeadlineTwo = (e) => {
         
         setHeadlineTwoUser(e.target.value);
-        setHeadlineTwoUserCharacters(e.target.value.length)}
+        setHeadlineTwoUserCharacters(e.target.value.length)
+    }
 
     // set headline 3
     const onChangeHeadlineThree = (e) => {
         
         setHeadlineThreeUser(e.target.value);
-        setHeadlineThreeUserCharacters(e.target.value.length)}
+        setHeadlineThreeUserCharacters(e.target.value.length)
+    }
 
     // set description 1
     const onChangeDescOne = (e) => {
         
         setDescOneUser(e.target.value); 
-        setDescOneUserCharacters(e.target.value.length)}
+        setDescOneUserCharacters(e.target.value.length)
+    }
     
     // set description 2
     const onChangeDescTwo = (e) => {
         
         setDescTwoUser(e.target.value);
-        setDescTwoUserCharacters(e.target.value.length)}
+        setDescTwoUserCharacters(e.target.value.length)
+    }
 
     // store new ad creative returned from API
     const [newAdCreative, setNewAdCreative] = useState()
@@ -577,30 +586,6 @@ const EditCampaign = () => {
         })
         .catch(error => console.log(error))
         
-    }
-
-
-    // object to store the locations selected by users
-    const [location_targeting, setLocation_targeting] = useState([])
-
-    // remove location from selected object
-    const removeLocation = (e) => {
-        const itemToRemove = e.currentTarget.value
-        const newArray = location_targeting.filter(el => el !== itemToRemove)
-        setLocation_targeting(newArray)
-    }
-
-    // object to manage location input
-    const [location_input, setLocation_input] = useState('')
-
-    // set location in location_input state
-    const onChangeLocation = (e) => {
-        setLocation_input(e.target.value);
-    }
-
-    // add location
-    const addLocation = (e) => {
-
     }
 
     // info for search terms report modal start here
@@ -710,7 +695,7 @@ const EditCampaign = () => {
             })
         .catch(error => console.log(error));
 
-    }, [date])
+    }, [date, customerId, campaignId, refreshToken, token])
 
     // when user clicks on EDIT button of Ad creative card
     // open modal to offer edits
@@ -738,7 +723,8 @@ const EditCampaign = () => {
     // set first keyword theme
     const onChangeKeywordOne = (e) => {
         setKeywordOne(e.target.value);
-        setKeywordOneCharacters(e.target.value.length)}
+        setKeywordOneCharacters(e.target.value.length)
+    }
 
     const [messageWarning2, setMessageWarning2] = useState('')
 
@@ -748,7 +734,7 @@ const EditCampaign = () => {
         setMessageWarning('');
         setMessageWarning2('');
         // tell user it can take a few seconds to show results
-        setMessage(' Fetching your data... It can take a few seconds.');
+        setMessageAddKeyword(' Fetching recommendations... It can take a few seconds.');
 
         // data to send to Google to get keyword theme recommendations
         const data_keywords = { 
@@ -785,9 +771,9 @@ const EditCampaign = () => {
         .then(resp => resp.json())
         .then(resp => {
             // console.log(resp)
-            if (resp.length > 0 && resp.isArray()) {
+            if (resp.length > 0) {
                 setKeywordSuggestions(resp)
-                setMessage('')
+                setMessageAddKeyword('')
             } else if (resp.length === 0) {
                 setMessageWarning('Please try again. No recommendations for that category.')
             }
@@ -841,6 +827,8 @@ const EditCampaign = () => {
             'campaign_id': campaignId['campaignID'],
             'display_name': JSON.stringify(selectedKeywordThemes), 
         }
+        console.log('data sent to the backend')
+        console.log(data)
 
         fetch('http://127.0.0.1:8000/api/sc-settings/edit-keywords/', {
             method: 'POST',
@@ -863,13 +851,172 @@ const EditCampaign = () => {
 
     }
 
-    // // if updatedKeywordThemes object has data
-    // useEffect(() => {
-    //     if(updatedKeywordThemes.length > 0) {
-    //         // save updated keyword themes of campaign to selectedKeywordThemes object
-    //         setSelectedKeywordThemes(updatedKeywordThemes)
-    //     }
-    // }, [updatedKeywordThemes])
+    // edit keywords ends here
+
+    // edit target locations starts here
+
+    // when user clicks on EDIT button of target locations card
+    // open modal to offer edits
+    const [modalGeoTargets, setModalGeoTargets] = useState(false)
+
+    // object to store the locations selected by users
+    const [location_targeting, setLocation_targeting] = useState([])
+
+    // object to manage location input
+    const [location_input, setLocation_input] = useState('')
+
+    // capture the location suggestions sent by Google's API from the text user input in text field
+    const [locationSuggestions, setLocationSuggestions] = useState([])
+
+    // capture the additional location suggestions sent by Google's API from the selected recommendations
+    const [additional_locationSuggestions, setAdditional_locationSuggestions] = useState([])
+
+    // store the updated geo targets after making changes
+    const [updatedGeoTargets, setUpdatedGeoTargets] = useState([])
+
+    // add the location the user input in the text field
+    // and get recommendations from API
+    const addLocation = (e) => {
+        if (location_input.length > 0 && 
+            // add location if it has not been added yet to the selected object
+            (location_targeting.indexOf(toTitleCase(location_input)) === -1)) {
+            // eliminate warning message of no input in text box
+            setMessageWarning('')
+            // add message that we are looking for recommendations
+            setMessageGeoTargetRecommendations(' Fetching recommendations... It can take a few seconds.')
+            // add it to the selected array
+            setLocation_targeting([...location_targeting, toTitleCase(location_input)]);
+
+            // data to send to the backend and then to the API
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'], 
+                'location': location_input, 
+                'country_code': campaignInfo[0].country_code, 
+                'language_code': campaignInfo[0].language_code,
+            }
+
+            // call the API to get location recommendations
+            fetch('http://127.0.0.1:8000/api/location-recommendations/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                console.log(resp)
+                if (resp !== null) {
+                    setLocationSuggestions(resp)
+                    setMessageGeoTargetRecommendations('')
+                } else if (resp === null) {
+                    setMessageWarning('No recommendations for that location.')
+                }
+            })
+            // .then(resp => resp.length && setLocationSuggestions(resp))
+            .catch(error => console.log(error))
+        } else if (location_targeting.indexOf(location_input) !== -1) {
+            setMessageWarning('You already added '+location_input+'.')
+
+        } else {setMessageWarning('Enter a location in the text box above.')}
+        
+    }
+
+    // add the location selected from the suggestions
+    const addLocationRecommended = (e) => {
+        
+        // store selected recommendation
+        const selectedRecomm = e.currentTarget.value
+    
+        // add it to the selected array
+        setLocation_targeting([...location_targeting, selectedRecomm]);
+        // remove it from the suggestion array
+        const itemToRemove = selectedRecomm
+        const newArray = locationSuggestions.filter(el => el !== itemToRemove);
+        setLocationSuggestions(newArray);
+
+        // get more recommendations from the API based on the selected one
+
+        // data to send to the backend and then to the API
+        const data_recomm = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'location': selectedRecomm, 
+            'country_code': campaignInfo[0].country_code, 
+            'language_code': campaignInfo[0].language_code,
+        }
+
+        // call our API to get location recommendations
+        fetch('http://127.0.0.1:8000/api/location-recommendations/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data_recomm),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => resp.length && setAdditional_locationSuggestions(resp))
+        .catch(error => console.log(error))
+    
+    }
+
+    // remove location from selected object
+    const removeLocation = (e) => {
+        const itemToRemove = e.currentTarget.value
+        const newArray = location_targeting.filter(el => el !== itemToRemove)
+        setLocation_targeting(newArray)
+    }
+
+    // set location in location_input state
+    const onChangeLocation = (e) => {
+        setLocation_input(e.target.value);
+    }
+
+    // send changes of geo targets to Google's servers
+    const onClickEditGeoTargets = () => {
+        // close modal
+        setModalGeoTargets(false)
+
+        // tell user you are changing the target locations of the campaign
+        setMessageEditingGeoTargets(' Changing the target locations... It can take a few seconds.')
+
+        // data to send to Google to edit keyword themes
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'],
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'new_geo_target_names': JSON.stringify(location_targeting), 
+            'country_code': campaignInfo[0].country_code, 
+            'language_code': campaignInfo[0].language_code,
+        }
+        console.log('data sent to the backend')
+        console.log(data)
+
+        fetch('http://127.0.0.1:8000/api/sc-settings/edit-geo-targets/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            // console.log(resp)
+            if (resp.length > 0) {
+                setUpdatedGeoTargets(resp)
+                setMessageEditingGeoTargets('')
+            } 
+        })
+        .catch(error => console.log(error))
+
+    }
+
+    // edit target locations ends here
 
     // go back button
     const goBack = () => {
@@ -884,7 +1031,8 @@ const EditCampaign = () => {
     <div className="container mt-4" font="gotham-rounded-bold">
         
         <br/>
-        <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
+        <h4 className="display-4 text-left mb-4" font="gotham-rounded-bold" 
+        style={{color:'rgb(248,172,6)', fontSize:'40px'}}>
             Campaign Information
         </h4> 
 
@@ -1361,7 +1509,7 @@ const EditCampaign = () => {
                                         <br/>
                                     </Fragment>
                                     }
-                                    {message ? <Message msg={message} /> : null}
+                                    {messageAddKeyword ? <Message msg={messageAddKeyword} /> : null}
                                     {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
                                     {messageWarning2 ? <MessageWarning msg={messageWarning2} /> : null}
                                     <br/>
@@ -1442,29 +1590,7 @@ const EditCampaign = () => {
                                                 </div>
                                             </Fragment>
                                             }
-                                            {/* <div className="row">
-                                            {keywordSuggestions.length > 0 && keywordSuggestions.map(item => {
-                                                // map value if item is not already in the recommendations
-                                                if (selectedKeywordThemes.indexOf(item) === -1) {
-                                                    return  <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
-                                                            <button type="button" className="btn btn-outline-primary btn-sm" 
-                                                            style={{whiteSpace: 'nowrap'}} 
-                                                            value={item} 
-                                                            key={item}
-                                                            onClick={addSelectedKeyTheme}>
-                                                                <i className="fas fa-plus fa-fw" 
-                                                                style={{marginRight: '5px'}}
-                                                                key={item}></i>
-
-                                                                {item}
-                                                            </button>
-                                                        </div>
-                                                } else {
-                                                    return console.log('Not showing item that is already selected.')
-                                                }
-                                                
-                                            })}
-                                            </div> */}
+                                            
                                         </div>
                                     </Fragment>
                                 }
@@ -1573,28 +1699,191 @@ const EditCampaign = () => {
                             style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
                                 Target locations
                             </h5>
+                            {messageEditingGeoTargets && 
+                            <Fragment>
+                            <br/>
+                            <Message msg={messageEditingGeoTargets} />
+                            <br/>
+                            </Fragment>
+                            }
                             <p className="card-text">
                                 Your ads show to people physically or regularly in the locations you select, 
                                 and to people who express interest in these locations.
                             </p>
                             <label>Selected locations:</label>
                             <br/>
-                            <div className="row">
-                                {item.geo_targets.map(item => {
-                                    return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
-                                    <button type="button" className="btn btn-outline-secondary btn-sm" 
-                                    style={{whiteSpace: 'nowrap'}} 
-                                    value={item} 
-                                    key={item}>
-                                        
-                                        {item}
-                                    </button>
+                            {updatedGeoTargets.length > 1 ?
+                            <Fragment>
+                                <div className="row">
+                                    {updatedGeoTargets.map(item => {
+                                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                        <button type="button" className="btn btn-outline-secondary btn-sm" 
+                                        style={{whiteSpace: 'nowrap'}} 
+                                        value={item} 
+                                        key={item}>
+                                            
+                                            {item}
+                                        </button>
+                                    </div>
+                                    })}
                                 </div>
-                                })}
-                            </div>
+                            </Fragment> :
+                            <Fragment>
+                                <div className="row">
+                                    {item.geo_targets.map(item => {
+                                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                        <button type="button" className="btn btn-outline-secondary btn-sm" 
+                                        style={{whiteSpace: 'nowrap'}} 
+                                        value={item} 
+                                        key={item}>
+                                            
+                                            {item}
+                                        </button>
+                                    </div>
+                                    })}
+                                </div>
+                            </Fragment>
+                            }
                             <br/>
                             <br/>
-                            <button type="button" className="btn btn-outline-primary">
+                            {/* start of edit geo targets modal */}
+                            <Modal show={modalGeoTargets} size="lg" centered
+                                aria-labelledby="contained-modal-title-vcenter">
+                                <Modal.Header closeButton onClick={() => setModalGeoTargets(false)}>
+                                <Modal.Title id="contained-modal-title-vcenter">
+                                    Edit your target locations
+                                </Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                
+                                <p>
+                                    Your ads show to people physically or regularly in the locations you select, 
+                                    and to people who express interest in these locations.
+                                </p>
+                                
+                                <br/>
+                                <br/>
+
+                                <label>Location</label>
+                                    <br/>
+                                    <textarea className="form-control" placeholder="Enter location..." 
+                                    id="location" rows="1"
+                                    onChange={onChangeLocation} ></textarea>
+                                    <small className= "form-text text-muted">
+                                        Enter country, state, province, city. 
+                                        Add 1 location at a time and add as many as you like.
+                                    </small> 
+                                    <br/>
+                                    <br/>
+                                    <button onClick={addLocation} className="btn btn-success">
+                                        ADD & RECOMMEND
+                                    </button>
+                                    
+
+                                <br/>
+                                <br/>
+
+                                {messageGeoTargetRecommendations ? <Message msg={messageGeoTargetRecommendations} /> : null}
+                                {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+                                {messageWarning2 ? <MessageWarning msg={messageWarning2} /> : null}
+                                <br/>
+
+                                {location_targeting.length > 0 && 
+                                <Fragment>
+                                    <label>Selected locations:</label>
+                                    <br/>
+                                    <div className="row">
+                                            {location_targeting.map(item => {
+                                                return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                                <button type="button" className="btn btn-primary btn-sm" 
+                                                style={{whiteSpace: 'nowrap'}} 
+                                                value={item} 
+                                                key={item}
+                                                onClick={removeLocation}>
+                                                    
+                                                    {item}
+                                                    <i className="fas fa-times fa-fw" 
+                                                    style={{marginLeft: '5px'}}
+                                                    key={item}></i>
+                                                </button>
+                                                </div>
+                                            })}
+                                    </div>
+                                </Fragment>
+                                }
+
+                                {locationSuggestions.length > 0 && 
+                                <Fragment>
+                                    <br/>
+                                    <label>Recommended locations:</label>
+                                    <br/>
+                                    <div className="row">
+                                            {/* show recommended locations from the location input by user in the text field */} 
+                                            {locationSuggestions.map(item => {
+                                                // map value if item is not already in the recommendations
+                                                if (location_targeting.indexOf(item.geo_name) === -1) {
+                                                    return <div className="col-sm" style={{paddingTop: '10px'}} key={item.geo_id}>
+                                                    <button type="button" className="btn btn-outline-primary btn-sm" 
+                                                    style={{whiteSpace: 'nowrap'}} 
+                                                    value={item.geo_name} 
+                                                    key={item.geo_id}
+                                                    onClick={addLocationRecommended}>
+                                                        <i className="fas fa-plus fa-fw" 
+                                                        style={{marginRight: '5px'}}
+                                                        key={item.geo_name}></i>
+
+                                                        {item.geo_name}
+                                                        
+                                                    </button>
+                                                    </div>
+
+                                                } else {
+                                                    return console.log('Not showing item that is already selected.')
+                                                }
+                                                
+                                            })}
+
+                                            {/* show recommended locations from the last location selected by user from the recommendations */}
+                                            {additional_locationSuggestions.map(item => {
+                                                // map value if item is not already in the recommendations nor on the recommendations from text input
+                                                if (location_targeting.indexOf(item.geo_name) === -1 &&
+                                                locationSuggestions.indexOf(item.geo_name) === -1) {
+                                                    return <div className="col-sm" style={{paddingTop: '10px'}} key={item.geo_id}>
+                                                    <button type="button" className="btn btn-outline-primary btn-sm" 
+                                                    style={{whiteSpace: 'nowrap'}} 
+                                                    value={item.geo_name} 
+                                                    key={item.geo_id}
+                                                    onClick={addLocationRecommended}>
+                                                        <i className="fas fa-plus fa-fw" 
+                                                        style={{marginRight: '5px'}}
+                                                        key={item.geo_name}></i>
+
+                                                        {item.geo_name}
+                                                        
+                                                    </button>
+                                                    </div>
+
+                                                } else {
+                                                    return console.log('Not showing item that is already selected.')
+                                                }
+                                                
+                                            })}
+                                    </div>
+                                </Fragment>
+                                }
+
+                                
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={() => setModalGeoTargets(false)}>CLOSE</Button>
+                                <Button variant="primary" onClick={onClickEditGeoTargets}>SAVE</Button>
+                                </Modal.Footer>
+                            </Modal>
+                            {/* end of edit geo targets modal */}
+
+                            {/* edit button in geo target card */}
+                            <button type="button" className="btn btn-outline-primary"
+                            onClick={() => setModalGeoTargets(true)}>
                                 EDIT
                             </button>
                         </div>
