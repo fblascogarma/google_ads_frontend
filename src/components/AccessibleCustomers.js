@@ -84,7 +84,7 @@ const AccessibleCustomers = () => {
     const onClick = e => {
         const cusID = e.currentTarget.id
         setCustomerId("customerID", cusID);
-        history.push('/googleads/accounts/campaigns');
+        history.push('/campaigns');
 
     }
 
@@ -129,7 +129,7 @@ const AccessibleCustomers = () => {
 
     // create new Google Ads account (client, not manager)
     const createAccount = () => {
-        history.push('/googleads/accounts/create')
+        history.push('/create-google-ads-account')
     }
 
 

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import React, {useState, useEffect, Fragment} from 'react';
-// import { Link } from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import Message from './Message';
@@ -164,14 +163,14 @@ const Campaigns = () => {
     // redirect to step 1 of campaign creation 
     // when user clicks on 'Create campaign' button
     const create = () => {
-        history.push('/googleads/campaigns/create-campaign')
+        history.push('/create-campaign')
     }
 
     // go back button
     const goAccountsList = () => {
         // if user has refresh token cookie, take them to Accounts page
         if (refreshToken['refreshToken']) {
-            history.push('/googleads/accounts')
+            history.push('/googleads-accounts')
         // if not, taking them to the home page
         } else {
             history.push('/')
@@ -185,23 +184,9 @@ const Campaigns = () => {
     const onClick = e => {
         const campaignID = e.currentTarget.id
         setCampaignId("campaignID", campaignID);
-        history.push('/googleads/campaigns/edit');
+        history.push('/edit-campaign');
 
     }
-
-    // if there is a successMessage in the cookies for creating a campaign
-    // show it to the user
-    // useEffect(() => {
-    //     if (successMessage['successMessage']) {
-    //         setMessageSuccess('The ad was successfully created! Google is reviewing your ad. Generally, it takes one business day, and you will know when you see the status of your campaign as Active.')
-    //     }
-    // }, [successMessage])
-
-    // useEffect(() => {
-    //     if (history.location.state.from === '/googleads/campaigns/budget') {
-    //         setMessageSuccess('The ad was successfully created! All ads go through a quick policy check. This usually takes one business day, and you will know when you see the status of your campaign as Active.')
-    //     }
-    // }, [history])
 
 
     return (

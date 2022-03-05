@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import React, {useState, useEffect} from 'react';
-import { Link } from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 
@@ -61,7 +60,7 @@ const GoogleAds = () => {
                 setCustomerId('customerID', text, { encode: String})
 
                 // redirect user to the reporting page
-                history.push('/googleads/accounts/campaigns')
+                history.push('/campaigns')
 
             } else {
                 // use a cookie to store the refresh token value
@@ -70,7 +69,7 @@ const GoogleAds = () => {
                 setRefreshToken('refreshToken', text, { encode: String})
                 
                 // redirect user to the accessible accounts page
-                history.push('/googleads/accounts')
+                history.push('/googleads-accounts')
 
             }
             
@@ -123,7 +122,7 @@ const GoogleAds = () => {
 
     // create new Google Ads account (client, not manager)
     const createAccount = () => {
-        history.push('/googleads/accounts/create')
+        history.push('/create-google-ads-account')
     }
 
 

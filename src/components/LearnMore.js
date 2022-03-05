@@ -13,10 +13,12 @@
 // limitations under the License.
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 
 
 const LearnMore = () => {
+
+    let history = useHistory()
 
     // Manage state of component so it shows when user clicks it
     const [showCases, setShowCases] = useState(false)
@@ -44,6 +46,16 @@ const LearnMore = () => {
         </div>
         
     )
+
+    // START button
+    const goStart = () => {
+        history.push('/googleads-accounts')  
+    }
+
+    // HOME button
+    const goHome = () => {
+        history.push('/')  
+    }
 
     return (
         
@@ -88,12 +100,13 @@ const LearnMore = () => {
         
         <div className='mt-4' align="center">
             <br></br>
-            <Link to="/login">
-                <button type="button" className="btn btn-primary btn-block" style={{margin:'10px'}}>START</button>
-            </Link>
-            <Link to="/">
-            <button type="button" className="btn btn-outline-primary btn-block" style={{margin:'10px'}}>HOME</button>
-            </Link>
+            
+            <button type="button" className="btn btn-primary btn-block" style={{margin:'10px'}}
+            onClick={goStart}>START</button>
+           
+            <button type="button" className="btn btn-outline-primary btn-block" style={{margin:'10px'}}
+            onClick={goHome}>HOME</button>
+            
         </div>
         
     </div>

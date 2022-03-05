@@ -236,13 +236,13 @@ const CreateCampaign = () => {
                     setLanding_page("landing_page", landingPage, { encode: String});
                     setCountry_code("country_code", countryCode);
                     setPhone_number("phone_number", phoneNumber);
-                    history.push('/googleads/campaigns/location');
+                    history.push('/geo-location');
                 } else {setMessageError('You need to fill out all fields to continue.');}
         }
 
     // when user clicks on 'Back' button
     const goPreviousStep = () => {
-        history.push('/googleads/accounts/campaigns')}
+        history.push('/campaigns')}
     
 
 
@@ -321,16 +321,6 @@ const CreateCampaign = () => {
         <label>Enter name of your business</label>
         <br/>
         <br/>
-        {/* {accountInfo.length > 0 ? 
-        <textarea className="form-control" placeholder="Enter name of your business..." 
-        id="business_name" rows="1" maxLength="1000"
-        onChange={onChangeBusName} 
-        value={accountInfo[0].business_name ? accountInfo[0].business_name : businessName}></textarea> :
-        <textarea className="form-control" placeholder="Enter name of your business..." 
-        id="business_name" rows="1" maxLength="1000"
-        onChange={onChangeBusName} 
-        value={business_name ? business_name['business_name'] : businessName}></textarea>
-        } */}
         <textarea className="form-control" placeholder="Enter name of your business..." 
         id="business_name" rows="1" maxLength="1000"
         onChange={onChangeBusName} 
@@ -353,9 +343,6 @@ const CreateCampaign = () => {
         onChange={onChangeLanding} 
         value={landing_page ? landing_page['landing_page'] : landingPage}></textarea>
         }
-        {/* <textarea className="form-control" placeholder="https://www.example.com" id="landing_page_url" rows="1" maxLength="1000"
-        onChange={onChangeLanding} 
-        value={landing_page ? landing_page['landing_page'] : landingPage}></textarea> */}
         <small className="form-text text-muted">
             This might be your homepage, or a more specific page. 
             Copy the page address (URL) and paste it here 

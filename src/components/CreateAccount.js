@@ -117,7 +117,7 @@ const CreateAccount = () => {
 
 
     const goReporting = () => {
-        history.push('/googleads/accounts/campaigns')
+        history.push('/campaigns')
     }
 
 

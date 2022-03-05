@@ -33,33 +33,34 @@ import CreateAccount from './components/CreateAccount';
 import EditCampaign from './components/EditCampaign';
 
 const App = () => (
-<BrowserRouter onUpdate={() => window.scrollTo(0, 0)}>
-  <NavBar />
-  <div className="container mt-4">
-      
-    <Fragment>
-      <ScrollToTop />
-      <Switch>
-        <Route exact path= "/" component={Home} />
-        <Route exact path= "/learnmore" component={LearnMore} />
-        <Route exact path= "/googleads" component={GoogleAds} />
-        <Route exact path= "/login" component={Login} />
-        <Route exact path= "/googleads/accounts" component={AccessibleCustomers} />
-        <Route exact path= "/googleads/accounts/create" component={CreateAccount} />
-        <Route exact path= "/googleads/accounts/campaigns" component={Campaigns} />
-        <Route exact path= "/googleads/campaigns/create-campaign" component={CreateCampaign} />
-        <Route exact path= "/googleads/write-smart-ad" component={WriteSmartAd} />
-        <Route exact path= "/googleads/campaigns/keyword-themes" component={KeywordThemes} />
-        <Route exact path= "/googleads/campaigns/location" component={Location} />
-        <Route exact path= "/googleads/campaigns/budget" component={Budget} />
-        <Route exact path= "/googleads/campaigns/edit" component={EditCampaign} />
-        <Route exact path= "/about" component={About} />
-      </Switch>
-    </Fragment>
-  <Footer />
-  
-  </div>
-</BrowserRouter>
+
+  <BrowserRouter onUpdate={() => window.scrollTo(0, 0)}>
+    <NavBar />
+    <div className="container mt-4">
+        
+      <Fragment>
+        <ScrollToTop />
+        <Switch>
+          <Route exact path= "/" component={Home} />
+          <Route path= "/learn-more" component={LearnMore} />
+          <Route path= "/googleads" component={GoogleAds} />
+          <Route path= "/login" component={Login} />
+          <Route path= "/googleads-accounts" component={AccessibleCustomers} />
+          <Route path= "/create-google-ads-account" component={CreateAccount} />
+          <Route path= "/campaigns" component={Campaigns} />
+          <Route path= "/create-campaign" component={CreateCampaign} />
+          <Route path= "/write-smart-ad" component={WriteSmartAd} />
+          <Route path= "/keyword-themes" component={KeywordThemes} />
+          <Route path= "/geo-location" component={Location} />
+          <Route path= "/budget" component={Budget} />
+          <Route path= "/edit-campaign" component={EditCampaign} />
+          <Route path= "/about" component={About} />
+        </Switch>
+      </Fragment>
+    <Footer />
+    
+    </div>
+  </BrowserRouter>
 );
 
 export default App;

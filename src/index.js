@@ -14,8 +14,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Route, BrowserRouter} from 'react-router-dom';
-// import './index.css';
+import {BrowserRouter} from 'react-router-dom';
 import App from './App';
 import {CookiesProvider} from 'react-cookie';
 // import reportWebVitals from './reportWebVitals';
@@ -26,7 +25,7 @@ function Router() {
 
     <CookiesProvider>
       <BrowserRouter>
-          <Route exact path = '/' component = {App}/>
+          <App />
       </BrowserRouter>
     </CookiesProvider>
   )

@@ -269,7 +269,7 @@ const WriteSmartAd = () => {
                 }
                 
                 // send user to the next step
-                history.push('/googleads/campaigns/budget');
+                history.push('/budget');
             } 
         else {
             setMessageError('You need to fill out all fields to continue.')
@@ -279,7 +279,7 @@ const WriteSmartAd = () => {
     // redirect to user to previous step,
     // also used for progression tracker
     const goStep3 = () => {
-        history.push('/googleads/campaigns/keyword-themes')}
+        history.push('/keyword-themes')}
 
 
     return (

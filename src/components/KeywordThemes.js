@@ -241,7 +241,7 @@ const KeywordThemes = () => {
             setKeyword_themes("keyword_themes", selectedKeywordThemes, { encode: String})
 
             // and send user to the next step
-            history.push('/googleads/write-smart-ad')
+            history.push('/write-smart-ad')
 
             } else (setMessageWarning3('Please select at least one category of keywords to go to the next setp.'))
         }
@@ -249,7 +249,7 @@ const KeywordThemes = () => {
     // redirect to user to previous or next step,
     // also used for progression tracker
     const goStep2 = () => {
-        history.push('/googleads/campaigns/location')}
+        history.push('/geo-location')}
 
 
     return (

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import React, {useEffect} from 'react';
-import { Link } from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 
@@ -67,14 +66,24 @@ const Home = () => {
                 // need to add the encode function because the default will encode to url
                 setRefreshToken('refreshToken', text, { encode: String})
                 
-                // redirect user to the accessible accounts page
-                history.push('/googleads/accounts')
+                // redirect user to the google ads accounts page
+                history.push('/googleads-accounts')
 
             })
             .catch(error => console.log(error))
             
         }
     }, [token, google_access_code, state, history, setRefreshToken])
+
+    // START button
+    const goStart = () => {
+        history.push('/googleads-accounts')  
+    }
+
+    // LEARN MORE button
+    const goLearnMore = () => {
+        history.push('/learn-more')  
+    }
 
     return (
         
@@ -97,12 +106,13 @@ const Home = () => {
         
         <div className='mt-4' align="center">
             <br></br>
-            <Link to="/login">
-                <button type="button" className="btn btn-primary btn-block" style={{margin:'10px'}}>START</button>
-            </Link>
-            <Link to="/learnmore">
-            <button type="button" className="btn btn-outline-primary btn-block" style={{margin:'10px'}}>LEARN MORE</button>
-            </Link>
+            
+            <button type="button" className="btn btn-primary btn-block" style={{margin:'10px'}}
+            onClick={goStart}>START</button>
+            
+            <button type="button" className="btn btn-outline-primary btn-block" style={{margin:'10px'}}
+            onClick={goLearnMore}>LEARN MORE</button>
+            
         </div>
         
     </div>

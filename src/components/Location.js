@@ -164,7 +164,7 @@ const Location = () => {
 
 
     const goStep1 = () => {
-        history.push('/googleads/campaigns/create-campaign')
+        history.push('/create-campaign')
     }
 
     const goStep3 = () => {
@@ -172,7 +172,7 @@ const Location = () => {
             // save the selected keyword themes as cookies
             setGeo_location("geo_location", location_targeting, { encode: String})
             // and send user to the next step
-            history.push('/googleads/campaigns/keyword-themes')
+            history.push('/keyword-themes')
         } else {
             setMessageWarning('Add at least one location, please.')
         }
