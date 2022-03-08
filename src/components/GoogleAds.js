@@ -14,7 +14,7 @@
 
 import React, {useState, useEffect} from 'react';
 import {useCookies} from 'react-cookie';
-import {useHistory} from 'react-router-dom';
+import {useHistory, Link} from 'react-router-dom';
 
 const GoogleAds = () => {
 
@@ -35,7 +35,7 @@ const GoogleAds = () => {
 
     // check to see if user has a refresh token for Google
     // and if so, save it as a cookie
-    // and redirect user to the '/googleads/accounts' page
+    // and redirect user to the '/googleads-accounts' page
     useEffect(() => {
         if(!refreshToken['refreshToken']) {
             const data = { 'mytoken': token['mytoken']}
@@ -70,14 +70,10 @@ const GoogleAds = () => {
                 
                 // redirect user to the accessible accounts page
                 history.push('/googleads-accounts')
-
             }
-            
         })
-        .catch(error => console.log(error))
-            
+        .catch(error => console.log(error))   
         }
-        
     }, [refreshToken, token, history, setRefreshToken, setCustomerId])
 
 
@@ -85,7 +81,7 @@ const GoogleAds = () => {
     // redirect user to the Accounts page
     useEffect(() => {
         if(refreshToken['refreshToken']) {
-            history.push('/googleads/accounts')
+            history.push('/googleads-accounts')
 
         }
     }, [refreshToken, history])
@@ -163,7 +159,9 @@ const GoogleAds = () => {
                             You can disconnect your account anytime you want.
                         </p>
                         <br/>
-                        <button onClick={authenticateGoogle} className="btn btn-success">CONNECT</button>
+                        <button onClick={authenticateGoogle} className="btn btn-outline-light">
+                            <img src="btn_google_signin_dark_normal_web.png" alt="Sign in with Google" height="auto" />
+                        </button>
                     </div>
                 </div> 
             </div>
