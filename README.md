@@ -100,8 +100,8 @@ If your users have [Google My Business](https://developers.google.com/my-busines
 Those two API for Google My Business are needed to get the business location id that you can use when creating a Smart Campaign. Check the Campaign Creation section for more information on this.
 
 **Important:** if you are not using Google My Business (aka Business Profile), you need to make the following changes to the code repositories that you are going to clone:
-1. In the backend, eliminate L41 and L75 from the authenticate.py. This will eliminate the scope during OAuth about Google My Business.
-1. In the frontend, eliminate the useEffect to get data from that API that is in L65 to L100.
+1. In the backend, eliminate [L41](https://github.com/fblascogarma/google_ads_backend/blob/main/api/authenticate.py#L41) and [L75](https://github.com/fblascogarma/google_ads_backend/blob/main/api/authenticate.py#L75) from the [authenticate.py](https://github.com/fblascogarma/google_ads_backend/blob/main/api/authenticate.py). This will eliminate the scope during OAuth about Google My Business.
+1. In the frontend, eliminate the useEffect to get data from that API that is in [L65 to L100](https://github.com/fblascogarma/google_ads_frontend/blob/main/src/components/CreateCampaign.js#L65-L100) in [CreateCampaign.js](https://github.com/fblascogarma/google_ads_frontend/blob/main/src/components/CreateCampaign.js).
 
 ### Verify your Google Cloud project
 
