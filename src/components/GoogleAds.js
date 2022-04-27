@@ -62,7 +62,10 @@ const GoogleAds = () => {
                 // redirect user to the reporting page
                 history.push('/campaigns')
 
-            } else {
+            // length > 3 makes sure it is the refresh token
+            // because the backend sends length = 2 if no refesh token found.
+            } else if(text.length>3) {
+                console.log(text.length)
                 // use a cookie to store the refresh token value
                 // text contains the refresh token value
                 // need to add the encode function because the default will encode to url

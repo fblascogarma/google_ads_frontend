@@ -63,10 +63,11 @@ const CreateCampaign = () => {
     // send it to the backend with the mytoken
     // and get information of the Google My Business
     useEffect(() => {
-        if(refreshToken) {
+        if(refreshToken['refreshToken']) {
 
             // tell user you are fetching their data
-            setMessage(' Fetching your data... It can take a few seconds.');
+            setMessage(' Fetching your data... It can take a few seconds.')
+            console.log('trying to get GMB data...')
             
             // data to send to the backend
             const data = { 
@@ -108,7 +109,7 @@ const CreateCampaign = () => {
         // if accountInfo.business_name exists, remove it
         console.log('changing bus name')
         if(accountInfo.length > 0 && accountInfo[0].business_name) {
-            console.log('inside if statement')
+            console.log('inside if(accountInfo.length > 0 && accountInfo[0].business_name) statement')
             const itemToRemove = accountInfo[0].business_name
             console.log('itemToRemove')
             console.log(itemToRemove)
@@ -126,7 +127,7 @@ const CreateCampaign = () => {
         removeLanding_page(['landing_page']);
         // if accountInfo.final_url exists, remove it
         if(accountInfo.length > 0) {
-            console.log('inside if statement')
+            console.log('inside if(accountInfo.length > 0) statement')
             const itemToRemove = accountInfo[0].final_url
             console.log('itemToRemove')
             console.log(itemToRemove)
@@ -175,8 +176,11 @@ const CreateCampaign = () => {
             setBusinessName(business_name['business_name'])
         } 
         else if(accountInfo.length > 0) {
+            if(accountInfo[0].business_name) {
+                setBusinessName(accountInfo[0].business_name)
+            }
             
-            setBusinessName(accountInfo[0].business_name)
+            
         }
     }, [business_name, accountInfo]) 
 

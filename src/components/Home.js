@@ -77,7 +77,21 @@ const Home = () => {
 
     // START button
     const goStart = () => {
-        history.push('/googleads-accounts')  
+        // if there is a refresh token in the cookies,
+        // send user to the Accounts page.
+        if(refreshToken['refreshToken']) {
+            history.push('/googleads-accounts')
+        }
+        // if no refresh token but yes mytoken,
+        // send user to Google Ads page.
+        else if(token['mytoken']) {
+            history.push('/googleads')
+        }
+        // if neither, this means user is not logged in yet,
+        // so push user to the login or signup page.
+        else {
+            history.push('/login')
+        }  
     }
 
     // LEARN MORE button

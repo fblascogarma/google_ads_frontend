@@ -75,7 +75,7 @@ const CreateAccount = () => {
 
             
     // create new Google Ads account (client, not manager)
-    const createAccount = () => {
+    const createAdsAccount = () => {
 
         // tell user the account is being created
         setMessage(' We are creating your Google Ads account. It may take a few seconds.')
@@ -189,7 +189,7 @@ const CreateAccount = () => {
                 {messageWarning && <MessageWarning msg="Failed to create account. Please try again" />}
                 {messageSuccess && <MessageSuccess msg={messageSuccess} />}
                 <br/>
-                <button onClick={createAccount} className="btn btn-success">CREATE</button>
+                <button onClick={createAdsAccount} className="btn btn-success">CREATE</button>
 
             </Fragment> 
         }

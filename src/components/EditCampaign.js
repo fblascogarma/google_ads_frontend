@@ -1021,7 +1021,7 @@ const EditCampaign = () => {
     // go back button
     const goBack = () => {
         
-        history.push('/googleads/accounts/campaigns')
+        history.push('/campaigns')
         
     }
 
