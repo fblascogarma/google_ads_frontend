@@ -88,6 +88,8 @@ const EditCampaign = () => {
     const [messageEditingGeoTargets, setMessageEditingGeoTargets] = useState('')
     const [messageGeoTargetRecommendations, setMessageGeoTargetRecommendations] = useState('')
     const [messageAddKeyword, setMessageAddKeyword] = useState('')
+    const [messageEditingAdSchedule, setMessageEditingAdSchedule] = useState('')
+
 
 
     // if there is no mytoken in the cookie, redirect user to the home page (denying access)
@@ -1018,6 +1020,129 @@ const EditCampaign = () => {
 
     // edit target locations ends here
 
+    // when user clicks on edit button on the ad schedule card
+    // change table row to input buttons to capture ad schedule changes
+    const [showEditAdSchedule, setShowEditAdSchedule] = useState(false)
+    const enableAdScheduleChange = () => setShowEditAdSchedule(showEditAdSchedule ? false : true)
+    const [monStartSchedule, setMonStartSchedule] = useState()
+    const [monEndSchedule, setMonEndSchedule] = useState()
+    const [tueStartSchedule, setTueStartSchedule] = useState()
+    const [tueEndSchedule, setTueEndSchedule] = useState()
+    const [wedStartSchedule, setWedStartSchedule] = useState()
+    const [wedEndSchedule, setWedEndSchedule] = useState()
+    const [thuStartSchedule, setThuStartSchedule] = useState()
+    const [thuEndSchedule, setThuEndSchedule] = useState()
+    const [friStartSchedule, setFriStartSchedule] = useState()
+    const [friEndSchedule, setFriEndSchedule] = useState()
+    const [satStartSchedule, setSatStartSchedule] = useState()
+    const [satEndSchedule, setSatEndSchedule] = useState()
+    const [sunStartSchedule, setSunStartSchedule] = useState()
+    const [sunEndSchedule, setSunEndSchedule] = useState()
+
+    // store new campaign schedule returned from API
+    const [newCampaignSchedule, setNewCampaignSchedule] = useState([])
+
+    // set ad schedule
+    const changeMonStartSchedule = (e) => {
+        setMonStartSchedule(e.target.value)
+    }
+    const changeMonEndSchedule = (e) => {
+        setMonEndSchedule(e.target.value);
+    }
+    const changeTueStartSchedule = (e) => {
+        setTueStartSchedule(e.target.value)
+    }
+    const changeTueEndSchedule = (e) => {
+        setTueEndSchedule(e.target.value);
+    }
+    const changeWedStartSchedule = (e) => {
+        setWedStartSchedule(e.target.value)
+    }
+    const changeWedEndSchedule = (e) => {
+        setWedEndSchedule(e.target.value);
+    }
+    const changeThuStartSchedule = (e) => {
+        setThuStartSchedule(e.target.value)
+    }
+    const changeThuEndSchedule = (e) => {
+        setThuEndSchedule(e.target.value);
+    }
+    const changeFriStartSchedule = (e) => {
+        setFriStartSchedule(e.target.value)
+    }
+    const changeFriEndSchedule = (e) => {
+        setFriEndSchedule(e.target.value);
+    }
+    const changeSatStartSchedule = (e) => {
+        setSatStartSchedule(e.target.value)
+    }
+    const changeSatEndSchedule = (e) => {
+        setSatEndSchedule(e.target.value);
+    }
+    const changeSunStartSchedule = (e) => {
+        setSunStartSchedule(e.target.value)
+    }
+    const changeSunEndSchedule = (e) => {
+        setSunEndSchedule(e.target.value);
+    }
+
+    // send new schedule to Google
+    const onClickSendNewSchedule = () => {
+        // show again the table with ad schedule
+        setShowEditAdSchedule(false)
+        // tell user you are changing the ad schedule of the campaign
+        setMessageEditingAdSchedule(' Changing campaign ad schedule... It can take a few seconds.');
+                        
+        // data to send to the backend
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'mon_start': monStartSchedule,
+            'mon_end': monEndSchedule,
+            'tue_start': tueStartSchedule,
+            'tue_end': tueEndSchedule,
+            'wed_start': wedStartSchedule,
+            'wed_end': wedEndSchedule,
+            'thu_start': thuStartSchedule,
+            'thu_end': thuEndSchedule,
+            'fri_start': friStartSchedule,
+            'fri_end': friEndSchedule,
+            'sat_start': satStartSchedule,
+            'sat_end': satEndSchedule,
+            'sun_start': sunStartSchedule,
+            'sun_end': sunEndSchedule,
+        }
+        console.log('data to send to backend for ad schedule')
+        console.log(data)
+
+        fetch('http://127.0.0.1:8000/api/sc-settings/edit-ad-schedule/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            console.log(resp)
+            if (resp.length > 0) {
+                setNewCampaignSchedule(resp)
+                setMessageEditingAdSchedule('')
+            } else if (resp === null) {
+                // console.log(resp);
+                setMessageEditingAdSchedule('')
+                setMessageWarning('Error when trying to change ad schedule of the campaign.')
+
+            }
+        })
+        .catch(error => console.log(error))
+
+    }
+    // end of edit ad schedule
+
     // go back button
     const goBack = () => {
         
@@ -1888,8 +2013,295 @@ const EditCampaign = () => {
                             </button>
                         </div>
                     </div>
+                    <br/>
+                    <br/>
                     {/* geo targeting location setting ends */}
                     </div>
+
+                    {/* ad schedule setting starts */}
+                    <div className="card" font="gotham-rounded-bold">
+                        <div className="card-body">
+                            <h5 className="card-title" 
+                            style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
+                                Ad Schedule
+                            </h5>
+                            {messageEditingAdSchedule && 
+                            <Fragment>
+                            <br/>
+                            <Message msg={messageEditingAdSchedule} />
+                            <br/>
+                            </Fragment>
+                            }
+                            <p className="card-text">
+                                You can set up a schedule for your campaign. 
+                                This means that your ad will run only during the days and times you want. 
+                                For example, many advertisers want their ads to appear during their 
+                                opening business hours. 
+                            </p>
+                            <p className="card-text">
+                                Time scale is from 0 to 23hs. For example, 4pm is 16hs.
+                            </p>
+                            <br/>
+                            {showEditAdSchedule ?
+                            // see edit fields
+                            <Fragment>
+                            <table className="table table-bordered table-hover table-responsive">
+                                <thead className="thead-light" style={{backgroundColor: 'rgb(248,172,6)'}}>
+                                    <tr key="ad_schedule_table" 
+                                    style={{ textAlign: 'center', verticalAlign: 'top'}}>
+                                        
+                                        <th key="day" scope="col" className='col-sm-4'>Day</th>
+                                        <th key="hours" scope="col" className='col-sm-2' colSpan={2}>Hours</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr key={item.MONDAY} id={item.MONDAY} value={item.MONDAY}
+                                    style={{ textAlign: 'center'}} >
+                                        <td >
+                                            Monday
+                                        </td>
+                                        <td  > 
+                                            <input type="number" className="form-control" 
+                                            id="monday_start" name="monday_start" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].MONDAY_start_hour : item.MONDAY_start_hour}
+                                            onChange={changeMonStartSchedule} />
+                                        </td>
+                                        <td >
+                                            <input type="number" className="form-control" 
+                                            id="monday_end" name="monday_end" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].MONDAY_end_hour : item.MONDAY_end_hour}
+                                            onChange={changeMonEndSchedule} />
+                                        </td>
+                                    </tr>
+                                    <tr key={item.TUESDAY} id={item.TUESDAY} value={item.TUESDAY}
+                                    style={{ textAlign: 'center'}} >
+                                        <td >
+                                            Tuesday
+                                        </td>
+                                        <td  > 
+                                            <input type="number" className="form-control" 
+                                            id="tuesday_start" name="tuesday_start" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].TUESDAY_start_hour : item.TUESDAY_start_hour}
+                                            onChange={changeTueStartSchedule} />
+                                        </td>
+                                        <td >
+                                            <input type="number" className="form-control" 
+                                            id="tuesday_end" name="tuesday_end" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].TUESDAY_end_hour : item.TUESDAY_end_hour}
+                                            onChange={changeTueEndSchedule} />
+                                        </td>
+                                    </tr>
+                                    <tr key={item.WEDNESDAY} id={item.WEDNESDAY} value={item.WEDNESDAY}
+                                    style={{ textAlign: 'center'}} >
+                                        <td >
+                                            Wednesday
+                                        </td>
+                                        <td  > 
+                                            <input type="number" className="form-control" 
+                                            id="wednesday_start" name="wednesday_start" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].WEDNESDAY_start_hour : item.WEDNESDAY_start_hour}
+                                            onChange={changeWedStartSchedule} />
+                                        </td>
+                                        <td >
+                                            <input type="number" className="form-control" 
+                                            id="wednesday_end" name="wednesday_end" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].WEDNESDAY_end_hour : item.WEDNESDAY_end_hour}
+                                            onChange={changeWedEndSchedule} />
+                                        </td>
+                                    </tr>
+                                    <tr key={item.THURSDAY} id={item.THURSDAY} value={item.THURSDAY}
+                                    style={{ textAlign: 'center'}} >
+                                        <td >
+                                            Thursday
+                                        </td>
+                                        <td  > 
+                                            <input type="number" className="form-control" 
+                                            id="thursday_start" name="thursday_start" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].THURSDAY_start_hour : item.THURSDAY_start_hour}
+                                            onChange={changeThuStartSchedule} />
+                                        </td>
+                                        <td >
+                                            <input type="number" className="form-control" 
+                                            id="thursday_end" name="thursday_end" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].THURSDAY_end_hour : item.THURSDAY_end_hour}
+                                            onChange={changeThuEndSchedule} />
+                                        </td>
+                                    </tr>
+                                    <tr key={item.FRIDAY} id={item.FRIDAY} value={item.FRIDAY}
+                                    style={{ textAlign: 'center'}} >
+                                        <td >
+                                            Friday
+                                        </td>
+                                        <td  > 
+                                            <input type="number" className="form-control" 
+                                            id="friday_start" name="friday_start" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].FRIDAY_start_hour : item.FRIDAY_start_hour}
+                                            onChange={changeFriStartSchedule} />
+                                        </td>
+                                        <td >
+                                            <input type="number" className="form-control" 
+                                            id="friday_end" name="friday_end" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].FRIDAY_end_hour : item.FRIDAY_end_hour}
+                                            onChange={changeFriEndSchedule} />
+                                        </td>
+                                    </tr>
+                                    <tr key={item.SATURDAY} id={item.SATURDAY} value={item.SATURDAY}
+                                    style={{ textAlign: 'center'}} >
+                                        <td >
+                                            Saturday
+                                        </td>
+                                        <td  > 
+                                            <input type="number" className="form-control" 
+                                            id="saturday_start" name="saturday_start" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].SATURDAY_start_hour : item.SATURDAY_start_hour}
+                                            onChange={changeSatStartSchedule} />
+                                        </td>
+                                        <td >
+                                            <input type="number" className="form-control" 
+                                            id="saturday_end" name="saturday_end" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].SATURDAY_end_hour : item.SATURDAY_end_hour}
+                                            onChange={changeSatEndSchedule} />
+                                        </td>
+                                    </tr>
+                                    <tr key={item.SUNDAY} id={item.SUNDAY} value={item.SUNDAY}
+                                    style={{ textAlign: 'center'}} >
+                                        <td >
+                                            Sunday
+                                        </td>
+                                        <td  > 
+                                            <input type="number" className="form-control" 
+                                            id="sunday_start" name="sunday_start" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].SUNDAY_start_hour : item.SUNDAY_start_hour}
+                                            onChange={changeSunStartSchedule} />
+                                        </td>
+                                        <td >
+                                            <input type="number" className="form-control" 
+                                            id="sunday_end" name="sunday_end" 
+                                            min="0" max="23" defaultValue={newCampaignSchedule.length > 0 ? newCampaignSchedule[0].SUNDAY_end_hour : item.SUNDAY_end_hour}
+                                            onChange={changeSunEndSchedule} />
+                                        </td>
+                                    </tr> 
+                                </tbody>
+                            </table>
+                            <br/>
+                            <br/>
+                            <div className='row'>
+                                <div className="col-sm-1">
+                                    <button type="button" className="btn btn-primary"
+                                    onClick={onClickSendNewSchedule}>
+                                        SAVE
+                                    </button>
+                                </div>
+                                <div className="col-sm-1">
+                                    <button type="button" className="btn btn-outline-primary"
+                                    onClick={enableAdScheduleChange}>
+                                        CANCEL
+                                    </button>
+                                </div>
+                            </div>
+                            </Fragment> :
+                            // see table showing ad schedule
+                            <Fragment>
+                            <table className="table table-bordered table-hover table-responsive">
+                                <thead className="thead-light" style={{backgroundColor: 'rgb(248,172,6)'}}>
+                                    <tr key="ad_schedule_table" 
+                                    style={{ textAlign: 'center', verticalAlign: 'top'}}>
+                                        
+                                        <th key="monday" scope="col">Monday</th>
+                                        <th key="tuesday" scope="col">Tuesday</th>
+                                        <th key="wednesday" scope="col">Wednesday</th>
+                                        <th key="thursday" scope="col">Thursday</th>
+                                        <th key="friday" scope="col">Friday</th>
+                                        <th key="saturday" scope="col">Saturday</th>
+                                        <th key="sunday" scope="col">Sunday</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    <tr key={item.campaign_id} id={item.campaign_id} value={item.campaign_id}
+                                style={{ textAlign: 'center'}}>
+                                    {/* if there was an update, use the newCampaignSchedule object */}
+                                    {newCampaignSchedule.length > 0 ?
+                                    <Fragment>
+                                        {newCampaignSchedule[0].MONDAY ?
+                                        <td> {newCampaignSchedule[0].MONDAY_start_hour} - {newCampaignSchedule[0].MONDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {newCampaignSchedule[0].TUESDAY ?
+                                        <td> {newCampaignSchedule[0].TUESDAY_start_hour} - {newCampaignSchedule[0].TUESDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {newCampaignSchedule[0].WEDNESDAY ?
+                                        <td> {newCampaignSchedule[0].WEDNESDAY_start_hour} - {newCampaignSchedule[0].WEDNESDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {newCampaignSchedule[0].THURSDAY ?
+                                        <td> {newCampaignSchedule[0].THURSDAY_start_hour} - {newCampaignSchedule[0].THURSDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {newCampaignSchedule[0].FRIDAY ?
+                                        <td> {newCampaignSchedule[0].FRIDAY_start_hour} - {newCampaignSchedule[0].FRIDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {newCampaignSchedule[0].SATURDAY ?
+                                        <td> {newCampaignSchedule[0].SATURDAY_start_hour} - {newCampaignSchedule[0].SATURDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {newCampaignSchedule[0].SUNDAY ?
+                                        <td> {newCampaignSchedule[0].SUNDAY_start_hour} - {newCampaignSchedule[0].SUNDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+
+                                    </Fragment> :
+                                    // and if not, use current settings object
+                                    <Fragment>
+                                        {/* if there is an ad schedule, show it */}
+                                        {/* and if there is not, show that the ad is showing all day */}
+                                        {item.MONDAY ?
+                                        <td> {item.MONDAY_start_hour} - {item.MONDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {item.TUESDAY ?
+                                        <td> {item.TUESDAY_start_hour} - {item.TUESDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {item.WEDNESDAY ?
+                                        <td> {item.WEDNESDAY_start_hour} - {item.WEDNESDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {item.THURSDAY ?
+                                        <td> {item.THURSDAY_start_hour} - {item.THURSDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {item.FRIDAY ?
+                                        <td> {item.FRIDAY_start_hour} - {item.FRIDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {item.SATURDAY ?
+                                        <td> {item.SATURDAY_start_hour} - {item.SATURDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                        {item.SUNDAY ?
+                                        <td> {item.SUNDAY_start_hour} - {item.SUNDAY_end_hour} </td> :
+                                        <td> All day</td>
+                                        }
+                                    </Fragment>}
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br/>
+                            <br/>
+                            {/* edit button in ad schedule card */}
+                            <button type="button" className="btn btn-outline-primary"
+                            onClick={enableAdScheduleChange}>
+                                EDIT
+                            </button>
+                            </Fragment>
+                            // table showing ad schedule ends here
+                            }
+                        </div>
+                    </div>
+                    {/* ad schedule setting ends */}
                 </div>
             )
         })}

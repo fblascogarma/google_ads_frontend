@@ -44,6 +44,7 @@ export const NavBar = () => {
     // cookies from step 1
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code', "US"])
     const [business_name, setBusiness_name, removeBusiness_name] = useCookies(['business_name'])
+    const [business_location_id, setBusiness_location_id, removeBusiness_location_id] = useCookies(['business_location_id'])
     const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
     const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
     const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
@@ -83,6 +84,7 @@ export const NavBar = () => {
         removeKeyword_themes(['keyword_themes']);
         removeGeo_location(['geo_location']);
         removeCampaignID(['campaignID']);
+        removeBusiness_location_id(['business_location_id'])
 
     }
 
