@@ -61,7 +61,10 @@ const AccessibleCustomers = () => {
                 
             })
             .then(resp => resp.json())
-            .then(resp => setAccountInfo(resp))
+            .then(resp => {
+                console.log(resp)
+                setAccountInfo(resp)
+                })
             .catch(error => {
                 console.log(error);
                 setMessage('');
@@ -78,13 +81,48 @@ const AccessibleCustomers = () => {
         }
     }, [accountInfo])
 
-    // when user clicks on a row, the customer_id will be saved as a cookie
+    // When user clicks on a row, the customer_id will be saved as a cookie
     // to be used for the session, and they will be redirected 
-    // to the page of campaigns info for that customer
+    // to the page of campaigns info for that customer.
+    // Also, it will check if it is linked to our Google Ads Manager account,
+    // and if it's not, we are going to link it.
     const onClick = e => {
         const cusID = e.currentTarget.id
-        setCustomerId("customerID", cusID);
-        history.push('/campaigns');
+        console.log("cusID:")
+        console.log(cusID)
+        setCustomerId("customerID", cusID)
+        const managerID = e.currentTarget.getAttribute("value")
+        console.log("managerID:")
+        console.log(managerID)
+        if(managerID !== '4642579541') {
+            // data to send to the backend
+            const data = { 
+                'refreshToken': refreshToken['refreshToken'],
+                'customer_id': cusID
+            }
+
+            console.log("data:")
+            console.log(data)
+            fetch('http://127.0.0.1:8000/api/link-accounts/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token['mytoken']}`
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(resp => resp.json())
+            .then(resp => {
+                console.log(resp)
+                })
+            .catch(error => {
+                console.log(error)
+                })
+
+        }
+
+        history.push('/campaigns')
 
     }
 
@@ -156,7 +194,8 @@ const AccessibleCustomers = () => {
             <MessageError msg={messageError} />
             <div className="container" align="left">
                 <div className="col-6">
-                    <button onClick={authenticateGoogle} className="btn btn-success btn-sm">
+                    <button onClick={authenticateGoogle} 
+                    className="btn btn-success btn-sm">
                         Reconnect to Google Ads
                     </button>
                 </div>
@@ -167,7 +206,9 @@ const AccessibleCustomers = () => {
         : null}
 
         <br/>
-        <button onClick={createAccount} className="btn btn-success">Create account</button>
+        <button onClick={createAccount} className="btn btn-success">
+            Create account
+        </button>
 
         <br/>
         <br/>
@@ -175,13 +216,17 @@ const AccessibleCustomers = () => {
 
         <table className="table table-bordered table-hover table-responsive">
             <thead className="thead-light" style={{backgroundColor: 'rgb(248,172,6)'}}>
-                <tr key="accounts_table" style={{ textAlign: 'center', verticalAlign: 'top'}}>
+                <tr key="accounts_table" 
+                style={{ textAlign: 'center', verticalAlign: 'top'}}>
                     
+                    <th key="description" scope="col">NAME</th>
+                    <th key="account_type" scope="col">ACCOUNT TYPE</th>
                     <th key="customer_id" scope="col">CUSTOMER ID</th>
-                    <th key="description" scope="col">DESCRIPTION</th>
                     <th key="time_zone" scope="col">TIME ZONE</th>
                     <th key="currency" scope="col">CURRENCY</th>
-                    <th key="account_type" scope="col">ACCOUNT TYPE</th>
+                    <th key="billing_status" scope="col">BILLING STATUS</th>
+                    <th key="manager_id" scope="col">MANAGER ID</th>
+                    
                 </tr>
             </thead>
            
@@ -192,16 +237,17 @@ const AccessibleCustomers = () => {
                     
                 <tr key={item.customer_id} 
                 onClick={item.account_type === 'Client' ? onClick : onClickManager} 
-                id={item.customer_id} value={item.customer_id} 
+                id={item.customer_id} 
+                value={item.manager_account_linked ? item.manager_account_linked : item.customer_id}
                 style={{ textAlign: 'center', cursor: 'pointer'}}>
                     
-                
-                    <td key={item.customer_id}> {item.customer_id}</td>
                     <td key={item.description}> {item.description}</td>
+                    <td key={item.account_type}> {item.account_type}</td>
+                    <td key={item.customer_id}> {item.customer_id}</td>
                     <td key={item.time_zone}> {item.time_zone}</td>
                     <td key={item.currency}> {item.currency}</td>
-                    <td key={item.account_type}> {item.account_type}</td>
-
+                    <td key={item.billing_status}> {item.billing_status}</td>
+                    <td key={item.manager_account_linked}> {(item.manager_account_linked === "0") ? "No Manager Linked" : item.manager_account_linked}</td>
                     
                 </tr>
                 
