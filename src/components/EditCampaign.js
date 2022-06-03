@@ -650,6 +650,118 @@ const EditCampaign = () => {
             })
         .catch(error => console.log(error));
     }
+    
+    // when user clicks on negative keywords button
+    // open modal to edit negative keywords
+    const [modalNegativeKeywords, setModalNegativeKeywords] = useState(false)
+
+    // store negative keyword themes from Google Ads API
+    const [negativeKeywords, setNegativeKeywords] = useState([])
+
+    // messages to inform users we are getting the negative keywords info
+    const [messageNegativeKeywords, setMessageNegativeKeywords] = useState(' Fetching your data... It can take a few seconds.')
+
+    const [messageEditingNegativeKeywords, setMessageEditingNegativeKeywords] = useState('')
+
+    const openNegativeKeywords = () => {
+        // open modal
+        setModalNegativeKeywords(true)
+
+        // tell user you are getting info
+        setMessageNegativeKeywords(' Fetching your data... It can take a few seconds.')
+
+        // data to send to the API
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID']
+        }
+        console.log(data)
+
+        // get negative keywords of smart campaign from api
+        fetch('http://127.0.0.1:8000/api/get-negative-keywords/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => setNegativeKeywords(resp))
+        .then(resp => {
+            if (resp !== null) {
+                setMessageNegativeKeywords('')
+            } else {
+                setMessageWarning('There was a problem and we could not get the negative keyword themes.')
+            }
+
+            })
+        .catch(error => console.log(error));
+    }
+
+    // store user's text input for negative keyword theme
+    const [negativeKeyword, setNegativeKeyword] = useState("")
+    const [negativeKeywordCharacters, setNegativeKeywordCharacters] = useState()
+
+    // add the negative keyword themes selected from the suggestions
+    const onChangeNegativeKeyword = (e) => {
+        setNegativeKeyword(e.target.value);
+        setNegativeKeywordCharacters(e.target.value.length)
+    }
+
+    // when user clicks on ADD the negative keyword they input in the text field
+    const addNegativeKeywordToList = () => {
+        // only add it if it hasn't been already added
+        if (negativeKeywords.indexOf(negativeKeyword) === -1) {
+            setNegativeKeywords([...negativeKeywords, negativeKeyword])
+        }
+    }
+
+    // when user removes a negative keyword
+    const removeNegativeKeyword = (e) => {
+        const itemToRemove = e.currentTarget.value
+        const newArray = negativeKeywords.filter(el => el !== itemToRemove)
+        setNegativeKeywords(newArray) 
+    }
+
+    // send edits of negative keywords to Google Ads API
+    const onClickEditNegativeKeywords = () => {
+
+        // tell user you are changing the negative keyword themes of the campaign
+        setMessageEditingNegativeKeywords(' Changing the categories of negative keywords... It can take a few seconds.')
+
+        // data to send to Google to edit keyword themes
+        const data = { 
+            'refreshToken': refreshToken['refreshToken'],
+            'customer_id': customerId['customerID'], 
+            'campaign_id': campaignId['campaignID'],
+            'display_name': JSON.stringify(negativeKeywords), 
+        }
+        console.log('data sent to the backend')
+        console.log(data)
+
+        fetch('http://127.0.0.1:8000/api/edit-negative-keywords/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+            // console.log(resp)
+            if (resp.length > 0) {
+                setNegativeKeywords(resp)
+                setMessageEditingNegativeKeywords('')
+            } 
+        })
+        .catch(error => console.log(error))
+
+    }
 
     // function to transform user's keyword input into title case
     function toTitleCase(str) {
@@ -1516,6 +1628,10 @@ const EditCampaign = () => {
                             style={{color:'rgb(248,172,6)', fontSize:'20px'}}>
                                 Categories of keywords
                             </h5>
+                            <p>
+                            If there are certain words or phrases your customers use, 
+                            consider including them as a category of keywords.
+                            </p>
                             {messageEditingKeywords && 
                             <Fragment>
                             <br/>
@@ -1796,6 +1912,85 @@ const EditCampaign = () => {
                                 </Modal.Footer>
                             </Modal>
                             {/* end of search terms modal */}
+                            {/* start of negative keywords modal */}
+                            <Modal show={modalNegativeKeywords} size="lg" centered
+                                aria-labelledby="contained-modal-title-vcenter">
+                                <Modal.Header closeButton onClick={() => setModalNegativeKeywords(false)}>
+                                <Modal.Title id="contained-modal-title-vcenter">
+                                    Category of Negative Keywords
+                                </Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                {/* message saying you are getting the negative keywords of the campaign */}
+                                {messageNegativeKeywords ? <Message msg={messageNegativeKeywords} /> : null}
+                                {/* message saying you are sending the changes of the negative keywords */}
+                                {messageEditingNegativeKeywords ? <Message msg={messageEditingNegativeKeywords} /> : null}
+                                {/* message saying that the campaign has no negative keyword themes yet */}
+                                {(negativeKeywords && negativeKeywords.length < 1) && <MessageWarning msg="Your campaign is not using negative keywords." />}
+                                <p>Category of keywords can also be used to exclude targeting.
+                                    For example, you can create negative category of keywords to 
+                                    exclude your ads from appearing when people search for free products.
+                                </p>
+                                <br/>
+                                <br/>
+                                {/* negative keywords starts */}
+                                <label>Category of negative keywords</label>
+                                <br/>
+                                    <textarea className="form-control" 
+                                    placeholder="Enter category of negative keywords..." 
+                                    id="keyword_text" rows="1" maxLength="30"
+                                    onChange={onChangeNegativeKeyword} value={negativeKeyword}>
+                                    </textarea>
+                                    <small className= "form-text text-muted">
+                                        {negativeKeywordCharacters ? negativeKeywordCharacters : 0}/30 characters.
+                                    </small>
+                                    <br/>
+                                    <br/>
+                                    {negativeKeywordCharacters > 0 && 
+                                    <Fragment>
+                                        <button onClick={addNegativeKeywordToList} className="btn btn-success">
+                                        ADD
+                                        </button>
+                                        <br/>
+                                        <br/>
+                                    </Fragment>
+                                    }
+                                    {messageAddKeyword ? <Message msg={messageAddKeyword} /> : null}
+                                    {messageWarning ? <MessageWarning msg={messageWarning} /> : null}
+                                    {messageWarning2 ? <MessageWarning msg={messageWarning2} /> : null}
+                                    <br/>
+                                <label>Selected category of negative keywords:</label>
+                                <br/>
+                                <small className="form-text text-muted">
+                                    {negativeKeywords.length} selected.
+                                </small>
+                                <div className="row">
+                                    {negativeKeywords.map(item => {
+                                        return <div className="col-sm" style={{paddingTop: '10px'}} key={item}>
+                                        <button type="button" className="btn btn-primary btn-sm" 
+                                        style={{whiteSpace: 'nowrap'}} 
+                                        value={item} 
+                                        key={item}
+                                        onClick={removeNegativeKeyword}>
+                                            
+                                            {item}
+                                            <i className="fas fa-times fa-fw" 
+                                            style={{marginLeft: '5px'}}
+                                            key={item}></i>
+                                        </button>
+                                    </div>
+                                    })}
+                                </div>
+                                    <br/>
+                                    <br/>
+                                {/* negative keywords ends */}
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={() => setModalNegativeKeywords(false)}>CLOSE</Button>
+                                <Button variant="primary" onClick={onClickEditNegativeKeywords}>SAVE</Button>
+                                </Modal.Footer>
+                            </Modal>
+                            {/* end of negative keywords modal */}
                             <div className="row">
                                 <div className="col-sm-2">
                                 <button type="button" className="btn btn-outline-primary"
@@ -1807,6 +2002,12 @@ const EditCampaign = () => {
                                 <button type="button" className="btn btn-link" 
                                 onClick={getSearchTermsReport}>
                                     SEARCH TERMS REPORT
+                                </button> 
+                                </div>
+                                <div className="col-sm-4">
+                                <button type="button" className="btn btn-link" 
+                                onClick={openNegativeKeywords}>
+                                    NEGATIVE KEYWORDS
                                 </button> 
                                 </div>
                             </div>
