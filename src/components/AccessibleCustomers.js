@@ -224,7 +224,8 @@ const AccessibleCustomers = () => {
                 style={{ textAlign: 'center', verticalAlign: 'top'}}>
                     
                     <th key="description" scope="col">NAME</th>
-                    <th key="account_type" scope="col">ACCOUNT TYPE</th>
+                    <th key="account_type" scope="col">TYPE</th>
+                    <th key="account_status" scope="col">STATUS</th>
                     <th key="customer_id" scope="col">CUSTOMER ID</th>
                     <th key="time_zone" scope="col">TIME ZONE</th>
                     <th key="currency" scope="col">CURRENCY</th>
@@ -247,6 +248,7 @@ const AccessibleCustomers = () => {
                     
                     <td key={item.description}> {item.description}</td>
                     <td key={item.account_type}> {item.account_type}</td>
+                    <td key={item.status}> {item.status}</td>
                     <td key={item.customer_id}> {item.customer_id}</td>
                     <td key={item.time_zone}> {item.time_zone}</td>
                     <td key={item.currency}> {item.currency}</td>

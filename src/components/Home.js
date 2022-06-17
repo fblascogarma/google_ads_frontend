@@ -61,9 +61,8 @@ const Home = () => {
             })
             .then(function(text) {
                 
-                // use a cookie to store the refresh token value
-                // text contains the refresh token value
-                // need to add the encode function because the default will encode to url
+                // Use a cookie to store info of the account.
+                // Need to add the encode function because the default will encode to url.
                 setRefreshToken('refreshToken', text, { encode: String})
                 
                 // redirect user to the google ads accounts page
