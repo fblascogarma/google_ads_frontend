@@ -84,6 +84,7 @@ const CreateAccount = () => {
         const data = { 
             'refreshToken': refreshToken['refreshToken'], 
             'mytoken': token['mytoken'], 
+            'customer_id': customerId['customerID'],
             'account_name': account_name, 
             'email_address': email, 
             'currency': currency, 

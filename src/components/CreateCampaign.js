@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState, useEffect, Fragment} from 'react';
-import {useCookies} from 'react-cookie';
-import {useHistory} from 'react-router-dom';
-import Message from './Message';
-import MessageError from './MessageErrorNoClose';
-import ProgressionTracker from './ProgressionTracker';
+import React, {useState, useEffect, Fragment} from 'react'
+import {useCookies} from 'react-cookie'
+import {useHistory} from 'react-router-dom'
+import Message from './Message'
+import MessageError from './MessageErrorNoClose'
+import ProgressionTracker from './ProgressionTracker'
 
 
 // this is step 1 from a 5-step process
@@ -71,8 +71,7 @@ const CreateCampaign = () => {
             
             // data to send to the backend
             const data = { 
-                'mytoken': token['mytoken'], 
-                'refreshToken': refreshToken['refreshToken']
+                'mytoken': token['mytoken']
             }
 
             fetch('http://127.0.0.1:8000/api/get-business-info/', {
@@ -92,8 +91,8 @@ const CreateCampaign = () => {
                 setMessage('')
                 })
             .catch(error => {
-                console.log(error);
-                setMessage('');
+                console.log(error)
+                setMessage('')
                 })
             
               

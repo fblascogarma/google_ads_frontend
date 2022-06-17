@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState, useEffect, Fragment} from 'react';
-import {useCookies} from 'react-cookie';
-import {useHistory} from 'react-router-dom';
-import Message from './Message';
-import MessageWarning from './MessageWarning';
-import ProgressionTracker from './ProgressionTracker';
+import React, {useState, useEffect, Fragment} from 'react'
+import {useCookies} from 'react-cookie'
+import {useHistory} from 'react-router-dom'
+import Message from './Message'
+import MessageWarning from './MessageWarning'
+import ProgressionTracker from './ProgressionTracker'
 
 
 const KeywordThemes = () => {
@@ -118,32 +118,34 @@ const KeywordThemes = () => {
         return str.replace(
             /\w\S*/g,
             function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
             }
         );
     }
 
 
     // data to send to Google to get keyword theme recommendations
-    const data = { 'refreshToken': refreshToken['refreshToken'], 
-    'keyword_text': keywordOne, 
-    'country_code': country_code['country_code'], 
-    'language_code': language_code['language_code'],
-    'customer_id': customerId['customerID'],
-    'final_url': landing_page['landing_page'],
-    'business_name': business_name['business_name'],
-    'geo_target_names': JSON.stringify(geo_location['geo_location']),
+    const data = { 
+        'mytoken': token['mytoken'], 
+        'refreshToken': refreshToken['refreshToken'], 
+        'keyword_text': keywordOne, 
+        'country_code': country_code['country_code'], 
+        'language_code': language_code['language_code'],
+        'customer_id': customerId['customerID'],
+        'final_url': landing_page['landing_page'],
+        'business_name': business_name['business_name'],
+        'geo_target_names': JSON.stringify(geo_location['geo_location']),
     }
     
     
     // get keyword themes suggestions from API
     const keywordThemesSuggestions = () => {
         // if there was a warning message, remove it
-        setMessageWarning('');
-        setMessageWarning2('');
-        setMessageWarning3('');
+        setMessageWarning('')
+        setMessageWarning2('')
+        setMessageWarning3('')
         // tell user it can take a few seconds to show results
-        setMessage(' Fetching your data... It can take a few seconds.');
+        setMessage(' Fetching your data... It can take a few seconds.')
 
         // if keyword theme is already selected, do not add it again to the object
         if ((selectedKeywordThemes.indexOf(toTitleCase(keywordOne)) === -1) && 
@@ -151,7 +153,7 @@ const KeywordThemes = () => {
         selectedKeywordThemes.length < 7) {
             setSelectedKeywordThemes([...selectedKeywordThemes, toTitleCase(keywordOne)])
         } else if (selectedKeywordThemes.length > 6) {
-            setMessageWarning2('Remove one category to add this one.');
+            setMessageWarning2('Remove one category to add this one.')
         }
         console.log(data)
 
@@ -185,12 +187,14 @@ const KeywordThemes = () => {
     const addSelectedKeyTheme = (e) => {
         if (selectedKeywordThemes.length < 7) {
             // add it to the selected array
-            setSelectedKeywordThemes([...selectedKeywordThemes, e.currentTarget.value]);
+            setSelectedKeywordThemes([...selectedKeywordThemes, e.currentTarget.value])
             // remove it from the suggestion array
             const itemToRemove = e.currentTarget.value
-            const newArray = keywordSuggestions.filter(el => el !== itemToRemove);
-            setKeywordSuggestions(newArray);
-        } else {setMessageWarning('Remove selected categories to add new ones.')}
+            const newArray = keywordSuggestions.filter(el => el !== itemToRemove)
+            setKeywordSuggestions(newArray)
+        } else {
+            setMessageWarning('Remove selected categories to add new ones.')
+        }
         
     }
     

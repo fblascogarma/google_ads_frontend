@@ -48,36 +48,75 @@ const GoogleAds = () => {
             },
             body: JSON.stringify(data),
         })
-        .then(function(response) {    
-            return response.text();
-        })
-        .then(function(text) {
-            let isnum = /^\d+$/.test(text);
-            // check if value from backend is the customer id or refresh token
-            // by checking if the response is all digits, which means is customer id
-            if (isnum) {
-                // save it as a cookie
-                setCustomerId('customerID', text, { encode: String})
-
-                // redirect user to the reporting page
+        .then(resp => resp.json())
+        .then(resp => {
+            console.log('response from our backend:'+resp)
+            // if user does not have a refresh token but has a Google Ads account
+            if (resp.refresh_token === 0 && resp.customer_id !==0) {
+                console.log('user has an Ads account but no refresh token')
+                // save the Google Ads account ID as a cookie
+                console.log('Google Ads ID:'+resp.customer_id)
+                setCustomerId('customerID', resp.customer_id, { encode: String})
+                // redirect user to the Reporting page
                 history.push('/campaigns')
-
-            // length > 3 makes sure it is the refresh token
-            // because the backend sends length = 2 if no refesh token found.
-            } else if(text.length>3) {
-                console.log(text.length)
-                // use a cookie to store the refresh token value
-                // text contains the refresh token value
-                // need to add the encode function because the default will encode to url
-                setRefreshToken('refreshToken', text, { encode: String})
-                
+            }
+            // if user has a refresh token
+            else if (resp.refresh_token ===1) {
+                console.log('user has a refresh token')
+                setRefreshToken('refreshToken', 'True')
                 // redirect user to the accessible accounts page
                 history.push('/googleads-accounts')
             }
+            else if (resp.refresh_token === 0 && resp.customer_id === 0) {
+                console.log('New user that does not have refresh token or Google Ads account')
+            }
+           
         })
         .catch(error => console.log(error))   
         }
     }, [refreshToken, token, history, setRefreshToken, setCustomerId])
+    // useEffect(() => {
+    //     if(!refreshToken['refreshToken']) {
+    //         const data = { 'mytoken': token['mytoken']}
+
+    //         fetch('http://127.0.0.1:8000/api/lookup-refreshtoken/', {
+    //         'method': 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': `Token ${token['mytoken']}`
+    //         },
+    //         body: JSON.stringify(data),
+    //     })
+    //     .then(function(response) {    
+    //         return response.text();
+    //     })
+    //     .then(function(text) {
+    //         let isnum = /^\d+$/.test(text);
+    //         // check if value from backend is the customer id or refresh token
+    //         // by checking if the response is all digits, which means is customer id
+    //         if (isnum) {
+    //             // save it as a cookie
+    //             setCustomerId('customerID', text, { encode: String})
+
+    //             // redirect user to the reporting page
+    //             history.push('/campaigns')
+
+    //         // length > 3 makes sure it is the refresh token
+    //         // because the backend sends length = 2 if no refesh token found.
+    //         } else if(text.length>3) {
+    //             console.log(text.length)
+    //             // use a cookie to store the refresh token value
+    //             // text contains the refresh token value
+    //             // need to add the encode function because the default will encode to url
+    //             setRefreshToken('refreshToken', text, { encode: String})
+                
+    //             // redirect user to the accessible accounts page
+    //             history.push('/googleads-accounts')
+    //         }
+    //     })
+    //     .catch(error => console.log(error))   
+    //     }
+    // }, [refreshToken, token, history, setRefreshToken, setCustomerId])
 
 
     // if user has a refresh token saved as a cookie,

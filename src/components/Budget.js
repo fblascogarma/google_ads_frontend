@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState, useEffect, Fragment} from 'react';
-import {useCookies} from 'react-cookie';
-import {useHistory} from 'react-router-dom';
-import ProgressionTracker from './ProgressionTracker';
-import Message from './Message';
-import MessageWarning from './MessageWarning';
-import MessageSuccess from './MessageSuccess';
-import MessageError from './MessageErrorNoClose';
+import React, {useState, useEffect, Fragment} from 'react'
+import {useCookies} from 'react-cookie'
+import {useHistory} from 'react-router-dom'
+import ProgressionTracker from './ProgressionTracker'
+import Message from './Message'
+import MessageWarning from './MessageWarning'
+import MessageSuccess from './MessageSuccess'
+import MessageError from './MessageErrorNoClose'
 
 
 const Budget = () => {
@@ -90,6 +90,7 @@ const Budget = () => {
 
             // data to send to the API
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'country_code': country_code['country_code'], 
@@ -169,6 +170,7 @@ const Budget = () => {
 
         // data to send to the API
         const data = { 
+            'mytoken': token['mytoken'], 
             'refreshToken': refreshToken['refreshToken'], 
             'customer_id': customerId['customerID'], 
             'country_code': country_code['country_code'], 

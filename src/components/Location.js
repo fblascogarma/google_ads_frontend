@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState, useEffect, Fragment} from 'react';
-import {useCookies} from 'react-cookie';
-import {useHistory} from 'react-router-dom';
-// import Message from './Message';
-import MessageWarning from './MessageWarning';
-import ProgressionTracker from './ProgressionTracker';
+import React, {useState, useEffect, Fragment} from 'react'
+import {useCookies} from 'react-cookie'
+import {useHistory} from 'react-router-dom'
+import MessageWarning from './MessageWarning'
+import ProgressionTracker from './ProgressionTracker'
 
 
 const Location = () => {
 
     const [token, setToken, removeToken] = useCookies(['mytoken'])
     const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
+    const [customerId, setCustomerId, removeCustomerID] = useCookies(['customer_id'])
     let history = useHistory()
 
     // messages to give feedback to users
@@ -55,20 +55,32 @@ const Location = () => {
     // capture the additional location suggestions sent by Google's API from the selected recommendations
     const [additional_locationSuggestions, setAdditional_locationSuggestions] = useState([])
 
+    // function to transform user's location input into title case
+    function toTitleCase(str) {
+        return str.replace(
+            /\w\S*/g,
+            function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        );
+    }
+
     // add the location the user input in the text field
     // and get recommendations from API
     const addLocation = (e) => {
         if (location_input.length > 0 && 
             // add location if it has not been added yet to the selected object
-            (location_targeting.indexOf(location_input) === -1)) {
+            (location_targeting.indexOf(toTitleCase(location_input)) === -1)) {
             // eliminate warning message of no input in text box
             setMessageWarning('')
             // add it to the selected array
-            setLocation_targeting([...location_targeting, location_input]);
+            setLocation_targeting([...location_targeting, toTitleCase(location_input)]);
 
             // data to send to the backend and then to the API
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
                 'location': location_input, 
                 'country_code': country_code['country_code'], 
                 'language_code': language_code['language_code']
@@ -95,8 +107,8 @@ const Location = () => {
             })
             // .then(resp => resp.length && setLocationSuggestions(resp))
             .catch(error => console.log(error))
-        } else if (location_targeting.indexOf(location_input) !== -1) {
-            setMessageWarning('You already added '+location_input+'.')
+        } else if (location_targeting.indexOf(toTitleCase(location_input)) !== -1) {
+            setMessageWarning('You already added '+toTitleCase(location_input)+'.')
 
         } else {setMessageWarning('Enter a location in the text box above.')}
         
@@ -104,37 +116,54 @@ const Location = () => {
 
     // add the location selected from the suggestions
     const addLocationRecommended = (e) => {
-        
-            // store selected recommendation
-            const selectedRecomm = e.currentTarget.value
-        
+        // store selected recommendation
+        const selectedRecomm = e.currentTarget.value
+        // add location if it has not been added yet to the selected object
+        if (location_targeting.indexOf(selectedRecomm) === -1) {
             // add it to the selected array
-            setLocation_targeting([...location_targeting, selectedRecomm]);
+            setLocation_targeting([...location_targeting, selectedRecomm])
             // remove it from the suggestion array
             const itemToRemove = selectedRecomm
-            const newArray = locationSuggestions.filter(el => el !== itemToRemove);
-            setLocationSuggestions(newArray);
+            const newArray = locationSuggestions.filter(el => el !== itemToRemove)
+            setLocationSuggestions(newArray)
 
-            // get more recommendations from the API based on the selected one
-            // data to send to the backend and then to the API
-            const data_recomm = { 'refreshToken': refreshToken['refreshToken'], 
-            'location': selectedRecomm, 
+        }
+        
+            // store selected recommendation
+            // const selectedRecomm = e.currentTarget.value
+        
+            // add it to the selected array
+            // setLocation_targeting([...location_targeting, selectedRecomm]);
+            // // remove it from the suggestion array
+            // const itemToRemove = selectedRecomm
+            // const newArray = locationSuggestions.filter(el => el !== itemToRemove);
+            // setLocationSuggestions(newArray);
+            
+
+        // get more recommendations from the API based on the selected one
+        // data to send to the backend and then to the API
+        const data_recomm = { 
+            'mytoken': token['mytoken'], 
+            'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
+            'location': location_input, 
             'country_code': country_code['country_code'], 
-            'language_code': language_code['language_code']}
+            'language_code': language_code['language_code']
+        }
 
-            // call the API to get location recommendations
-            fetch('http://127.0.0.1:8000/api/location-recommendations/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token['mytoken']}`
-                },
-                body: JSON.stringify(data_recomm),
-                
-            })
-            .then(resp => resp.json())
-            .then(resp => resp.length && setAdditional_locationSuggestions(resp))
-            .catch(error => console.log(error))
+        // call the API to get location recommendations
+        fetch('http://127.0.0.1:8000/api/location-recommendations/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token['mytoken']}`
+            },
+            body: JSON.stringify(data_recomm),
+            
+        })
+        .then(resp => resp.json())
+        .then(resp => resp.length && setAdditional_locationSuggestions(resp))
+        .catch(error => console.log(error))
         
     }
     

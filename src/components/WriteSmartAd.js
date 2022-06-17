@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState, useEffect, Fragment} from 'react';
-import {useCookies} from 'react-cookie';
-import {useHistory} from 'react-router-dom';
-import Message from './Message';
-import MessageWarning from './MessageWarning';
-import MessageError from './MessageErrorNoClose';
-import ProgressionTracker from './ProgressionTracker';
+import React, {useState, useEffect, Fragment} from 'react'
+import {useCookies} from 'react-cookie'
+import {useHistory} from 'react-router-dom'
+import Message from './Message'
+import MessageWarning from './MessageWarning'
+import MessageError from './MessageErrorNoClose'
+import ProgressionTracker from './ProgressionTracker'
 
 
 
@@ -93,32 +93,32 @@ const WriteSmartAd = () => {
 
     // set headline 1
     const onChangeHeadlineOne = (e) => {
-        removeHeadline_1(['headline_1']);
-        setHeadlineOneUser(e.target.value); 
+        removeHeadline_1(['headline_1'])
+        setHeadlineOneUser(e.target.value)
         setHeadlineOneUserCharacters(e.target.value.length)}
 
     // set headline 2
     const onChangeHeadlineTwo = (e) => {
-        removeHeadline_2(['headline_2']);
-        setHeadlineTwoUser(e.target.value);
+        removeHeadline_2(['headline_2'])
+        setHeadlineTwoUser(e.target.value)
         setHeadlineTwoUserCharacters(e.target.value.length)}
 
     // set headline 3
     const onChangeHeadlineThree = (e) => {
-        removeHeadline_3(['headline_3']);
-        setHeadlineThreeUser(e.target.value);
+        removeHeadline_3(['headline_3'])
+        setHeadlineThreeUser(e.target.value)
         setHeadlineThreeUserCharacters(e.target.value.length)}
 
     // set description 1
     const onChangeDescOne = (e) => {
-        removeDesc_1(['desc_1']);
-        setDescOneUser(e.target.value); 
+        removeDesc_1(['desc_1'])
+        setDescOneUser(e.target.value) 
         setDescOneUserCharacters(e.target.value.length)}
     
     // set description 2
     const onChangeDescTwo = (e) => {
-        removeDesc_2(['desc_2']);
-        setDescTwoUser(e.target.value);
+        removeDesc_2(['desc_2'])
+        setDescTwoUser(e.target.value)
         setDescTwoUserCharacters(e.target.value.length)}
 
     // get ad creative recommendations (headlines & descriptions)
@@ -130,6 +130,7 @@ const WriteSmartAd = () => {
 
             // data to send to the API
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'country_code': country_code['country_code'], 
@@ -196,13 +197,13 @@ const WriteSmartAd = () => {
                 console.log(error)
                 setMessage('')
                 }
-                );
+                )
 
         }
     }, [
         geo_location, country_code, landing_page, 
         customerId, keyword_themes, language_code, 
-        refreshToken, token, business_name, headlineOne
+        refreshToken, token, business_name, headlineOne, getRecomm
         ]
     )
 

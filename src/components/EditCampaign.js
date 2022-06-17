@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState, useEffect, Fragment} from 'react';
-// import { Link } from 'react-router-dom';
-import {useCookies} from 'react-cookie';
-import {useHistory} from 'react-router-dom';
-import Message from './Message';
-import MessageWarning from './MessageWarning';
-import MessageSuccess from './MessageSuccess';
-import MessageError from './MessageErrorNoClose';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
+import React, {useState, useEffect, Fragment} from 'react'
+import {useCookies} from 'react-cookie'
+import {useHistory} from 'react-router-dom'
+import Message from './Message'
+import MessageWarning from './MessageWarning'
+import MessageSuccess from './MessageSuccess'
+import MessageError from './MessageErrorNoClose'
+import Modal from 'react-bootstrap/Modal'
+import Button from 'react-bootstrap/Button'
 
 
 const EditCampaign = () => {
@@ -100,9 +99,10 @@ const EditCampaign = () => {
         }
     }, [token])
 
-    // if there is a campaign_id in the cookies
-    // send it to the backend with the refreshToken and customer_id
-    // where they will be used to get the campaigns settings associated with that campaign_id
+    // If there is a campaign_id in the cookies
+    // send it to the backend with the customer_id
+    // where they will be used to get the campaigns 
+    // settings associated with that campaign_id.
     useEffect(() => {
         if(campaignId) {
 
@@ -111,6 +111,7 @@ const EditCampaign = () => {
             
             // data to send to the backend
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'campaign_id': campaignId['campaignID']
@@ -163,7 +164,8 @@ const EditCampaign = () => {
         setStatus(e.target.value)
     }
 
-    // change state of the campaign
+    // Change state of the campaign
+    // active, pause, remove.
     useEffect(() => {
         if (status === 'Active') {
             // tell user you are changing the status of the campaign
@@ -171,6 +173,7 @@ const EditCampaign = () => {
                         
             // data to send to the backend
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'campaign_id': campaignId['campaignID']
@@ -208,6 +211,7 @@ const EditCampaign = () => {
                         
             // data to send to the backend
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'campaign_id': campaignId['campaignID']
@@ -245,6 +249,7 @@ const EditCampaign = () => {
                         
             // data to send to the backend
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'campaign_id': campaignId['campaignID']
@@ -290,7 +295,7 @@ const EditCampaign = () => {
     // store new campaign name returned from API
     const [newCampaignName, setNewCampaignName] = useState()
 
-    // send new campaign name to backend and to Google's API
+    // Change the campaign name.
     const onClickSendNewName = () => {
         // show again the h5 tag
         setShowEditName(false)
@@ -299,6 +304,7 @@ const EditCampaign = () => {
                         
         // data to send to the backend
         const data = { 
+            'mytoken': token['mytoken'], 
             'refreshToken': refreshToken['refreshToken'], 
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],
@@ -368,6 +374,7 @@ const EditCampaign = () => {
 
         // data to send to the API
         const data = { 
+            'mytoken': token['mytoken'], 
             'refreshToken': refreshToken['refreshToken'], 
             'customer_id': customerId['customerID'], 
             'country_code': campaignInfo[0].country_code, 
@@ -407,7 +414,7 @@ const EditCampaign = () => {
         return () => ac.abort();
     }
 
-    // send new budget to backend and to Google's API
+    // Change campaign budget.
     const onClickEditBudget = () => {
         if (selected_budget> 0) {
             // close modal
@@ -419,6 +426,7 @@ const EditCampaign = () => {
                             
             // data to send to the backend
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'campaign_id': campaignId['campaignID'],
@@ -520,7 +528,7 @@ const EditCampaign = () => {
     // store new ad creative returned from API
     const [newAdCreative, setNewAdCreative] = useState()
     
-    // send new ad creative to backend and to Google's API
+    // Change ad creative.
     const onClickEditAdCreative = () => {
        
         // close modal
@@ -553,6 +561,7 @@ const EditCampaign = () => {
                         
         // data to send to the backend
         const data = { 
+            'mytoken': token['mytoken'],
             'refreshToken': refreshToken['refreshToken'], 
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],
@@ -621,6 +630,7 @@ const EditCampaign = () => {
 
         // data to send to the API
         const data = { 
+            'mytoken': token['mytoken'], 
             'refreshToken': refreshToken['refreshToken'], 
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],
@@ -663,6 +673,8 @@ const EditCampaign = () => {
 
     const [messageEditingNegativeKeywords, setMessageEditingNegativeKeywords] = useState('')
 
+    // Open modal of negative keywords and
+    // get current negative keywords.
     const openNegativeKeywords = () => {
         // open modal
         setModalNegativeKeywords(true)
@@ -672,6 +684,7 @@ const EditCampaign = () => {
 
         // data to send to the API
         const data = { 
+            'mytoken': token['mytoken'], 
             'refreshToken': refreshToken['refreshToken'], 
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID']
@@ -726,7 +739,7 @@ const EditCampaign = () => {
         setNegativeKeywords(newArray) 
     }
 
-    // send edits of negative keywords to Google Ads API
+    // Change negative keyword themes.
     const onClickEditNegativeKeywords = () => {
 
         // tell user you are changing the negative keyword themes of the campaign
@@ -734,6 +747,7 @@ const EditCampaign = () => {
 
         // data to send to Google to edit keyword themes
         const data = { 
+            'mytoken': token['mytoken'], 
             'refreshToken': refreshToken['refreshToken'],
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],
@@ -773,13 +787,15 @@ const EditCampaign = () => {
         );
       }
 
-    // fetch data to API when user selects a new date to filter the info
+    // Fetch data to API when user selects a new date 
+    // to filter the info of search terms report.
     useEffect(() => {
         // tell user you are getting info
         setMessageSearchTerms(' Fetching information on search terms... It can take a few seconds.')
 
         // data to send to the API
         const data = { 
+            'mytoken': token['mytoken'], 
             'refreshToken': refreshToken['refreshToken'], 
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],
@@ -852,6 +868,7 @@ const EditCampaign = () => {
 
         // data to send to Google to get keyword theme recommendations
         const data_keywords = { 
+            'mytoken': token['mytoken'],
             'refreshToken': refreshToken['refreshToken'],
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],
@@ -926,7 +943,7 @@ const EditCampaign = () => {
         
     }
 
-    // send changes of keywords to Google's servers
+    // Change keyword themes.
     const onClickEditKeywords = () => {
         // close modal
         setModalKeywords(false)
@@ -936,6 +953,7 @@ const EditCampaign = () => {
 
         // data to send to Google to edit keyword themes
         const data = { 
+            'mytoken': token['mytoken'],
             'refreshToken': refreshToken['refreshToken'],
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],
@@ -988,8 +1006,8 @@ const EditCampaign = () => {
     // store the updated geo targets after making changes
     const [updatedGeoTargets, setUpdatedGeoTargets] = useState([])
 
-    // add the location the user input in the text field
-    // and get recommendations from API
+    // Add the location the user input in the text field
+    // and get recommendations from API.
     const addLocation = (e) => {
         if (location_input.length > 0 && 
             // add location if it has not been added yet to the selected object
@@ -1003,7 +1021,9 @@ const EditCampaign = () => {
 
             // data to send to the backend and then to the API
             const data = { 
+                'mytoken': token['mytoken'],
                 'refreshToken': refreshToken['refreshToken'], 
+                'customer_id': customerId['customerID'], 
                 'location': location_input, 
                 'country_code': campaignInfo[0].country_code, 
                 'language_code': campaignInfo[0].language_code,
@@ -1038,7 +1058,7 @@ const EditCampaign = () => {
         
     }
 
-    // add the location selected from the suggestions
+    // Add the location selected from the suggestions.
     const addLocationRecommended = (e) => {
         
         // store selected recommendation
@@ -1055,7 +1075,9 @@ const EditCampaign = () => {
 
         // data to send to the backend and then to the API
         const data_recomm = { 
+            'mytoken': token['mytoken'],
             'refreshToken': refreshToken['refreshToken'], 
+            'customer_id': customerId['customerID'], 
             'location': selectedRecomm, 
             'country_code': campaignInfo[0].country_code, 
             'language_code': campaignInfo[0].language_code,
@@ -1089,7 +1111,7 @@ const EditCampaign = () => {
         setLocation_input(e.target.value);
     }
 
-    // send changes of geo targets to Google's servers
+    // Change geo targets (locations)
     const onClickEditGeoTargets = () => {
         // close modal
         setModalGeoTargets(false)
@@ -1099,6 +1121,7 @@ const EditCampaign = () => {
 
         // data to send to Google to edit keyword themes
         const data = { 
+            'mytoken': token['mytoken'],
             'refreshToken': refreshToken['refreshToken'],
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],
@@ -1198,7 +1221,7 @@ const EditCampaign = () => {
         setSunEndSchedule(e.target.value);
     }
 
-    // send new schedule to Google
+    // Change ad schedule of campaign.
     const onClickSendNewSchedule = () => {
         // show again the table with ad schedule
         setShowEditAdSchedule(false)
@@ -1207,6 +1230,7 @@ const EditCampaign = () => {
                         
         // data to send to the backend
         const data = { 
+            'mytoken': token['mytoken'],
             'refreshToken': refreshToken['refreshToken'], 
             'customer_id': customerId['customerID'], 
             'campaign_id': campaignId['campaignID'],

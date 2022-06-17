@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState, useEffect, Fragment} from 'react';
-import {useCookies} from 'react-cookie';
-import {useHistory} from 'react-router-dom';
-import Message from './Message';
-import MessageWarning from './MessageWarning';
-import MessageSuccess from './MessageSuccess';
+import React, {useState, useEffect, Fragment} from 'react'
+import {useCookies} from 'react-cookie'
+import {useHistory} from 'react-router-dom'
+import Message from './Message'
+import MessageWarning from './MessageWarning'
+import MessageSuccess from './MessageSuccess'
 
 
 const Campaigns = () => {
@@ -72,6 +72,7 @@ const Campaigns = () => {
             
             // data to send to the backend
             const data = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'date_range': date
@@ -113,6 +114,7 @@ const Campaigns = () => {
 
             // data to send to the backend
             const data2 = { 
+                'mytoken': token['mytoken'], 
                 'refreshToken': refreshToken['refreshToken'], 
                 'customer_id': customerId['customerID'], 
                 'date_range': "using same model of reporting"

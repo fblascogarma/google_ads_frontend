@@ -43,13 +43,16 @@ const AccessibleCustomers = () => {
     // send it to the backend with the mytoken
     // where they will be used to get the list of accounts associated with those tokens
     useEffect(() => {
-        if(refreshToken) {
+        if(refreshToken['refreshToken']) {
 
             // tell user you are fetching their data
             setMessage(' Fetching your data... It can take a few seconds.');
             
             // data to send to the backend
-            const data = { 'mytoken': token['mytoken'], 'refreshToken': refreshToken['refreshToken']}
+            const data = { 
+                'mytoken': token['mytoken'], 
+                'refreshToken': refreshToken['refreshToken']
+            }
 
             fetch('http://127.0.0.1:8000/api/get-accounts/', {
                 method: 'POST',
@@ -97,6 +100,7 @@ const AccessibleCustomers = () => {
         if(managerID !== '4642579541') {
             // data to send to the backend
             const data = { 
+                'mytoken': token['mytoken'],
                 'refreshToken': refreshToken['refreshToken'],
                 'customer_id': cusID
             }
