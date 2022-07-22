@@ -67,19 +67,6 @@ const Home = () => {
                     history.push('/googleads-accounts')
                 }
             })
-            // .then(function(response) {    
-            //     return response.text();
-            // })
-            // .then(function(text) {
-                
-            //     // Use a cookie to store info of the account.
-            //     // Need to add the encode function because the default will encode to url.
-            //     setRefreshToken('refreshToken', text, { encode: String})
-                
-            //     // redirect user to the google ads accounts page
-            //     history.push('/googleads-accounts')
-
-            // })
             .catch(error => console.log(error))
             
         }
