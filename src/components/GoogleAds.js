@@ -75,48 +75,6 @@ const GoogleAds = () => {
         .catch(error => console.log(error))   
         }
     }, [refreshToken, token, history, setRefreshToken, setCustomerId])
-    // useEffect(() => {
-    //     if(!refreshToken['refreshToken']) {
-    //         const data = { 'mytoken': token['mytoken']}
-
-    //         fetch('http://127.0.0.1:8000/api/lookup-refreshtoken/', {
-    //         'method': 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': `Token ${token['mytoken']}`
-    //         },
-    //         body: JSON.stringify(data),
-    //     })
-    //     .then(function(response) {    
-    //         return response.text();
-    //     })
-    //     .then(function(text) {
-    //         let isnum = /^\d+$/.test(text);
-    //         // check if value from backend is the customer id or refresh token
-    //         // by checking if the response is all digits, which means is customer id
-    //         if (isnum) {
-    //             // save it as a cookie
-    //             setCustomerId('customerID', text, { encode: String})
-
-    //             // redirect user to the reporting page
-    //             history.push('/campaigns')
-
-    //         // length > 3 makes sure it is the refresh token
-    //         // because the backend sends length = 2 if no refesh token found.
-    //         } else if(text.length>3) {
-    //             console.log(text.length)
-    //             // use a cookie to store the refresh token value
-    //             // text contains the refresh token value
-    //             // need to add the encode function because the default will encode to url
-    //             setRefreshToken('refreshToken', text, { encode: String})
-                
-    //             // redirect user to the accessible accounts page
-    //             history.push('/googleads-accounts')
-    //         }
-    //     })
-    //     .catch(error => console.log(error))   
-    //     }
-    // }, [refreshToken, token, history, setRefreshToken, setCustomerId])
 
 
     // if user has a refresh token saved as a cookie,
@@ -129,7 +87,7 @@ const GoogleAds = () => {
     }, [refreshToken, history])
 
 
-    // when user clicks the 'Connect to Google' button
+    // when user clicks the 'Sign in with Google' button
     const authenticateGoogle = () => {
         fetch('http://127.0.0.1:8000/api/connect/', {
             'method': 'GET',
@@ -192,11 +150,6 @@ const GoogleAds = () => {
                             manage it from our app!  
                             
                         </p>
-                        <p className="card-text"> 
-                            {/* make clarification below because OAuth scope uses the word Adwords which can create unnecessary friction */}
-                            When giving us permission to connect to your account, 
-                            you will see that Google uses Adwords to refer to Google Ads.
-                        </p>
                         <p className="card-text">
                             You can disconnect your account anytime you want.
                         </p>
@@ -221,12 +174,6 @@ const GoogleAds = () => {
                         <p className="card-text">
                             Don't worry! We can create one for you.
                         </p>
-                        <p className="card-text">
-                            You will need to select an account name, your email, 
-                            the currency you want to use, 
-                            and the time zone.
-                        </p>
-                        <br/>
                         <br/>
                         <br/>
                         <button onClick={createAccount} className="btn btn-success">CREATE</button>
