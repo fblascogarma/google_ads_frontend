@@ -13,10 +13,14 @@
 // limitations under the License.
 
 import React, { useState } from 'react';
+import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 
 
 const LearnMore = () => {
+
+    const [token, setToken, removeToken] = useCookies(['mytoken'])
+    const [refreshToken, setRefreshToken, removeRefreshToken] = useCookies(['refreshToken'])
 
     let history = useHistory()
 
@@ -49,7 +53,21 @@ const LearnMore = () => {
 
     // START button
     const goStart = () => {
-        history.push('/googleads-accounts')  
+        // if there is a refresh token in the cookies,
+        // send user to the Accounts page.
+        if(refreshToken['refreshToken']) {
+            history.push('/googleads-accounts')
+        }
+        // if no refresh token but yes mytoken,
+        // send user to Google Ads page.
+        else if(token['mytoken']) {
+            history.push('/googleads')
+        }
+        // if neither, this means user is not logged in yet,
+        // so push user to the login or signup page.
+        else {
+            history.push('/login')
+        }  
     }
 
     // HOME button
