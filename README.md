@@ -47,7 +47,7 @@ Here are the instructions for the frontend after you cloned the repo.
 
 > source NAME-OF-YOUR-PROJECT/bin/Activate
 
-2. Install all dependencies in the cloned frontend repo.
+2. Navigate to the cloned folder, and install all dependencies.
 
 > npm install
 
