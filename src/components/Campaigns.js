@@ -238,7 +238,12 @@ const Campaigns = () => {
         <Fragment>
             <p>See how your campaigns are performing. 
             You can filter by campaign status and dates. 
+            </p>
+            <p> 
             Click a campaign if you want to make changes or see the current settings.
+            In this app, it's only possible to edit Smart campaigns. 
+            For other campaign types when you click the app will break.
+            If you want to fix this and send a pull request, please do! It would be great.
             </p>
         </Fragment> : 
         // if user has zero campaigns yet, show this message
