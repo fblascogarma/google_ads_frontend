@@ -222,12 +222,11 @@ const Campaigns = () => {
                 style={{marginRight: '5px'}}></i>
                 Your account cannot show ads. 
                 To start running your ads, 
-                <a href="https://ads.google.com/home/" className="alert-link"
+                <a href={`https://ads.google.com/aw/billing/settings?ecid=${customerId}`} className="alert-link"
                 target="_blank" rel="noopener noreferrer"> CLICK HERE </a> 
                 to enter your billing information. 
                 This link will open a new tab with Google Ads platform. 
-                Go to Settings in the top menu, 
-                and click on Billing & payments. 
+                It will take you directly to the Payments Setup page. 
                 When you finish, 
                 close that tab to continue working on Fran Ads.
                 

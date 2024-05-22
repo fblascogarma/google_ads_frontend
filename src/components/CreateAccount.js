@@ -142,9 +142,9 @@ const CreateAccount = () => {
                 <br/>
                 <p>
                 One more step to go. 
-                Check for an email with the subject 
-                <strong> "You received an invitation to access a Google Ads account", </strong>
-                and accept the invitation. 
+                Check for an email with subject 
+                <strong> "Accept your invitation to access a Google Ads account", </strong>
+                and accept the invitation. You have 20 days to accept before losing access.
                 </p>
                 <br/>
                 <p>When you finish, close that window so you come back here 
