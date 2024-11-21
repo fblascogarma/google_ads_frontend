@@ -45,11 +45,20 @@ You need to [install NodeJS](https://nodejs.org/en/download/) if you haven't don
 
 Clone this repo and the repo for the [backend](https://github.com/fblascogarma/google_ads_backend). To create the backend, follow the steps on the README file on that repo.
 
+To clone the repo, go to the folder where you want to have this project, and using your terminal write:
+
+> git clone https://github.com/fblascogarma/google_ads_frontend.git
+
+You'll need a virtual environment, so if you haven't set that up yet, use your terminal to write:
+
+> python3 -m venv google_ads_frontend
+
+
 Here are the instructions for the frontend after you cloned the repo.
 
 1. Activate a virtual environment. 
 
-> source NAME-OF-YOUR-PROJECT/bin/Activate
+> source google_ads_frontend/bin/activate
 
 2. Navigate to the cloned folder, and install all dependencies.
 
