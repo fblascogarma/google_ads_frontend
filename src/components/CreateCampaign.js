@@ -38,6 +38,7 @@ const CreateCampaign = () => {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [countryCode, setCountryCode] = useState("US")
     const [languageCode, setLanguageCode] = useState("en")
+    const [isPolitical, setIsPolitical] = useState(false)
 
     // cookies from step 1
     const [country_code, setCountry_code, removeCountry_code] = useCookies(['country_code', "US"])
@@ -46,6 +47,7 @@ const CreateCampaign = () => {
     const [landing_page, setLanding_page, removeLanding_page] = useCookies(['landing_page'])
     const [phone_number, setPhone_number, removePhone_number] = useCookies(['phone_number'])
     const [language_code, setLanguage_code, removeLanguage_code] = useCookies(['language_code'])
+    const [is_political, setIs_political, removeIs_political] = useCookies(['is_political'])
     
     const [messageError, setMessageError] = useState('')
     const [message, setMessage] = useState('')
@@ -107,7 +109,7 @@ const CreateCampaign = () => {
         // removeBusiness_name(['business_name']);
         // if accountInfo.business_name exists, remove it
         console.log('changing bus name')
-        if(accountInfo.length > 0 && accountInfo[0].business_name) {
+        if(accountInfo && accountInfo.length > 0 && accountInfo[0].business_name) {
             console.log('inside if(accountInfo.length > 0 && accountInfo[0].business_name) statement')
             const itemToRemove = accountInfo[0].business_name
             console.log('itemToRemove')
@@ -121,11 +123,11 @@ const CreateCampaign = () => {
         }
         setBusinessName(e.target.value)}
 
-    // set business name
+    // set landing page
     const onChangeLanding = (e) => {
         removeLanding_page(['landing_page']);
         // if accountInfo.final_url exists, remove it
-        if(accountInfo.length > 0) {
+        if(accountInfo && accountInfo.length > 0) {
             console.log('inside if(accountInfo.length > 0) statement')
             const itemToRemove = accountInfo[0].final_url
             console.log('itemToRemove')
@@ -143,7 +145,7 @@ const CreateCampaign = () => {
     const onChangePhoneNumber = (e) => {
         removePhone_number(['phone_number']);
         // if accountInfo.phone_number exists, remove it
-        if(accountInfo.length > 0) {
+        if(accountInfo && accountInfo.length > 0) {
             console.log('inside if statement')
             const itemToRemove = accountInfo[0].phone_number
             console.log('itemToRemove')
@@ -167,6 +169,9 @@ const CreateCampaign = () => {
         removeLanguage_code(['language_code']);
         setLanguageCode(e.target.value)}
 
+    // set isPolitical
+    const onChangePolitical = (e) => {setIsPolitical(e.target.checked)}
+
     // if there are field values saved as cookies, populate fields with those values
     // or if the user has GMB and we get their Business Profile info, use those values
     useEffect(() => {
@@ -174,7 +179,7 @@ const CreateCampaign = () => {
             
             setBusinessName(business_name['business_name'])
         } 
-        else if(accountInfo.length > 0) {
+        else if(accountInfo && accountInfo.length > 0) {
             if(accountInfo[0].business_name) {
                 setBusinessName(accountInfo[0].business_name)
             }
@@ -188,7 +193,7 @@ const CreateCampaign = () => {
             
             setLandingPage(landing_page['landing_page'])
         }
-        else if(accountInfo.length > 0) {
+        else if(accountInfo && accountInfo.length > 0) {
             
             setLandingPage(accountInfo[0].final_url)
         }
@@ -199,7 +204,7 @@ const CreateCampaign = () => {
             
             setPhoneNumber(phone_number['phone_number'])
         }
-        else if(accountInfo.length > 0) {
+        else if(accountInfo && accountInfo.length > 0) {
             
             setPhoneNumber(accountInfo[0].phone_number)
         }
@@ -239,6 +244,7 @@ const CreateCampaign = () => {
                     setLanding_page("landing_page", landingPage, { encode: String});
                     setCountry_code("country_code", countryCode);
                     setPhone_number("phone_number", phoneNumber);
+                    setIs_political("is_political", isPolitical);
                     history.push('/geo-location');
                 } else {setMessageError('You need to fill out all fields to continue.');}
         }
@@ -327,7 +333,7 @@ const CreateCampaign = () => {
         <textarea className="form-control" placeholder="Enter name of your business..." 
         id="business_name" rows="1" maxLength="1000"
         onChange={onChangeBusName} 
-        value={accountInfo.length > 0 ? accountInfo[0].business_name : businessName}></textarea>
+        value={accountInfo && accountInfo.length > 0 ? accountInfo[0].business_name : businessName}></textarea>
         <small className="form-text text-muted">
             This helps Google show your ad when people search for your business by name.
         </small>
@@ -338,7 +344,7 @@ const CreateCampaign = () => {
         <label>Tell us where people go after they click your ad</label>
         <br/>
         <br/>
-        {accountInfo.length > 0 ? 
+        {accountInfo && accountInfo.length > 0 ? 
         <textarea className="form-control" placeholder="https://www.example.com" id="landing_page_url" rows="1" maxLength="1000"
         onChange={onChangeLanding} 
         value={accountInfo[0].final_url ? accountInfo[0].final_url : landingPage}></textarea> :
@@ -384,11 +390,11 @@ const CreateCampaign = () => {
                     </div>
                     <div className="col">
                         <label>Enter phone number for your business</label>
-                        {accountInfo.length > 0 ? 
+                        {accountInfo && accountInfo.length > 0 ? 
                         <textarea className="form-control" placeholder="Enter phone number..." 
                         id="phone_number" rows="1" maxLength="100"
                         onChange={onChangePhoneNumber} 
-                        value={accountInfo[0].phone_number ? accountInfo[0].phone_number : phoneNumber}></textarea> :
+                        value={accountInfo && accountInfo[0].phone_number ? accountInfo[0].phone_number : phoneNumber}></textarea> :
                         <textarea className="form-control" placeholder="Enter phone number..." 
                             id="phone_number" rows="1" maxLength="100"
                             onChange={onChangePhoneNumber} 
@@ -399,6 +405,16 @@ const CreateCampaign = () => {
             </div>
             <br/>
             <br/>
+
+        <label>
+            <input type="checkbox" 
+            onChange={onChangePolitical}
+            checked={isPolitical}
+            style={{ transform: 'scale(1.5)', marginRight: '12px' }}/>
+            Check this box if your ad is political
+        </label>
+        <br/>
+        <br/>
 
         {messageError ? <MessageError msg={messageError} /> : null}
         <div className="container" align="left">

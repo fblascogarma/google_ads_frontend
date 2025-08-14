@@ -44,6 +44,7 @@ const Budget = () => {
     const [headline_3, setHeadline_3, removeHeadline_3] = useCookies(['headline_3'])
     const [desc_1, setDesc_1, removeDesc_1] = useCookies(['desc_1'])
     const [desc_2, setDesc_2, removeDesc_2] = useCookies(['desc_2'])
+    const [is_political, setIs_political, removeIs_political] = useCookies(['is_political'])
 
 
 
@@ -187,7 +188,8 @@ const Budget = () => {
             'headline_3_user': headline_3['headline_3'],
             'desc_1_user': desc_1['desc_1'],
             'desc_2_user': desc_2['desc_2'],
-            'campaign_name': business_name['business_name']
+            'campaign_name': business_name['business_name'],
+            'is_political': is_political['is_political']
         }
 
         // create AbortController function to cancel fetch when it ends
